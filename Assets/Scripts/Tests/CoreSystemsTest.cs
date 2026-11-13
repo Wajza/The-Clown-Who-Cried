@@ -1,8 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,42 +8,22 @@ using UnityEngine.InputSystem;
 /// Press Play in CoreTest_A and watch: Pip dies, respawns, touches the checkpoint, collects a
 /// test Star Fragment, travels to CoreTest_B, dies there, and finally uses Continue. Every check
 /// prints PASS or FAIL in the Console, and a summary is written to Logs/Part1TestResults.txt.
-///
-/// When Unity runs from the command line (batch mode) it closes itself afterwards with exit
-/// code 0 if everything passed, 1 if not. That's how Claude ran these tests.
-///
-/// Your real save file is moved aside before the test and put back afterwards.
-/// Untick "Run On Start" to walk around the test scene without running the test.
+/// (The PASS/FAIL, timeout and save-backup machinery is in SystemTestBase.)
 /// </summary>
-public class CoreSystemsTest : MonoBehaviour
+public class CoreSystemsTest : SystemTestBase
 {
-    [SerializeField, Tooltip("Run the test automatically when Play starts.")]
-    private bool runOnStart = true;
-
-    [SerializeField, Min(5f), Tooltip("Give up (and fail) if the whole test takes longer than this (seconds).")]
-    private float timeout = 120f;
-
     private const string SceneA = "CoreTest_A";
     private const string SceneB = "CoreTest_B";
     private const string CheckpointId = "CoreTest_A_CP1";
     private const string FragmentId = "test_fragment_1";
 
-    private readonly List<string> _results = new List<string>();
-    private int _failures;
+    protected override string ResultsFileName => "Part1TestResults.txt";
+    protected override string LogTag => "Part1Test";
+
     private bool _respawned;
     private bool _sceneLoaded;
 
-    // ------------------------------------------------------------------ Unity lifecycle
-
-    private void Start()
-    {
-        if (!runOnStart)
-            return;
-
-        // Keep this object alive across scene loads, because the test continues in CoreTest_B.
-        DontDestroyOnLoad(gameObject);
-        StartCoroutine(RunWithTimeout());
-    }
+    // ------------------------------------------------------------------ Events the test watches
 
     private void OnEnable()
     {
@@ -66,45 +42,7 @@ public class CoreSystemsTest : MonoBehaviour
 
     // ------------------------------------------------------------------ Test flow
 
-    private IEnumerator RunWithTimeout()
-    {
-        string backup = SaveSystem.SavePath + ".before-test";
-        BackUpRealSave(backup);
-
-        IEnumerator test = RunTest();
-        float deadline = Time.realtimeSinceStartup + timeout;
-        bool finished = false;
-
-        // Step through the test by hand so we can stop it if it runs too long or throws.
-        while (true)
-        {
-            if (Time.realtimeSinceStartup > deadline)
-            {
-                Fail($"Timed out after {timeout} s");
-                break;
-            }
-
-            bool hasMore;
-            try { hasMore = test.MoveNext(); }
-            catch (Exception e)
-            {
-                Fail($"Exception: {e}");
-                break;
-            }
-
-            if (!hasMore)
-            {
-                finished = true;
-                break;
-            }
-            yield return test.Current;
-        }
-
-        RestoreRealSave(backup);
-        Finish(finished);
-    }
-
-    private IEnumerator RunTest()
+    protected override IEnumerator RunTest()
     {
         // 1. The bootstrap created GameSystems, and the first scene was announced.
         yield return WaitUntil(() => GameManager.Instance != null && _sceneLoaded, 5f, "first SceneLoaded");
@@ -129,7 +67,7 @@ public class CoreSystemsTest : MonoBehaviour
         Check("Map back on when every owner unlocked", map.enabled);
 
         // 3. Die with no checkpoint: back to where Pip entered the scene.
-        Vector2 entry = PlayerController.Current.transform.position;
+        Vector2 entry = PipPosition();
         PlayerController.Current.Teleport(entry + new Vector2(6f, 0f), 0f);
         yield return new WaitForSeconds(0.2f);
         yield return KillPipAndWaitForRespawn();
@@ -213,82 +151,6 @@ public class CoreSystemsTest : MonoBehaviour
         Check("Screen visible again", !ScreenFader.Instance.IsCovering);
     }
 
-    // ------------------------------------------------------------------ Helpers
-
     private static InputActionMap PlayerMap() =>
         PlayerController.Current.InputActions.FindActionMap("Player", true);
-
-    private static Vector2 PipPosition() => PlayerController.Current.transform.position;
-
-    private IEnumerator WaitUntil(Func<bool> condition, float seconds, string what)
-    {
-        float end = Time.realtimeSinceStartup + seconds;
-        while (!condition())
-        {
-            if (Time.realtimeSinceStartup > end)
-            {
-                Fail($"Waited {seconds} s for {what}");
-                yield break;
-            }
-            yield return null;
-        }
-    }
-
-    private void CheckNear(string label, Vector2 actual, Vector2 expected)
-    {
-        // Pip's pivot is at her feet and spawn points sit on the floor, so after landing she
-        // should be almost exactly on the point. A big y difference means a pivot/placement bug.
-        bool ok = Mathf.Abs(actual.x - expected.x) < 0.15f && Mathf.Abs(actual.y - expected.y) < 0.1f;
-        Check($"{label} (at {actual}, expected {expected})", ok);
-    }
-
-    private void Check(string label, bool ok)
-    {
-        if (!ok)
-            _failures++;
-        string line = (ok ? "PASS  " : "FAIL  ") + label;
-        _results.Add(line);
-        if (ok) Debug.Log("[Part1Test] " + line);
-        else Debug.LogError("[Part1Test] " + line);
-    }
-
-    private void Fail(string reason) => Check(reason, false);
-
-    private void Finish(bool finished)
-    {
-        if (!finished && _failures == 0)
-            Fail("Test did not finish");
-
-        var sb = new StringBuilder();
-        sb.AppendLine($"Part 1 Core test - {DateTime.Now}");
-        foreach (string line in _results)
-            sb.AppendLine(line);
-        sb.AppendLine(_failures == 0 ? "ALL PASSED" : $"{_failures} FAILED");
-
-        string path = Path.Combine(Application.dataPath, "..", "Logs", "Part1TestResults.txt");
-        Directory.CreateDirectory(Path.GetDirectoryName(path));
-        File.WriteAllText(path, sb.ToString());
-        Debug.Log($"[Part1Test] {(_failures == 0 ? "ALL PASSED" : _failures + " FAILED")}. Results: {path}");
-
-#if UNITY_EDITOR
-        // Only close Unity when it was started from the command line.
-        if (Application.isBatchMode)
-            UnityEditor.EditorApplication.Exit(_failures == 0 ? 0 : 1);
-#endif
-    }
-
-    private static void BackUpRealSave(string backup)
-    {
-        if (File.Exists(backup))
-            File.Delete(backup);
-        if (File.Exists(SaveSystem.SavePath))
-            File.Move(SaveSystem.SavePath, backup);
-    }
-
-    private static void RestoreRealSave(string backup)
-    {
-        SaveSystem.Delete(); // Remove the test's save.
-        if (File.Exists(backup))
-            File.Move(backup, SaveSystem.SavePath);
-    }
 }

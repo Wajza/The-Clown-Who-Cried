@@ -1,0 +1,69 @@
+{
+    "name": "SystemControls",
+    "maps": [
+        {
+            "name": "Systems",
+            "id": "b3a1c7e2-5d4f-4a8b-9c61-2f7e8d9a0b11",
+            "actions": [
+                {
+                    "name": "Interact",
+                    "type": "Button",
+                    "id": "c4b2d8f3-6e5a-4b9c-8d72-3a8f9e0b1c21",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Advance",
+                    "type": "Button",
+                    "id": "d5c3e9a4-7f6b-4c0d-9e83-4b9a0f1c2d31",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ChoiceUp",
+                    "type": "Button",
+                    "id": "e6d4fab5-807c-4d1e-8f94-5c0b1a2d3e41",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ChoiceDown",
+                    "type": "Button",
+                    "id": "f7e5abc6-918d-4e2f-9a05-6d1c2b3e4f51",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                { "name": "", "id": "1a2b3c4d-0001-4000-8000-000000000001", "path": "<Keyboard>/f", "interactions": "", "processors": "", "groups": "", "action": "Interact", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "1a2b3c4d-0002-4000-8000-000000000002", "path": "<Gamepad>/buttonEast", "interactions": "", "processors": "", "groups": "", "action": "Interact", "isComposite": false, "isPartOfComposite": false },
+
+                { "name": "", "id": "1a2b3c4d-0003-4000-8000-000000000003", "path": "<Keyboard>/space", "interactions": "", "processors": "", "groups": "", "action": "Advance", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "1a2b3c4d-0004-4000-8000-000000000004", "path": "<Keyboard>/enter", "interactions": "", "processors": "", "groups": "", "action": "Advance", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "1a2b3c4d-0005-4000-8000-000000000005", "path": "<Keyboard>/f", "interactions": "", "processors": "", "groups": "", "action": "Advance", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "1a2b3c4d-0006-4000-8000-000000000006", "path": "<Mouse>/leftButton", "interactions": "", "processors": "", "groups": "", "action": "Advance", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "1a2b3c4d-0007-4000-8000-000000000007", "path": "<Gamepad>/buttonSouth", "interactions": "", "processors": "", "groups": "", "action": "Advance", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "1a2b3c4d-0008-4000-8000-000000000008", "path": "<Gamepad>/buttonEast", "interactions": "", "processors": "", "groups": "", "action": "Advance", "isComposite": false, "isPartOfComposite": false },
+
+                { "name": "", "id": "1a2b3c4d-0009-4000-8000-000000000009", "path": "<Keyboard>/w", "interactions": "", "processors": "", "groups": "", "action": "ChoiceUp", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "1a2b3c4d-0010-4000-8000-000000000010", "path": "<Keyboard>/upArrow", "interactions": "", "processors": "", "groups": "", "action": "ChoiceUp", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "1a2b3c4d-0011-4000-8000-000000000011", "path": "<Gamepad>/dpad/up", "interactions": "", "processors": "", "groups": "", "action": "ChoiceUp", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "1a2b3c4d-0012-4000-8000-000000000012", "path": "<Gamepad>/leftStick/up", "interactions": "", "processors": "", "groups": "", "action": "ChoiceUp", "isComposite": false, "isPartOfComposite": false },
+
+                { "name": "", "id": "1a2b3c4d-0013-4000-8000-000000000013", "path": "<Keyboard>/s", "interactions": "", "processors": "", "groups": "", "action": "ChoiceDown", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "1a2b3c4d-0014-4000-8000-000000000014", "path": "<Keyboard>/downArrow", "interactions": "", "processors": "", "groups": "", "action": "ChoiceDown", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "1a2b3c4d-0015-4000-8000-000000000015", "path": "<Gamepad>/dpad/down", "interactions": "", "processors": "", "groups": "", "action": "ChoiceDown", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "1a2b3c4d-0016-4000-8000-000000000016", "path": "<Gamepad>/leftStick/down", "interactions": "", "processors": "", "groups": "", "action": "ChoiceDown", "isComposite": false, "isPartOfComposite": false }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

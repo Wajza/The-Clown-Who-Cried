@@ -31,7 +31,7 @@ public enum GameState
 /// Only the Raise methods can fire an event (C# 'event' blocks outside Invoke), which keeps
 /// the code that fires each event easy to find.
 ///
-/// Later parts add more events here (dialogue, tasks, cutscenes).
+/// Each part adds its events here in its own section (Part 2: dialogue; later: tasks, cutscenes).
 /// </summary>
 public static class GameEvents
 {
@@ -71,6 +71,21 @@ public static class GameEvents
     public static void RaisePlayerRespawned() => PlayerRespawned?.Invoke();
     public static void RaiseGameSaved() => GameSaved?.Invoke();
 
+    // ------------------------------------------------------------------ Dialogue (Part 2)
+
+    /// <summary>Fired with the conversation when the dialogue box opens.</summary>
+    public static event Action<DialogueData> DialogueStarted;
+
+    /// <summary>Fired with the SAME conversation (the one that was started) when the box closes.</summary>
+    public static event Action<DialogueData> DialogueEnded;
+
+    /// <summary>Fired with the NPC's id after a conversation with that NPC finishes. Tasks use this.</summary>
+    public static event Action<string> NpcTalkedTo;
+
+    public static void RaiseDialogueStarted(DialogueData dialogue) => DialogueStarted?.Invoke(dialogue);
+    public static void RaiseDialogueEnded(DialogueData dialogue) => DialogueEnded?.Invoke(dialogue);
+    public static void RaiseNpcTalkedTo(string npcId) => NpcTalkedTo?.Invoke(npcId);
+
     // ------------------------------------------------------------------ Reset
 
     /// <summary>
@@ -87,5 +102,8 @@ public static class GameEvents
         CheckpointReached = null;
         PlayerRespawned = null;
         GameSaved = null;
+        DialogueStarted = null;
+        DialogueEnded = null;
+        NpcTalkedTo = null;
     }
 }

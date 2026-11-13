@@ -5,15 +5,14 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 /// <summary>
 /// EDITOR-ONLY tool that does the Part 1 setup for you (it lives in an "Editor" folder, so it is
 /// never included in the built game).
 ///
 /// Menu: Tools > Clown Who Cried > Part 1 > ...
-///   - "Build GameSystems Prefab": Assets/Resources/GameSystems.prefab with GameManager,
-///     SceneLoader, PlayerSaveBridge, PlayerDeathHandler and the Fader canvas.
+///   - "Build GameSystems Prefab": rebuilds Assets/Resources/GameSystems.prefab with the systems
+///     of EVERY part so far (see GameSystemsPrefabBuilder).
 ///   - "Build Test Scenes": Assets/Scenes/Tests/CoreTest_A and CoreTest_B, each with ground,
 ///     a stand-in Pip, spawn points and a checkpoint, and adds them to the Build Profile scene list.
 ///   - "Run Everything": both of the above.
@@ -33,9 +32,9 @@ public static class Part1Setup
 {
     // ------------------------------------------------------------------ Paths
 
-    private const string ResourcesFolder = "Assets/Resources";
-    private const string PrefabPath = ResourcesFolder + "/GameSystems.prefab";
-    private const string TestScenesFolder = "Assets/Scenes/Tests";
+    internal const string ResourcesFolder = "Assets/Resources";
+    internal const string PrefabPath = ResourcesFolder + "/GameSystems.prefab";
+    internal const string TestScenesFolder = "Assets/Scenes/Tests";
     private const string SceneAPath = TestScenesFolder + "/CoreTest_A.unity";
     private const string SceneBPath = TestScenesFolder + "/CoreTest_B.unity";
     private const string PlaceholderSpritePath = TestScenesFolder + "/Placeholder_White.png";
@@ -46,7 +45,7 @@ public static class Part1Setup
     private const string PlayerLayerName = "Player";
 
     // Pip's feet stand on the floor's top surface, which is at this height in the test scenes.
-    private const float FloorY = -1.5f;
+    internal const float FloorY = -1.5f;
 
     // ------------------------------------------------------------------ Menu items
 
@@ -58,41 +57,9 @@ public static class Part1Setup
         Debug.Log("Part1Setup: done.");
     }
 
+    /// <summary>Builds the whole GameSystems prefab (every part's systems, not only Part 1's).</summary>
     [MenuItem("Tools/Clown Who Cried/Part 1/Build GameSystems Prefab")]
-    public static void BuildGameSystemsPrefab()
-    {
-        EnsureFolder(ResourcesFolder);
-
-        // 1. Root object with the four core components.
-        var root = new GameObject("GameSystems");
-        root.AddComponent<GameManager>();
-        root.AddComponent<SceneLoader>();
-        root.AddComponent<PlayerSaveBridge>();
-        root.AddComponent<PlayerDeathHandler>();
-
-        // 2. Fader: a Canvas drawn on top of everything, with a CanvasGroup + ScreenFader.
-        var fader = new GameObject("Fader", typeof(RectTransform), typeof(Canvas), typeof(CanvasGroup));
-        fader.transform.SetParent(root.transform, false);
-        Canvas canvas = fader.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 1000; // Above every other UI.
-        fader.AddComponent<GraphicRaycaster>(); // Lets the black screen block clicks while visible.
-        fader.AddComponent<ScreenFader>();
-
-        // 3. The black Image, stretched over the whole screen.
-        var black = new GameObject("Black", typeof(RectTransform), typeof(Image));
-        black.transform.SetParent(fader.transform, false);
-        var rect = black.GetComponent<RectTransform>();
-        rect.anchorMin = Vector2.zero;
-        rect.anchorMax = Vector2.one;
-        rect.offsetMin = Vector2.zero;
-        rect.offsetMax = Vector2.zero;
-        black.GetComponent<Image>().color = Color.black;
-
-        PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
-        Object.DestroyImmediate(root);
-        Debug.Log($"Part1Setup: saved {PrefabPath}");
-    }
+    public static void BuildGameSystemsPrefab() => GameSystemsPrefabBuilder.Build();
 
     [MenuItem("Tools/Clown Who Cried/Part 1/Build Test Scenes")]
     public static void BuildTestScenes()
@@ -194,7 +161,8 @@ public static class Part1Setup
 
     // ------------------------------------------------------------------ Scene pieces
 
-    private static void BuildCommon(Sprite square)
+    /// <summary>Camera, floor and stand-in Pip: the start of every test scene.</summary>
+    internal static void BuildCommon(Sprite square)
     {
         // Camera sized for 480x270 at 16 pixels per unit: half the height = 270 / 16 / 2.
         var cam = new GameObject("Main Camera", typeof(Camera));
@@ -259,7 +227,7 @@ public static class Part1Setup
         so.ApplyModifiedPropertiesWithoutUndo();
     }
 
-    private static void AddSpawnPoint(string id, Vector2 position, bool isDefault)
+    internal static void AddSpawnPoint(string id, Vector2 position, bool isDefault)
     {
         var go = new GameObject($"SpawnPoint_{id}");
         go.transform.position = position;
@@ -304,7 +272,7 @@ public static class Part1Setup
     // ------------------------------------------------------------------ Helpers
 
     /// <summary>A 16x16 white sprite (1 tile), so stand-in objects are visible.</summary>
-    private static Sprite GetOrCreatePlaceholderSprite()
+    internal static Sprite GetOrCreatePlaceholderSprite()
     {
         if (!File.Exists(PlaceholderSpritePath))
         {
@@ -330,7 +298,7 @@ public static class Part1Setup
     }
 
     /// <summary>Adds scenes to File > Build Profiles > Scene List, keeping the ones already there.</summary>
-    private static void AddScenesToBuildProfile(params string[] paths)
+    internal static void AddScenesToBuildProfile(params string[] paths)
     {
         var scenes = new List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
         foreach (string path in paths)
@@ -343,7 +311,7 @@ public static class Part1Setup
     }
 
     /// <summary>Layer index by name. Logs an error (and falls back to Default) if it doesn't exist.</summary>
-    private static int RequireLayer(string layerName)
+    internal static int RequireLayer(string layerName)
     {
         int layer = LayerMask.NameToLayer(layerName);
         if (layer < 0)
@@ -354,7 +322,7 @@ public static class Part1Setup
         return layer;
     }
 
-    private static void EnsureFolder(string folder)
+    internal static void EnsureFolder(string folder)
     {
         if (AssetDatabase.IsValidFolder(folder))
             return;
