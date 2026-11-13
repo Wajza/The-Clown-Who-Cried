@@ -31,7 +31,7 @@ public enum GameState
 /// Only the Raise methods can fire an event (C# 'event' blocks outside Invoke), which keeps
 /// the code that fires each event easy to find.
 ///
-/// Each part adds its events here in its own section (Part 2: dialogue; later: tasks, cutscenes).
+/// Each part adds its events here in its own section (Part 2: dialogue, Part 3: tasks; later: cutscenes).
 /// </summary>
 public static class GameEvents
 {
@@ -86,6 +86,21 @@ public static class GameEvents
     public static void RaiseDialogueEnded(DialogueData dialogue) => DialogueEnded?.Invoke(dialogue);
     public static void RaiseNpcTalkedTo(string npcId) => NpcTalkedTo?.Invoke(npcId);
 
+    // ------------------------------------------------------------------ Tasks (Part 3)
+
+    /// <summary>Fired with the task when TaskManager starts it.</summary>
+    public static event Action<TaskData> TaskStarted;
+
+    /// <summary>Fired with the task when one of its objectives is done but the task isn't finished yet.</summary>
+    public static event Action<TaskData> TaskProgressed;
+
+    /// <summary>Fired with the task when its last objective is done (its flags are already set).</summary>
+    public static event Action<TaskData> TaskCompleted;
+
+    public static void RaiseTaskStarted(TaskData task) => TaskStarted?.Invoke(task);
+    public static void RaiseTaskProgressed(TaskData task) => TaskProgressed?.Invoke(task);
+    public static void RaiseTaskCompleted(TaskData task) => TaskCompleted?.Invoke(task);
+
     // ------------------------------------------------------------------ Reset
 
     /// <summary>
@@ -105,5 +120,8 @@ public static class GameEvents
         DialogueStarted = null;
         DialogueEnded = null;
         NpcTalkedTo = null;
+        TaskStarted = null;
+        TaskProgressed = null;
+        TaskCompleted = null;
     }
 }

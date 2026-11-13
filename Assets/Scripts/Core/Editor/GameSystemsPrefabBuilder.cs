@@ -12,8 +12,10 @@ using UnityEngine.UI;
 /// What ends up in the prefab:
 ///   GameSystems                 GameManager, SceneLoader, PlayerSaveBridge, PlayerDeathHandler   (Part 1)
 ///                               SystemInput, InteractionInput, DialogueRunner                   (Part 2)
+///                               TaskManager                                                      (Part 3)
 ///   ├─ Fader                    full-screen black fade, drawn above everything                   (Part 1)
-///   └─ DialogueCanvas           the dialogue box (DialogueUI)                                    (Part 2)
+///   ├─ DialogueCanvas           the dialogue box (DialogueUI)                                    (Part 2)
+///   └─ TaskCanvas               task tracker (top right) and "New task" banner (TaskTrackerUI)   (Part 3)
 ///
 /// UI sizes are in "game pixels": the canvases scale a 480 x 270 layout up to the real screen,
 /// the same way the Pixel Perfect Camera scales the game (x4 at 1920 x 1080).
@@ -34,6 +36,7 @@ public static class GameSystemsPrefabBuilder
         var root = new GameObject("GameSystems");
         AddCore(root);      // Part 1
         AddDialogue(root);  // Part 2
+        AddTasks(root);     // Part 3
 
         PrefabUtility.SaveAsPrefabAsset(root, Part1Setup.PrefabPath);
         Object.DestroyImmediate(root);
@@ -148,6 +151,57 @@ public static class GameSystemsPrefabBuilder
         // Hidden until a conversation starts (DialogueUI.Awake also hides it).
         panel.gameObject.SetActive(false);
         choices.gameObject.SetActive(false);
+    }
+
+    // ------------------------------------------------------------------ Part 3: Tasks
+
+    private static void AddTasks(GameObject root)
+    {
+        root.AddComponent<TaskManager>();
+
+        // ---- Canvas below the dialogue box (sort order 50), so a conversation covers it.
+        GameObject canvas = CreateCanvas("TaskCanvas", root.transform, sortingOrder: 50);
+        var tracker = canvas.AddComponent<TaskTrackerUI>();
+        Color boxColor = new Color(0.08f, 0.06f, 0.12f, 0.8f);
+
+        // ---- Tracker: top right, 150 px wide, as tall as its text needs.
+        Image panel = CreateImage("Tracker", canvas.transform, boxColor);
+        RectTransform p = panel.rectTransform;
+        p.anchorMin = p.anchorMax = p.pivot = new Vector2(1f, 1f);
+        p.anchoredPosition = new Vector2(-6f, -6f);
+        p.sizeDelta = new Vector2(150f, 20f);
+        var layout = panel.gameObject.AddComponent<VerticalLayoutGroup>();
+        layout.padding = new RectOffset(5, 5, 3, 4);
+        layout.childControlHeight = true;
+        layout.childControlWidth = true;
+        layout.childForceExpandHeight = false;
+        panel.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        TMP_Text trackerText = CreateText("Text", panel.transform, "", 9f, TextAlignmentOptions.TopLeft);
+
+        // ---- Banner: top centre, fades in and out.
+        Image banner = CreateImage("Banner", canvas.transform, boxColor);
+        RectTransform b = banner.rectTransform;
+        b.anchorMin = b.anchorMax = b.pivot = new Vector2(0.5f, 1f);
+        b.anchoredPosition = new Vector2(0f, -30f);
+        b.sizeDelta = new Vector2(200f, 18f);
+        var bannerGroup = banner.gameObject.AddComponent<CanvasGroup>();
+        bannerGroup.alpha = 0f;
+        bannerGroup.blocksRaycasts = false;
+
+        TMP_Text bannerText = CreateText("Text", banner.transform, "", 10f, TextAlignmentOptions.Center);
+        bannerText.fontStyle = FontStyles.Bold;
+        Stretch(bannerText.rectTransform);
+
+        // ---- Wire into TaskTrackerUI.
+        var so = new SerializedObject(tracker);
+        so.FindProperty("trackerPanel").objectReferenceValue = panel.gameObject;
+        so.FindProperty("trackerText").objectReferenceValue = trackerText;
+        so.FindProperty("banner").objectReferenceValue = bannerGroup;
+        so.FindProperty("bannerText").objectReferenceValue = bannerText;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        panel.gameObject.SetActive(false); // Hidden until a task starts.
     }
 
     // ------------------------------------------------------------------ UI helpers

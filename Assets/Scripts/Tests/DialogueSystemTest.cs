@@ -53,7 +53,6 @@ public class DialogueSystemTest : SystemTestBase
     private void OnNpcTalkedTo(string id) { _lastNpcTalkedTo = id; _npcTalkCount++; }
     private void OnSceneLoaded(string scene, string spawn) => _sceneLoaded = true;
 
-    private static DialogueRunner Runner => DialogueRunner.Instance;
     private static DialogueUI UI => DialogueRunner.Instance.UI;
 
     // ------------------------------------------------------------------ Test flow
@@ -192,32 +191,7 @@ public class DialogueSystemTest : SystemTestBase
 
     // ------------------------------------------------------------------ Steps
 
-    private IEnumerator MovePipTo(float x)
-    {
-        PlayerController.Current.Teleport(new Vector2(x, Part1FloorY), 0f);
-        yield return new WaitForSeconds(0.15f); // A few physics steps for the triggers.
-        yield return null;                      // One Update for InteractionInput.
-    }
-
-    /// <summary>Finish typing the current line (if needed), then move on.</summary>
-    private IEnumerator CompleteAndAdvance()
-    {
-        if (Runner.IsTyping)
-        {
-            Runner.RequestAdvance();
-            yield return null;
-        }
-        Runner.RequestAdvance();
-        yield return null;
-    }
-
-    /// <summary>Press Advance until the conversation is over (picking the first answer if asked).</summary>
-    private IEnumerator FinishConversation()
-    {
-        for (int i = 0; i < 40 && Runner.IsRunning; i++)
-            yield return CompleteAndAdvance();
-        Check("Conversation could be finished", !Runner.IsRunning);
-    }
+    // (MovePipTo, CompleteAndAdvance and FinishConversation are in SystemTestBase.)
 
     private static bool HasBinding(UnityEngine.InputSystem.InputAction action, string path)
     {
@@ -226,7 +200,4 @@ public class DialogueSystemTest : SystemTestBase
                 return true;
         return false;
     }
-
-    // Height of the floor in the test scenes (Part1Setup.FloorY is editor-only).
-    private const float Part1FloorY = -1.5f;
 }

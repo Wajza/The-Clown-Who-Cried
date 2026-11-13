@@ -163,10 +163,12 @@ public static class Part2Setup
         AssetDatabase.SaveAssets();
     }
 
+    private static T LoadOrCreate<T>(string name) where T : ScriptableObject => LoadOrCreate<T>(TestDataFolder, name);
+
     /// <summary>Loads the asset if it exists (keeping its ID, so scenes stay linked), or creates it.</summary>
-    private static T LoadOrCreate<T>(string name) where T : ScriptableObject
+    internal static T LoadOrCreate<T>(string folder, string name) where T : ScriptableObject
     {
-        string path = $"{TestDataFolder}/{name}.asset";
+        string path = $"{folder}/{name}.asset";
         T asset = AssetDatabase.LoadAssetAtPath<T>(path);
         if (asset == null)
         {
@@ -220,7 +222,7 @@ public static class Part2Setup
     /// An NPC standing on the floor: pivot at the feet, a 1 x 1.5 tile body, a talk range
     /// 5 tiles wide, and a yellow "!" prompt above the head.
     /// </summary>
-    private static NpcTalk AddNpc(string name, string npcId, float x, Color color, Sprite square,
+    internal static NpcTalk AddNpc(string name, string npcId, float x, Color color, Sprite square,
         DialogueData defaultDialogue, params NpcTalk.ConditionalDialogue[] conditional)
     {
         var npc = new GameObject(name);

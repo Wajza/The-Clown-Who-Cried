@@ -140,6 +140,48 @@ public abstract class SystemTestBase : MonoBehaviour
 
     protected static Vector2 PipPosition() => PlayerController.Current.transform.position;
 
+    // ------------------------------------------------------------------ Shared steps (dialogue tests)
+
+    /// <summary>Height of the floor in the test scenes (Part1Setup.FloorY is editor-only).</summary>
+    protected const float TestFloorY = -1.5f;
+
+    protected static DialogueRunner Runner => DialogueRunner.Instance;
+
+    /// <summary>Puts Pip on the floor at x and waits for triggers and InteractionInput to notice.</summary>
+    protected IEnumerator MovePipTo(float x)
+    {
+        PlayerController.Current.Teleport(new Vector2(x, TestFloorY), 0f);
+        yield return new WaitForSeconds(0.15f); // A few physics steps for the triggers.
+        yield return null;                      // One Update for InteractionInput.
+    }
+
+    /// <summary>Finish typing the current line (if needed), then move on.</summary>
+    protected IEnumerator CompleteAndAdvance()
+    {
+        if (Runner.IsTyping)
+        {
+            Runner.RequestAdvance();
+            yield return null;
+        }
+        Runner.RequestAdvance();
+        yield return null;
+    }
+
+    /// <summary>Press Advance until the choices appear (or the conversation ends).</summary>
+    protected IEnumerator AdvanceToChoices()
+    {
+        for (int i = 0; i < 40 && Runner.IsRunning && !Runner.IsWaitingForChoice; i++)
+            yield return CompleteAndAdvance();
+    }
+
+    /// <summary>Press Advance until the conversation is over (picking the first answer if asked).</summary>
+    protected IEnumerator FinishConversation()
+    {
+        for (int i = 0; i < 40 && Runner.IsRunning; i++)
+            yield return CompleteAndAdvance();
+        Check("Conversation could be finished", !Runner.IsRunning);
+    }
+
     // ------------------------------------------------------------------ Results
 
     private void Finish(bool finished)
