@@ -13,7 +13,8 @@ using UnityEngine;
 /// SceneLoader uses this to place Pip after loading a scene. Checkpoint is a SpawnPoint too
 /// (it inherits from this class), so a save can say "respawn at checkpoint X" the same way.
 ///
-/// Setup: an empty GameObject where Pip's pivot should stand. Give it an id that is unique
+/// Setup: an empty GameObject ON THE FLOOR where Pip should stand. Pip's pivot is at her feet
+/// (bottom centre), so the floor surface is exactly where she belongs. Give it an id that is unique
 /// within its scene. Tick "Is Default" on the one Pip should use when no id is given.
 /// </summary>
 public class SpawnPoint : MonoBehaviour

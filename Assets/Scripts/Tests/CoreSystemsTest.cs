@@ -236,8 +236,9 @@ public class CoreSystemsTest : MonoBehaviour
 
     private void CheckNear(string label, Vector2 actual, Vector2 expected)
     {
-        // x must match closely; y may differ a little because Pip falls onto the floor.
-        bool ok = Mathf.Abs(actual.x - expected.x) < 0.15f && Mathf.Abs(actual.y - expected.y) < 1f;
+        // Pip's pivot is at her feet and spawn points sit on the floor, so after landing she
+        // should be almost exactly on the point. A big y difference means a pivot/placement bug.
+        bool ok = Mathf.Abs(actual.x - expected.x) < 0.15f && Mathf.Abs(actual.y - expected.y) < 0.1f;
         Check($"{label} (at {actual}, expected {expected})", ok);
     }
 

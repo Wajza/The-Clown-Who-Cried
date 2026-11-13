@@ -10,8 +10,8 @@ using UnityEngine;
 /// GameManager stores the id in the save data and writes the save file.
 ///
 /// Setup: a GameObject with a Collider2D set to "Is Trigger" and this script. Its position is
-/// where Pip reappears, so place it exactly like a SpawnPoint: where Pip's pivot is when she
-/// stands there (if Pip's pivot is at her feet, that's the floor). Optional: a SpriteRenderer plus an
+/// where Pip reappears. Pip's pivot is at her feet, so put it ON THE FLOOR, and shape the trigger
+/// to stand up from there (e.g. offset y = 1, size 1 x 2). Optional: a SpriteRenderer plus an
 /// "on" sprite, so the player can see it light up.
 /// </summary>
 [RequireComponent(typeof(Collider2D))]
