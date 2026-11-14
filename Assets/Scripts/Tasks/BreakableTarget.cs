@@ -68,6 +68,7 @@ public class BreakableTarget : MonoBehaviour, IDamageable
 
         if (GameManager.Instance != null)
             GameManager.Instance.Save.SetFlag(BrokenFlag(saveId));
+        AudioManager.Play(SoundIds.Break);
         Broken?.Invoke(this);
         GameEvents.RaiseTaskSignal(signalKey);
         gameObject.SetActive(false);

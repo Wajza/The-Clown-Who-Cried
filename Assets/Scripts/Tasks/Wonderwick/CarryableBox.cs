@@ -47,6 +47,7 @@ public class CarryableBox : Interactable
         transform.SetParent(pip.transform, worldPositionStays: false);
         transform.localPosition = carryOffset;
         PlayerAbilities.Block(this, Ability.Mallet, Ability.Coins, Ability.Dash);
+        AudioManager.Play(SoundIds.BoxPick);
     }
 
     /// <summary>Called by a DeliveryStall: the box is handed over and disappears.</summary>

@@ -6634,10 +6634,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelInfo
   displayName: Runaway Coaster
   city: 1
-  musicId: 
+  musicId: music_wonderwick
   showNameCard: 1
   lockAbilitiesUntilEarned: 1
   spawnPlayer: 1
+  saveOnEnter: 1
   cameraBounds: {fileID: 447665326}
 --- !u!4 &1803034575
 Transform:

@@ -488,10 +488,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelInfo
   displayName: Train
   city: 0
-  musicId: 
+  musicId: music_train
   showNameCard: 0
   lockAbilitiesUntilEarned: 0
   spawnPlayer: 0
+  saveOnEnter: 1
   cameraBounds: {fileID: 0}
 --- !u!4 &1317320369
 Transform:

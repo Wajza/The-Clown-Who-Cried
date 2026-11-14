@@ -142,6 +142,7 @@ public class RhythmMinigame : MonoBehaviour
     {
         if (hit) Hits++;
         else Misses++;
+        AudioManager.Play(hit ? SoundIds.RhythmHit : SoundIds.RhythmMiss);
         _next++;
         Feedback(hit ? "Great!" : "Miss!");
         if (scoreText != null)

@@ -8778,10 +8778,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelInfo
   displayName: Wonderwick
   city: 1
-  musicId: 
+  musicId: music_wonderwick
   showNameCard: 1
   lockAbilitiesUntilEarned: 1
   spawnPlayer: 1
+  saveOnEnter: 1
   cameraBounds: {fileID: 827367129}
 --- !u!4 &1719961866
 Transform:

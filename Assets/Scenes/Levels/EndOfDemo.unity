@@ -150,7 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelInfo
   displayName: End of Demo
   city: 0
-  musicId: 
+  musicId: music_end
   showNameCard: 0
   lockAbilitiesUntilEarned: 0
   spawnPlayer: 0

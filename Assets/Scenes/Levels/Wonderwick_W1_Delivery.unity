@@ -8703,10 +8703,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelInfo
   displayName: Punchline Delivery
   city: 1
-  musicId: 
+  musicId: music_wonderwick
   showNameCard: 1
   lockAbilitiesUntilEarned: 1
   spawnPlayer: 1
+  saveOnEnter: 1
   cameraBounds: {fileID: 1004166040}
 --- !u!4 &2023779521
 Transform:

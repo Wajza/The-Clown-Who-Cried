@@ -98,6 +98,17 @@ Status: [ ] open, [x] done
   My code uses `ChortleBoss.StartFight()`, `IsDefeated`, `OnDefeated`, `Mask/MaxMask`, `Phase`,
   `State` and the events listed in #5.
 
+- [ ] **12. (Optional) A static "any enemy popped" event, for the pop sound.** My audio listens
+  to your events for sounds (`PlayerSounds`, `WorldSounds`, `BossSounds`; nothing in your code
+  changes). Enemies only have a per-enemy `EnemyBase.Popped`, so there's no pop sound yet. If you
+  add `public static event Action<EnemyBase> AnyPopped;` (raised next to `Popped`), like your
+  `Pickup.AnyCollected`, I'll hook up the sound in one line.
+  The sounds already connected: Jumped, DashingChanged, StarLost, OnDeath, ShieldChanged,
+  SwingStarted, HitLanded, Pogoed, CoinsThrown, TearBurstReleased, GaugeChanged, ActiveChanged
+  (Blue Sight), HazardHit, FragmentCollected, Pickup.AnyCollected, PunchlineBomb.AnyExploded,
+  RubberChickenCannon.AnyFired, and Chortle's AttackWarned / AttackLaunched / PhaseChanged / OnDefeated.
+  Please keep those names (or tell me).
+
 ## For the artist
 
 Every placeholder lives in `Assets/Art/Placeholders`. **To replace one, overwrite the file and
@@ -120,6 +131,8 @@ keep the same file name.** Unity then keeps its ID, and every use updates withou
 | `Tiles/Placeholder_Tile_Wall.png` | Level end walls (bricks) | 16 x 16 |
 | `Level/Placeholder_Door.png` | Every door (houses, station, task rooms, Laugh Tower) | 16 x 32, pivot at the bottom |
 | `Assets/Prefabs/Placeholders/Placeholder_Pip.prefab` | Pip in every level until the real prefab exists | See teammate item 4 |
+| `Assets/Audio/Placeholders/Placeholder_sfx_*.wav` (37 files) | Every sound effect: `sfx_jump`, `sfx_hit`, `jingle_task_done`... | Generated chip-tune beeps. Overwrite with the real sound, same name. More than one version of a sound? Add the extra clips to its entry in `Assets/Resources/Audio/SoundLibrary` (one is picked at random) |
+| `Assets/Audio/Placeholders/Placeholder_music_*.wav` (8 files) | Music: title, Tumbleton, train, Wonderwick, audition (100 BPM), boss, boss final phase, end credits | Loops seamlessly. The audition track should stay at 100 BPM (the rhythm game's speed) or change the rhythm game's BPM to match. Volumes per sound are in the SoundLibrary |
 | `Assets/Resources/Placeholder_White.png` | Test-scene squares (floor, NPCs) | Test scenes only |
 
 Wanted later: NPC sprites and portraits (56 x 56 for the dialogue box), a dialogue "continue"

@@ -15,6 +15,7 @@ using UnityEngine.UI;
 ///                               TaskManager                                                      (Part 3)
 ///                               PlayerAbilities; GameManager starts New Game in Pip's house       (Part 5)
 ///                               CutscenePlayer, SmileStarBonus                                   (Part 8)
+///   ├─ Audio                    AudioManager + PlayerSounds, WorldSounds, BossSounds, GameEventSounds (Part 9)
 ///   ├─ Fader                    full-screen black fade, drawn above everything                   (Part 1)
 ///   ├─ DialogueCanvas           the dialogue box (DialogueUI)                                    (Part 2)
 ///   ├─ TaskCanvas               task tracker (top right) and "New task" banner (TaskTrackerUI)   (Part 3)
@@ -54,6 +55,7 @@ public static class GameSystemsPrefabBuilder
         AddLevels(root);    // Part 5
         root.AddComponent<CutscenePlayer>();  // Part 8: plays Timeline cutscenes (skip with Pause)
         root.AddComponent<SmileStarBonus>();  // Part 8: story-reward max Smile Stars
+        AddAudio(root);     // Part 9
 
         PrefabUtility.SaveAsPrefabAsset(root, Part1Setup.PrefabPath);
         Object.DestroyImmediate(root);
@@ -601,6 +603,22 @@ public static class GameSystemsPrefabBuilder
         c.disabledColor = new Color(0.2f, 0.2f, 0.2f, 0.6f);
         c.fadeDuration = 0f; // Instant: pixel games don't fade highlights (and time may be paused).
         return c;
+    }
+
+    // ------------------------------------------------------------------ Part 9: Audio
+
+    public const string SoundLibraryPath = "Assets/Resources/Audio/SoundLibrary.asset";
+
+    private static void AddAudio(GameObject root)
+    {
+        var audio = new GameObject("Audio");
+        audio.transform.SetParent(root.transform, false);
+        var manager = audio.AddComponent<AudioManager>();
+        SetField(manager, "library", AssetDatabase.LoadAssetAtPath<SoundLibrary>(SoundLibraryPath)); // Made by Part 9 setup.
+        audio.AddComponent<PlayerSounds>();
+        audio.AddComponent<WorldSounds>();
+        audio.AddComponent<BossSounds>();
+        audio.AddComponent<GameEventSounds>();
     }
 
     // ------------------------------------------------------------------ UI helpers

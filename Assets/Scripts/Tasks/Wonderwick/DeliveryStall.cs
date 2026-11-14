@@ -51,6 +51,7 @@ public class DeliveryStall : MonoBehaviour
             return;
 
         box.Deliver();
+        AudioManager.Play(SoundIds.BoxDeliver);
         SetServed(true);
         GameEvents.RaiseTaskSignal(signalKey);
     }

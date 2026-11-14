@@ -38,6 +38,7 @@ public class TaskSwitch : Interactable, IDamageable
         if (IsOn || !TaskAllows)
             return;
         GameManager.Instance.Save.SetFlag(Flag);
+        AudioManager.Play(SoundIds.Switch);
         ShowState();
         GameEvents.RaiseTaskSignal(signalKey);
     }

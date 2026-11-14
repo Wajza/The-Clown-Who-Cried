@@ -6994,10 +6994,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelInfo
   displayName: Tumbleton
   city: 0
-  musicId: 
+  musicId: music_tumbleton
   showNameCard: 1
   lockAbilitiesUntilEarned: 1
   spawnPlayer: 1
+  saveOnEnter: 1
   cameraBounds: {fileID: 69606463}
 --- !u!4 &960749849
 Transform:

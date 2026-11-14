@@ -812,10 +812,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelInfo
   displayName: The Audition
   city: 1
-  musicId: 
+  musicId: music_audition
   showNameCard: 1
   lockAbilitiesUntilEarned: 1
   spawnPlayer: 1
+  saveOnEnter: 1
   cameraBounds: {fileID: 497348002}
 --- !u!4 &580541441
 Transform:

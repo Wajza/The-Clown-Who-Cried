@@ -36,6 +36,7 @@ public class MirrorTeleporter : Interactable
     {
         IsTravelling = true;
         PlayerInputLock.Lock(this);
+        AudioManager.Play(SoundIds.Mirror);
 
         ScreenFader fader = ScreenFader.Instance;
         if (fader != null)
