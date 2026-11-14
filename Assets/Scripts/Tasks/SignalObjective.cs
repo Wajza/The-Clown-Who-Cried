@@ -26,6 +26,11 @@ public class SignalObjective : TaskObjective
     [Min(1), Tooltip("How many times it must happen.")]
     public int requiredCount = 1;
 
+    [Min(0f), Tooltip("Seconds allowed for this step (0 = no limit). Running out fails the task (e.g. W1's deliveries).")]
+    public float timeLimit;
+
+    public override float TimeLimit => timeLimit;
+
     public override Action Watch(ObjectiveRun run)
     {
         void OnSignal(string key)

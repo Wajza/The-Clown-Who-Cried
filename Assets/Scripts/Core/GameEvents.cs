@@ -110,6 +110,11 @@ public static class GameEvents
     public static void RaiseTaskProgressed(TaskData task) => TaskProgressed?.Invoke(task);
     public static void RaiseTaskCompleted(TaskData task) => TaskCompleted?.Invoke(task);
 
+    /// <summary>Fired with the task when it's given up (a timed step ran out, Part 7). It can be started again.</summary>
+    public static event Action<TaskData> TaskFailed;
+
+    public static void RaiseTaskFailed(TaskData task) => TaskFailed?.Invoke(task);
+
     // ------------------------------------------------------------------ Menus and journal (Part 4)
 
     /// <summary>Fired with true when the game pauses (pause menu or journal) and false when it resumes.</summary>
@@ -142,6 +147,7 @@ public static class GameEvents
         NpcTalkedTo = null;
         TaskStarted = null;
         TaskSignal = null;
+        TaskFailed = null;
         TaskProgressed = null;
         TaskCompleted = null;
         GamePausedChanged = null;

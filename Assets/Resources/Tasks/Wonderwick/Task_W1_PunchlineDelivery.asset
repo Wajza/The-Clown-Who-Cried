@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 189068639114db043bd7d104618a7675, type: 3}
+  m_Name: Task_W1_PunchlineDelivery
+  m_EditorClassIdentifier: Assembly-CSharp::TaskData
+  id: w1_punchline_delivery
+  title: Punchline Delivery
+  description: Postmaster Pun needs five boxes of jokes delivered, fast.
+  objectives:
+  - {fileID: 11400000, guid: 19e5d86bac2ace449b751f6e536e612a, type: 2}
+  setFlagWhenComplete: 
+  unlockOnStart: 
+  unlockOnComplete: 
+  city: 1
+  boardOrder: 1
+  showOnTaskBoard: 1
+  testOnly: 0

@@ -82,7 +82,71 @@ public class TaskManager : MonoBehaviour
     public string GetObjectiveText(TaskData task)
     {
         TaskObjective objective = GetCurrentObjective(task);
-        return objective != null ? objective.Describe(_active[task.id].progress.count) : "";
+        if (objective == null)
+            return "";
+        string text = objective.Describe(_active[task.id].progress.count);
+
+        // Timed step (W1): add the time left, e.g. "Deliver the punchlines (2/5) 1:05".
+        float left = GetTimeLeft(task);
+        if (left >= 0f)
+        {
+            int seconds = Mathf.CeilToInt(left);
+            text += $" {seconds / 60}:{seconds % 60:00}";
+        }
+        return text;
+    }
+
+    /// <summary>Seconds left on a timed step, or -1 if the current step has no time limit.</summary>
+    public float GetTimeLeft(TaskData task)
+    {
+        if (!IsActive(task) || _active[task.id].deadline <= 0f)
+            return -1f;
+        return Mathf.Max(0f, _active[task.id].deadline - Time.time);
+    }
+
+    /// <summary>True while any running task is on a timed step (the tracker refreshes its clock then).</summary>
+    public bool AnyTimedStep
+    {
+        get
+        {
+            foreach (RunningTask running in _active.Values)
+                if (running.deadline > 0f)
+                    return true;
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Changes the time left on a timed step (cutscenes, debugging, and the tests use it to make
+    /// time run out). Does nothing if the step isn't timed.
+    /// </summary>
+    public void SetTimeLeft(TaskData task, float seconds)
+    {
+        if (IsActive(task) && _active[task.id].deadline > 0f)
+            _active[task.id].deadline = Time.time + Mathf.Max(0f, seconds);
+    }
+
+    /// <summary>
+    /// Gives up a running task (e.g. time ran out): it stops, is NOT marked finished, its
+    /// task_[id]_active flag is removed, and GameEvents.TaskFailed is raised so the world can
+    /// reset (boxes go home...). The giver can then hand it out again.
+    /// </summary>
+    public void FailTask(TaskData task)
+    {
+        if (!IsActive(task))
+            return;
+
+        RunningTask running = _active[task.id];
+        StopWatching(running);
+        _active.Remove(task.id);
+        _activeOrder.Remove(task);
+
+        SaveData save = CurrentSave;
+        save.activeTasks.Remove(running.progress);
+        save.ClearFlag(task.ActiveFlag);
+
+        GameEvents.RaiseTaskFailed(task);
+        SaveIfWanted();
     }
 
     /// <summary>Every task TaskManager knows (all of Resources/Tasks). Used by the Journal's Task Board.</summary>
@@ -152,6 +216,7 @@ public class TaskManager : MonoBehaviour
         public TaskData task;
         public TaskProgress progress; // The same object that's in Save.activeTasks.
         public Action stopWatching;
+        public float deadline;        // Time.time when a timed step runs out; 0 = not timed.
     }
 
     private readonly Dictionary<string, RunningTask> _active = new Dictionary<string, RunningTask>();
@@ -177,6 +242,22 @@ public class TaskManager : MonoBehaviour
 
     private void OnSceneLoaded(string sceneName, string spawnPointId) => SyncWithSave();
 
+    // Timed steps: fail the task when its time is up. (Time.time stops while the game is paused.)
+    private void Update()
+    {
+        if (_active.Count == 0)
+            return;
+
+        List<TaskData> outOfTime = null;
+        foreach (RunningTask running in _active.Values)
+            if (running.deadline > 0f && Time.time >= running.deadline)
+                (outOfTime ??= new List<TaskData>()).Add(running.task);
+
+        if (outOfTime != null)
+            foreach (TaskData task in outOfTime)
+                FailTask(task);
+    }
+
     // ------------------------------------------------------------------ Watching objectives
 
     private void WatchCurrentObjective(TaskData task)
@@ -201,7 +282,10 @@ public class TaskManager : MonoBehaviour
         // Normally we keep the "stop" for later. But if the objective was met during Watch
         // (and the task already moved on), stop listening right away.
         if (IsActive(task) && _active[task.id].progress.step == step)
+        {
             running.stopWatching = stop;
+            running.deadline = objective.TimeLimit > 0f ? Time.time + objective.TimeLimit : 0f; // The clock starts now.
+        }
         else
             stop?.Invoke();
     }
@@ -277,6 +361,7 @@ public class TaskManager : MonoBehaviour
     {
         running.stopWatching?.Invoke();
         running.stopWatching = null;
+        running.deadline = 0f; // The step's clock (if any) stops too.
     }
 
     private void StopAllWatching()
@@ -317,9 +402,17 @@ public class TaskManager : MonoBehaviour
 
             AddRunning(task, progress);
             if (progress.step >= task.objectives.Count)
+            {
                 Complete(task); // Saved right at the end (e.g. objectives removed since).
-            else
-                WatchCurrentObjective(task);
+                continue;
+            }
+
+            // A timed step starts again from zero after loading (the world, e.g. W1's boxes and
+            // stalls, isn't saved mid-attempt, so the count must match a fresh start).
+            TaskObjective objective = task.objectives[progress.step];
+            if (objective != null && objective.TimeLimit > 0f)
+                progress.count = 0;
+            WatchCurrentObjective(task);
         }
     }
 

@@ -1035,7 +1035,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 0
+    FieldOfView: 0.01
     OrthographicSize: 8.4375
     NearClipPlane: 0.3
     FarClipPlane: 1000
@@ -1043,14 +1043,14 @@ MonoBehaviour:
     ModeOverride: 1
     PhysicalProperties:
       GateFit: 0
-      SensorSize: {x: 0, y: 0}
+      SensorSize: {x: 0.1, y: 0.1}
       LensShift: {x: 0, y: 0}
-      FocusDistance: 0
+      FocusDistance: 0.01
       Iso: 0
       ShutterSpeed: 0
-      Aperture: 0
-      BladeCount: 0
-      Curvature: {x: 0, y: 0}
+      Aperture: 0.7
+      BladeCount: 3
+      Curvature: {x: 0.7, y: 0.7}
       BarrelClipping: 0
       Anamorphism: 0
   BlendHint: 0
@@ -1487,7 +1487,7 @@ GameObject:
   - component: {fileID: 534913490}
   - component: {fileID: 534913489}
   m_Layer: 0
-  m_Name: TaskGate_LaughTower (needs W1-W4, Part 7)
+  m_Name: TaskGate_LaughTower (needs W1-W4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1505,7 +1505,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71a9fba0ada14a94aac5544f83c7ccc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TaskGate
-  requiredTasks: []
+  requiredTasks:
+  - {fileID: 11400000, guid: 1f194fd64386b7a49829bce2b10ea9b2, type: 2}
+  - {fileID: 11400000, guid: ce47afae961b11c41875b64872a15434, type: 2}
+  - {fileID: 11400000, guid: a4eeb507b50d6ff4fbf829868828089e, type: 2}
+  - {fileID: 11400000, guid: 3a9777f079a329846bd11edf1bcae6f2, type: 2}
   activeWhileClosed:
   - {fileID: 523256466}
   activeWhenOpen: []

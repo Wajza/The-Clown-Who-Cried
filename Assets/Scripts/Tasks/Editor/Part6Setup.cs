@@ -87,11 +87,11 @@ public static class Part6Setup
         tumblesDone = Asset<DialogueData>(DialogueFolder, "Dialogue_P4_Tumbles_Done"),
     };
 
-    private static T Asset<T>(string folder, string name) where T : Object =>
+    internal static T Asset<T>(string folder, string name) where T : Object =>
         AssetDatabase.LoadAssetAtPath<T>($"{folder}/{name}.asset");
 
     /// <summary>Creates the asset and calls 'fill' ONLY if it doesn't exist yet.</summary>
-    private static T CreateIfMissing<T>(string folder, string name, System.Action<T> fill) where T : ScriptableObject
+    internal static T CreateIfMissing<T>(string folder, string name, System.Action<T> fill) where T : ScriptableObject
     {
         T existing = Asset<T>(folder, name);
         if (existing != null)
@@ -315,7 +315,7 @@ public static class Part6Setup
     // ------------------------------------------------------------------ Pieces
 
     /// <summary>Removes a Part 5 marker and returns its x (or 'fallback' if it's gone).</summary>
-    private static float TakeMarker(string name, float fallback)
+    internal static float TakeMarker(string name, float fallback)
     {
         GameObject marker = GameObject.Find(name);
         if (marker == null)
@@ -325,7 +325,7 @@ public static class Part6Setup
         return x;
     }
 
-    private static T FindNamed<T>(string startOfName) where T : Component
+    internal static T FindNamed<T>(string startOfName) where T : Component
     {
         foreach (T component in Object.FindObjectsByType<T>(FindObjectsInactive.Include))
             if (component.name.StartsWith(startOfName))
@@ -333,7 +333,7 @@ public static class Part6Setup
         return null;
     }
 
-    private static GameObject Box(Transform parent, string name, Vector2 localPos, Vector2 size, Color color, int order)
+    internal static GameObject Box(Transform parent, string name, Vector2 localPos, Vector2 size, Color color, int order)
     {
         var go = new GameObject(name, typeof(SpriteRenderer));
         go.transform.SetParent(parent, false);
@@ -346,14 +346,14 @@ public static class Part6Setup
         return go;
     }
 
-    private static GameObject Prompt(Transform parent, float height)
+    internal static GameObject Prompt(Transform parent, float height)
     {
         GameObject prompt = Box(parent, "Prompt", new Vector2(0f, height), new Vector2(0.25f, 0.4f), new Color(1f, 0.9f, 0.2f), 20);
         prompt.SetActive(false);
         return prompt;
     }
 
-    private static void Area(Transform root, string name, float centerX, float width, string key)
+    internal static void Area(Transform root, string name, float centerX, float width, string key)
     {
         var area = new GameObject(name, typeof(BoxCollider2D));
         area.transform.SetParent(root);
@@ -368,7 +368,7 @@ public static class Part6Setup
     }
 
     /// <summary>A task-giving NPC: asks (default), "keep going" while active, "thanks" when done.</summary>
-    private static void Npc(Transform root, string name, string npcId, float x, Color color,
+    internal static void Npc(Transform root, string name, string npcId, float x, Color color,
         DialogueData ask, DialogueData active, DialogueData done, TaskData task, string requiredFlag)
     {
         NpcTalk npc = Part2Setup.AddNpcAt(name, npcId, new Vector2(x, 0f), color, Part1Setup.GetOrCreatePlaceholderSprite(), ask,
@@ -422,7 +422,7 @@ public static class Part6Setup
         so.ApplyModifiedPropertiesWithoutUndo();
     }
 
-    private static void Target(Transform root, string name, Vector2 position, string key, string saveId, TaskData task,
+    internal static void Target(Transform root, string name, Vector2 position, string key, string saveId, TaskData task,
         Color color, bool circle, int layer, bool pogo)
     {
         var target = new GameObject(name);
@@ -459,7 +459,7 @@ public static class Part6Setup
     }
 
     /// <summary>A solid wall that disappears when the task is done (a TaskGate).</summary>
-    private static void Wall(Transform root, string name, float x, TaskData task)
+    internal static void Wall(Transform root, string name, float x, TaskData task)
     {
         var gate = new GameObject(name);
         gate.transform.SetParent(root);
@@ -479,7 +479,7 @@ public static class Part6Setup
     }
 
     /// <summary>A strip of spikes on the floor (my teammate's PlayerHazards reacts to the "Spikes" tag).</summary>
-    private static void Spikes(Transform root, float centerX, float width)
+    internal static void Spikes(Transform root, float centerX, float width)
     {
         var spikes = new GameObject("Spikes", typeof(BoxCollider2D));
         spikes.transform.SetParent(root);

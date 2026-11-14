@@ -35,6 +35,12 @@ public abstract class TaskObjective : ScriptableObject
 
     /// <summary>Text for the tracker and Journal. 'progress' is the saved count (0 if not counting).</summary>
     public virtual string Describe(int progress) => description;
+
+    /// <summary>
+    /// Seconds Pip has for this step, or 0 for no limit. When time is up, TaskManager fails the
+    /// whole task (GameEvents.TaskFailed) so it can be tried again from the start.
+    /// </summary>
+    public virtual float TimeLimit => 0f;
 }
 
 /// <summary>

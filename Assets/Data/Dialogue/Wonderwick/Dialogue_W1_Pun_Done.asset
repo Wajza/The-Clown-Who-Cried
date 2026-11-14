@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9be1a34b3b09200499edfc1e51c2739e, type: 3}
+  m_Name: Dialogue_W1_Pun_Done
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  lines:
+  - speaker: {fileID: 11400000, guid: 830bbacb0fe1c784ea13a74c1bc9c1b5, type: 2}
+    text: Every joke delivered fresh. You're a lifesaver!
+  choices: []
+  setFlagWhenFinished: 

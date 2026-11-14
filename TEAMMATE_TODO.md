@@ -69,6 +69,21 @@ Status: [ ] open, [x] done
   - Until your Pip prefab exists, P3/P4 can't be played by hand: `Placeholder_Pip` has no coin
     thrower (no Star Coin prefab) and no mallet set-up. My automatic test hits the targets directly.
 
+- [ ] **9. Fill in the W3 "runaway riders" waves.** In `Wonderwick_W3_Coaster`, the object
+  `WaveSpawner_Riders` has your `WaveSpawner` with 2 spawn points and **no waves yet**. Please add
+  the waves (your enemy prefabs). My `WaveSpawnerBridge` (same object) starts it after Pip flips
+  the 4 switches and finishes the task on `OnAllWavesCleared`. Keep **Start On Player Enter**
+  unticked. With no waves the spawner counts as cleared at once, so the task works already.
+
+- [ ] **10. Things I built on top of your code (please keep these working):**
+  - W2 uses your **`BlueSightOnly`** (the secret platform, the cracks on fake mirrors) and my
+    `FakeFloor`, which inherits your **`BlueSightReactive`** (`AlphaWhen` / `SolidWhen`). The test
+    also uses `BlueSight.SetActive`.
+  - W3's Ferris wheel gondolas use my `PlatformCarrier`: while Pip stands on one, it moves her
+    `Rigidbody2D.position` by as much as the gondola moved each physics step. If your
+    `PlayerController` ever gets its own moving-platform code, tell me so they don't fight.
+  - W2's real mirrors and P2's respawns use your `PlayerController.Teleport`.
+
 ## For the artist
 
 Every placeholder lives in `Assets/Art/Placeholders`. **To replace one, overwrite the file and

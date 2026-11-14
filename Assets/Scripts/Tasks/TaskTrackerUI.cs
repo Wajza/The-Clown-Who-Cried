@@ -9,7 +9,8 @@ using UnityEngine;
 ///   - TRACKER (top right): every running task's title and its current objective.
 ///     Only shown during normal play (hidden in dialogue, cutscenes, the title screen...)
 ///     and only when at least one task is running.
-///   - BANNER (top centre): "New task: ..." and "Task complete: ..." for a couple of seconds.
+///   - BANNER (top centre): "New task: ...", "Task complete: ..." and "Task failed: ..." for a
+///     couple of seconds.
 ///     If several arrive at once they're shown one after another.
 ///
 /// It only LISTENS (GameEvents.TaskStarted / TaskProgressed / TaskCompleted, SceneLoaded,
@@ -63,6 +64,7 @@ public class TaskTrackerUI : MonoBehaviour
         GameEvents.TaskStarted += OnTaskStarted;
         GameEvents.TaskProgressed += OnTaskProgressed;
         GameEvents.TaskCompleted += OnTaskCompleted;
+        GameEvents.TaskFailed += OnTaskFailed;
         GameEvents.SceneLoaded += OnSceneLoaded;
         GameEvents.SceneLoadStarted += OnSceneLoadStarted;
         GameEvents.GameStateChanged += OnGameStateChanged;
@@ -73,6 +75,7 @@ public class TaskTrackerUI : MonoBehaviour
         GameEvents.TaskStarted -= OnTaskStarted;
         GameEvents.TaskProgressed -= OnTaskProgressed;
         GameEvents.TaskCompleted -= OnTaskCompleted;
+        GameEvents.TaskFailed -= OnTaskFailed;
         GameEvents.SceneLoaded -= OnSceneLoaded;
         GameEvents.SceneLoadStarted -= OnSceneLoadStarted;
         GameEvents.GameStateChanged -= OnGameStateChanged;
@@ -105,8 +108,26 @@ public class TaskTrackerUI : MonoBehaviour
         Refresh();
     }
 
+    private void OnTaskFailed(TaskData task)
+    {
+        ShowBanner($"Task failed: {task.title}");
+        Refresh();
+    }
+
     private void OnSceneLoaded(string sceneName, string spawnPointId) => Refresh();
     private void OnGameStateChanged(GameState state) => Refresh();
+
+    // A timed step (W1) shows a clock: redraw a few times a second while one runs.
+    private float _nextClockRefresh;
+
+    private void Update()
+    {
+        if (TaskManager.Instance != null && TaskManager.Instance.AnyTimedStep && Time.unscaledTime >= _nextClockRefresh)
+        {
+            _nextClockRefresh = Time.unscaledTime + 0.25f;
+            Refresh();
+        }
+    }
 
     // ------------------------------------------------------------------ Tracker
 
