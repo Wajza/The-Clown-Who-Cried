@@ -267,4 +267,8 @@ public class DialogueRunner : MonoBehaviour
         if (!string.IsNullOrEmpty(flag) && GameManager.Instance != null)
             GameManager.Instance.Save.SetFlag(flag);
     }
+
+    // Forget the old instance when Play starts (needed if Domain Reload is turned off).
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics() => Instance = null;
 }

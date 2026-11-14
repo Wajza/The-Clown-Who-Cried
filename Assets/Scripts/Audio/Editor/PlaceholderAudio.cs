@@ -45,6 +45,7 @@ public static class PlaceholderAudio
     {
         // Pip
         { SoundIds.Jump, () => Sweep(300, 700, 0.12f, Square) },
+        { SoundIds.Land, () => Mix(Noise(0.06f, 0.25f), Sweep(160, 80, 0.06f, Triangle, 0.3f)) },
         { SoundIds.Dash, () => Mix(Noise(0.15f, 0.25f), Sweep(500, 200, 0.15f, Square, 0.2f)) },
         { SoundIds.Swing, () => Noise(0.1f, 0.3f, highPass: true) },
         { SoundIds.Hit, () => Mix(Noise(0.08f, 0.5f), Sweep(200, 80, 0.1f, Square, 0.4f)) },

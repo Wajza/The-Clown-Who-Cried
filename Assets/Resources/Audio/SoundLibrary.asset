@@ -238,3 +238,8 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 7d1fa70b4d25986418f6cbec443afe95, type: 3}
     volume: 0.8
     pitchVariation: 0
+  - id: sfx_land
+    clips:
+    - {fileID: 8300000, guid: 73ca0481bb07dde49bd04070441f8ee0, type: 3}
+    volume: 0.8
+    pitchVariation: 0

@@ -102,7 +102,10 @@ Status: [ ] open, [x] done
   to your events for sounds (`PlayerSounds`, `WorldSounds`, `BossSounds`; nothing in your code
   changes). Enemies only have a per-enemy `EnemyBase.Popped`, so there's no pop sound yet. If you
   add `public static event Action<EnemyBase> AnyPopped;` (raised next to `Popped`), like your
-  `Pickup.AnyCollected`, I'll hook up the sound in one line.
+  `Pickup.AnyCollected`, I'll hook up the sound in one line. The final review (Part 10) found the
+  same for `EnemyBase.Damaged` (a coin hitting an enemy has no sound; mallet hits do, via
+  `HitLanded`), `ChortleCopy.Popped` and `JackInTheBox.HiddenChanged`: static versions of those
+  would let me add their sounds too.
   The sounds already connected: Jumped, DashingChanged, StarLost, OnDeath, ShieldChanged,
   SwingStarted, HitLanded, Pogoed, CoinsThrown, TearBurstReleased, GaugeChanged, ActiveChanged
   (Blue Sight), HazardHit, FragmentCollected, Pickup.AnyCollected, PunchlineBomb.AnyExploded,
@@ -137,6 +140,20 @@ keep the same file name.** Unity then keeps its ID, and every use updates withou
 
 Wanted later: NPC sprites and portraits (56 x 56 for the dialogue box), a dialogue "continue"
 arrow, journal page art (`JournalPageData.picture`), and the title screen background.
+
+## Building the game
+
+- **Windows:** Tools > Clown Who Cried > Build > Windows (64-bit) -> `Builds/Windows/TheClownWhoCried.exe`
+  (about 104 MB; `Builds/` is in .gitignore). Only the title screen and the 10 levels go in; test
+  scenes, test-only tasks/pages and `SampleScene` stay out.
+- **Mac:** needs **Mac Build Support (Mono)** added to Unity 6000.5.9f1 in Unity Hub
+  (Installs > gear > Add modules), then Tools > Clown Who Cried > Build > Mac.
+- **Check a build:** run `TheClownWhoCried.exe -batchmode -nographics -smoketest -logFile smoketest.log`;
+  the log ends with `SMOKETEST PASS` (it plays title -> New Game -> Wonderwick -> boss -> End of Demo).
+- Building makes Unity rewrite a few URP/Project Settings files (shader stripping caches). That's
+  normal; don't commit those changes unless you changed a setting on purpose.
+- Before sharing a build: set **Company Name** in Project Settings > Player (it's still
+  "DefaultCompany", which is also the save folder's name).
 
 ## For the whole team
 

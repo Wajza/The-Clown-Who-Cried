@@ -113,4 +113,8 @@ public class InteractionInput : MonoBehaviour
         if (Target != null)
             Target.SetPromptVisible(true);
     }
+
+    // Forget the old instance when Play starts (needed if Domain Reload is turned off).
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics() => Instance = null;
 }

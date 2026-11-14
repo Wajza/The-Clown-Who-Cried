@@ -4,7 +4,7 @@ using UnityEngine;
 /// Pip's sounds. It only LISTENS to my teammate's player events and asks the AudioManager to play
 /// the matching sound; their scripts don't know it exists.
 ///
-///   PlayerController   Jumped -> jump; DashingChanged(true) -> dash
+///   PlayerController   Jumped -> jump; DashingChanged(true) -> dash; GroundedChanged (after a jump/fall) -> land
 ///   PlayerHealth       StarLost -> star lost; OnDeath -> death; ShieldChanged(true) -> shield
 ///   PlayerMallet       SwingStarted -> swing; HitLanded -> hit; Pogoed -> pogo
 ///   PlayerCoinThrower  CoinsThrown -> coin throw
@@ -29,6 +29,10 @@ public class PlayerSounds : MonoBehaviour
     private PlayerHazards _hazards;
     private PlayerStarFragments _fragments;
     private bool _gaugeWasFull;
+    private float _leftGroundAt = -1f; // When Pip last left the ground (-1 = on the ground).
+
+    [SerializeField, Min(0f), Tooltip("Only play the landing sound after being in the air at least this long (seconds).")]
+    private float minAirTimeForLanding = 0.15f;
 
     private void Update()
     {
@@ -50,6 +54,7 @@ public class PlayerSounds : MonoBehaviour
             return;
 
         pip.Jumped += OnJumped;
+        pip.GroundedChanged += OnGroundedChanged;
         pip.DashingChanged += OnDashingChanged;
 
         if ((_health = pip.GetComponent<PlayerHealth>()) != null)
@@ -85,6 +90,7 @@ public class PlayerSounds : MonoBehaviour
         if (_pip != null)
         {
             _pip.Jumped -= OnJumped;
+            _pip.GroundedChanged -= OnGroundedChanged;
             _pip.DashingChanged -= OnDashingChanged;
         }
         if (_health != null)
@@ -134,6 +140,19 @@ public class PlayerSounds : MonoBehaviour
     private static void OnBlueSight(bool on) => AudioManager.Play(on ? SoundIds.BlueSightOn : SoundIds.BlueSightOff);
     private static void OnHazard() => AudioManager.Play(SoundIds.Hazard);
     private static void OnFragment(string id, int count) => AudioManager.Play(SoundIds.Fragment);
+
+    // Landing: only after a real jump or fall, not tiny hops over bumps.
+    private void OnGroundedChanged(bool grounded)
+    {
+        if (!grounded)
+        {
+            _leftGroundAt = Time.time;
+            return;
+        }
+        if (_leftGroundAt >= 0f && Time.time - _leftGroundAt >= minAirTimeForLanding)
+            AudioManager.Play(SoundIds.Land);
+        _leftGroundAt = -1f;
+    }
 
     private void OnGaugeChanged(int value, int max)
     {

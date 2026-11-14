@@ -133,4 +133,8 @@ public class SceneLoader : MonoBehaviour
         if (point != null)
             player.Teleport(point.Position, 0f); // My teammate's method: moves Pip and stops all motion.
     }
+
+    // Forget the old instance when Play starts (needed if Domain Reload is turned off).
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics() => Instance = null;
 }

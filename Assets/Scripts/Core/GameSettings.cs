@@ -26,4 +26,8 @@ public class GameSettings : ScriptableObject
             return s_instance;
         }
     }
+
+    // Look the asset up again when Play starts (needed if Domain Reload is turned off).
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics() => s_instance = null;
 }

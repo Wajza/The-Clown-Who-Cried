@@ -17,6 +17,7 @@ public static class SoundIds
 
     // ---- Pip (my teammate's player events; PlayerSounds)
     public const string Jump = "sfx_jump";
+    public const string Land = "sfx_land";
     public const string Dash = "sfx_dash";
     public const string Swing = "sfx_swing";
     public const string Hit = "sfx_hit";
@@ -69,7 +70,7 @@ public static class SoundIds
     /// <summary>All sound effect ids.</summary>
     public static readonly string[] AllSfx =
     {
-        Jump, Dash, Swing, Hit, Pogo, CoinThrow, StarLost, Death, Shield, TearBurst, TearFull, BlueSightOn, BlueSightOff,
+        Jump, Land, Dash, Swing, Hit, Pogo, CoinThrow, StarLost, Death, Shield, TearBurst, TearFull, BlueSightOn, BlueSightOff,
         Hazard, Fragment, Pickup, Bomb, Cannon, Checkpoint, Break, Switch, Mirror, BoxPick, BoxDeliver, RhythmHit, RhythmMiss,
         BossWarn, BossAttack, BossPhase, BossDefeat, UiPause, UiUnpause, UiDialogue, TaskNew, TaskDone, TaskFail, PageFound,
     };
