@@ -71,6 +71,84 @@ public static class PlaceholderArt
 
     public static TMP_FontAsset Font => AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontAssetPath);
 
+    // ------------------------------------------------------------------ Level art (Part 5)
+
+    public const string TileFolder = Folder + "/Tiles";
+    public const string LevelFolder = Folder + "/Level";
+
+    /// <summary>Ground tile (16 x 16): brown earth. For everything below the surface.</summary>
+    public static UnityEngine.Tilemaps.Tile GroundTile => LoadTile("Placeholder_Tile_Ground");
+    /// <summary>Ground surface tile (16 x 16): earth with grass on top. For the top row.</summary>
+    public static UnityEngine.Tilemaps.Tile GroundTopTile => LoadTile("Placeholder_Tile_GroundTop");
+    /// <summary>Wall tile (16 x 16): grey bricks.</summary>
+    public static UnityEngine.Tilemaps.Tile WallTile => LoadTile("Placeholder_Tile_Wall");
+    /// <summary>Door (16 x 32).</summary>
+    public static Sprite DoorSprite => AssetDatabase.LoadAssetAtPath<Sprite>($"{LevelFolder}/Placeholder_Door.png");
+
+    /// <summary>Creates the tile and door placeholders if missing (called by EnsureAll).</summary>
+    private static void EnsureLevelArt()
+    {
+        Part1Setup.EnsureFolder(TileFolder);
+        Part1Setup.EnsureFolder(LevelFolder);
+
+        Color dirt = new Color(0.42f, 0.3f, 0.22f), dirtDark = new Color(0.34f, 0.24f, 0.18f), grass = new Color(0.55f, 0.7f, 0.4f);
+        MakeTile("Placeholder_Tile_Ground", (x, y) => (x + y) % 5 == 0 ? dirtDark : dirt);
+        MakeTile("Placeholder_Tile_GroundTop", (x, y) => y >= 13 ? grass : (x + y) % 5 == 0 ? dirtDark : dirt);
+
+        Color brick = new Color(0.5f, 0.5f, 0.56f), mortar = new Color(0.38f, 0.38f, 0.44f);
+        MakeTile("Placeholder_Tile_Wall", (x, y) => y % 8 == 0 || (x + (y / 8 % 2) * 8) % 16 == 0 ? mortar : brick);
+
+        Color wood = new Color(0.55f, 0.35f, 0.2f), frame = new Color(0.3f, 0.18f, 0.1f), knob = new Color(1f, 0.85f, 0.3f);
+        MakeSprite($"{LevelFolder}/Placeholder_Door.png", 16, 32, new Vector2(0.5f, 0f), // Pivot at the bottom.
+            (x, y) => x == 0 || x == 15 || y == 31 ? frame : x == 12 && y == 14 ? knob : wood);
+    }
+
+    private static UnityEngine.Tilemaps.Tile LoadTile(string name) =>
+        AssetDatabase.LoadAssetAtPath<UnityEngine.Tilemaps.Tile>($"{TileFolder}/{name}.asset");
+
+    /// <summary>A 16 x 16 PNG plus a Tile asset using it (both only made if missing).</summary>
+    private static void MakeTile(string name, System.Func<int, int, Color> pixel)
+    {
+        string png = $"{TileFolder}/{name}.png";
+        MakeSprite(png, 16, 16, new Vector2(0.5f, 0.5f), pixel);
+
+        string tilePath = $"{TileFolder}/{name}.asset";
+        if (File.Exists(tilePath))
+            return;
+        var tile = ScriptableObject.CreateInstance<UnityEngine.Tilemaps.Tile>();
+        tile.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(png);
+        tile.colliderType = UnityEngine.Tilemaps.Tile.ColliderType.Grid; // A full square for physics.
+        AssetDatabase.CreateAsset(tile, tilePath);
+    }
+
+    private static void MakeSprite(string path, int w, int h, Vector2 pivot, System.Func<int, int, Color> pixel)
+    {
+        if (File.Exists(path))
+            return; // Never overwrite (it may be the artist's real picture by now).
+
+        var tex = new Texture2D(w, h, TextureFormat.RGBA32, false);
+        for (int y = 0; y < h; y++)
+            for (int x = 0; x < w; x++)
+                tex.SetPixel(x, y, pixel(x, y)); // y = 0 is the bottom row.
+        File.WriteAllBytes(path, tex.EncodeToPNG());
+        Object.DestroyImmediate(tex);
+        AssetDatabase.ImportAsset(path);
+
+        var importer = (TextureImporter)AssetImporter.GetAtPath(path);
+        importer.textureType = TextureImporterType.Sprite;
+        importer.spriteImportMode = SpriteImportMode.Single;
+        importer.spritePixelsPerUnit = 16;
+        importer.filterMode = FilterMode.Point;
+        importer.textureCompression = TextureImporterCompression.Uncompressed;
+        importer.mipmapEnabled = false;
+        var settings = new TextureImporterSettings();
+        importer.ReadTextureSettings(settings);
+        settings.spriteAlignment = (int)SpriteAlignment.Custom;
+        settings.spritePivot = pivot;
+        importer.SetTextureSettings(settings);
+        importer.SaveAndReimport();
+    }
+
     /// <summary>Creates any missing placeholder files and makes the pixel font TMP's default.</summary>
     public static void EnsureAll()
     {
@@ -85,6 +163,7 @@ public static class PlaceholderArt
         MakeIcon("Placeholder_UI_Bar", Square, 0);
         MakeFontAsset();
         MakeFontTheDefault();
+        EnsureLevelArt();
     }
 
     // ------------------------------------------------------------------ Icons

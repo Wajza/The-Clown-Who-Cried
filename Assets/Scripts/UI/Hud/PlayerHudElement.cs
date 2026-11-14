@@ -52,7 +52,8 @@ public abstract class PlayerHudElement : MonoBehaviour
         Pip = null;
     }
 
-    private void Relink()
+    /// <summary>Unlink and link again (e.g. when what decides "show or hide" changed).</summary>
+    protected void Relink()
     {
         if (_bound)
             Unbind();

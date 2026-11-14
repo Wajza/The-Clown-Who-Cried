@@ -203,8 +203,10 @@ public class UISystemTest : SystemTestBase
         Check("Next page: Wonderwick board", journal.PageTitle.Contains("Wonderwick"));
         Check("Finished task listed with [x]", journal.ListText.Contains("[x] Say Hi") && journal.DetailText.Contains("Done!"));
 
+        // The real pages in Resources/JournalPages count too, so compare with the actual total.
+        int totalPages = JournalPages.All.Count;
         journal.NextTab();
-        Check("Next page: Torn Pages, none found", journal.OnPagesTab && journal.PageTitle.Contains("0/2"));
+        Check($"Next page: Torn Pages, none of {totalPages} found", journal.OnPagesTab && journal.PageTitle.Contains($"0/{totalPages}"));
         Check("Missing pages show as torn out", journal.ListText.Contains("Page 1: (torn out)") && journal.ListText.Contains("Page 2: (torn out)"));
         journal.MoveSelection(+1);
         Check("Selecting moves down the list", journal.SelectedIndex == 1);
@@ -247,8 +249,17 @@ public class UISystemTest : SystemTestBase
         Menu.OpenJournal();
         yield return null;
         Menu.Journal.SetTab(Menu.Journal.TabCount - 1);
-        Check("Journal: 1 of 2 pages found", Menu.Journal.PageTitle.Contains("1/2"));
+        int totalPages = JournalPages.All.Count;
+        Check($"Journal: 1 of {totalPages} pages found", Menu.Journal.PageTitle.Contains($"1/{totalPages}"));
         Check("Found page listed by title", Menu.Journal.ListText.Contains("Page 1: A Test Page"));
+
+        // Highlight the test page (real pages may come before it in the list), then read it.
+        int index = 0;
+        for (int i = 0; i < totalPages; i++)
+            if (JournalPages.All[i] == page1)
+                index = i;
+        for (int i = 0; i < index; i++)
+            Menu.Journal.MoveSelection(+1);
         Check("Found page can be read", Menu.Journal.DetailText.Contains("This page is only a test."));
         Menu.CloseAll();
         yield return null;

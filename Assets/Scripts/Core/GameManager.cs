@@ -26,10 +26,10 @@ public class GameManager : MonoBehaviour
     private string titleSceneName = "Title";
 
     [SerializeField, Tooltip("Scene that New Game starts in.")]
-    private string firstSceneName = "Tumbleton";
+    private string firstSceneName = "Tumbleton_PipHouse";
 
     [SerializeField, Tooltip("Spawn point id New Game uses in that scene. Empty = the scene's default spawn point.")]
-    private string firstSpawnPointId = "";
+    private string firstSpawnPointId = "Bed";
 
     [Header("Saving")]
     [SerializeField, Tooltip("Save automatically every time a new scene is entered through SceneLoader.")]
@@ -136,6 +136,7 @@ public class GameManager : MonoBehaviour
     public void ReturnToTitle()
     {
         PlayerInputLock.ClearAll(); // Drop any leftover dialogue/cutscene locks.
+        PlayerAbilities.ClearBlocks(); // And any "can't attack while carrying" blocks.
         SceneLoader.Instance.LoadScene(titleSceneName);
     }
 

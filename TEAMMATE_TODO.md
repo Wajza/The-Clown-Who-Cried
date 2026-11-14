@@ -11,11 +11,9 @@ Status: [ ] open, [x] done
 
 ## For my teammate (code and prefabs)
 
-- [ ] **1. Add the "Pogo" tag** (Project Settings > Tags and Layers > Tags).
-  - The P4 "Reflex Check" task needs it: the last pot hangs over spikes and is tagged "Pogo",
-    so a down-swing bounces Pip over. `PlayerMallet` already pogos off anything tagged "Pogo"
-    (its `pogoTags`); the tag just doesn't exist yet (only Spikes, Pit and Boss do).
-  - `ProjectSettings/TagManager.asset` is shared. If I add it first (planned for Part 5), I'll say so here.
+- [x] **1. The "Pogo" tag.** Done by me in Part 5: it's now in `ProjectSettings/TagManager.asset`
+  after Spikes, Pit and Boss. Nothing to do; just don't remove it when merging. The P4 "Reflex
+  Check" pot over the spikes uses it, and `PlayerMallet` already pogos off it.
 
 - [ ] **2. A permanent bonus max Smile Star that Star Fragments don't overwrite.**
   - After beating Chortle, Pip gets +1 max Smile Star (and journal page 2).
@@ -39,10 +37,26 @@ Status: [ ] open, [x] done
   - Each **enemy** you want in the levels (Jack-in-the-box, pie thrower...).
   - **Grand Jester Chortle** and his arena pieces (trapdoors, cannons...).
   - Please commit each `.meta` with its prefab, so the IDs match on every computer.
+  - **Using the real Pip (one step):** every level spawns the Pip set in
+    `Assets/Resources/GameSettings` > **Player Prefab**. It's `Placeholder_Pip` (a pink box) for now.
+    Drag your Pip prefab into that field and every level uses it. Her pivot must be at her feet.
 
 - [ ] **5. Boss health bar hookup (nothing to code).** My `ChortleHealthSource` listens to
   `ChortleBoss.MaskChanged / PhaseChanged / StateChanged / OnDefeated`. Please don't rename those
   events, or tell me if you do.
+
+- [ ] **6. Your ScreenShake now uses Cinemachine (please check it feels right).** Part 5 installed
+  **Cinemachine 3.1.7** (3.1.4 doesn't compile on Unity 6.5) and added the **`CINEMACHINE_3`**
+  scripting symbol (Project Settings > Player > Scripting Define Symbols), so the Cinemachine code
+  inside `ScreenShake` is switched on. Every level's `CameraRig` has your `ScreenShake` + a
+  `CinemachineImpulseSource`, and the camera has a `CinemachineImpulseListener`. Tune
+  `globalMultiplier` on the rig if the shake is too strong or weak.
+
+- [ ] **7. Abilities are switched off by input action names.** `PlayerAbilities` (my code) turns
+  off single actions in your "Player" map until Pip earns them: `Swing` (mallet, P4), `BlueSight`
+  (W2), and `Swing`/`Throw`/`Dash` while carrying a box (W1). Juggle Shot uses
+  `PlayerCoinThrower.JuggleShotUnlocked`. Please keep those action names, or tell me if they change.
+  This only happens in my levels (scenes with a `LevelInfo`); your test scenes are untouched.
 
 ## For the artist
 
@@ -61,6 +75,11 @@ keep the same file name.** Unity then keeps its ID, and every use updates withou
 | `UI/Placeholder_UI_Button.png` | Every menu button | 9-sliced, 2 px border. Normal/selected colours are tints on the Button |
 | `UI/Placeholder_UI_Bar.png` | Tear Gauge, Blue Sight and boss bars | Image Type = Filled |
 | Title scene `Logo` text | Title screen logo | Replace with an Image named `Logo` |
+| `Tiles/Placeholder_Tile_GroundTop.png` | Top row of every level's floor (grass) | 16 x 16. The `.asset` next to it is the Tile used in the Tile Palette |
+| `Tiles/Placeholder_Tile_Ground.png` | Floor below the top row (earth) | 16 x 16 |
+| `Tiles/Placeholder_Tile_Wall.png` | Level end walls (bricks) | 16 x 16 |
+| `Level/Placeholder_Door.png` | Every door (houses, station, task rooms, Laugh Tower) | 16 x 32, pivot at the bottom |
+| `Assets/Prefabs/Placeholders/Placeholder_Pip.prefab` | Pip in every level until the real prefab exists | See teammate item 4 |
 | `Assets/Resources/Placeholder_White.png` | Test-scene squares (floor, NPCs) | Test scenes only |
 
 Wanted later: NPC sprites and portraits (56 x 56 for the dialogue box), a dialogue "continue"

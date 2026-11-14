@@ -13,6 +13,7 @@ using UnityEngine.UI;
 ///   GameSystems                 GameManager, SceneLoader, PlayerSaveBridge, PlayerDeathHandler   (Part 1)
 ///                               SystemInput, InteractionInput, DialogueRunner                   (Part 2)
 ///                               TaskManager                                                      (Part 3)
+///                               PlayerAbilities; GameManager starts New Game in Pip's house       (Part 5)
 ///   ├─ Fader                    full-screen black fade, drawn above everything                   (Part 1)
 ///   ├─ DialogueCanvas           the dialogue box (DialogueUI)                                    (Part 2)
 ///   ├─ TaskCanvas               task tracker (top right) and "New task" banner (TaskTrackerUI)   (Part 3)
@@ -49,6 +50,7 @@ public static class GameSystemsPrefabBuilder
         AddTasks(root);     // Part 3
         AddHud(root);       // Part 4
         AddMenus(root);     // Part 4
+        AddLevels(root);    // Part 5
 
         PrefabUtility.SaveAsPrefabAsset(root, Part1Setup.PrefabPath);
         Object.DestroyImmediate(root);
@@ -212,6 +214,36 @@ public static class GameSystemsPrefabBuilder
         so.ApplyModifiedPropertiesWithoutUndo();
 
         panel.gameObject.SetActive(false); // Hidden until a task starts.
+    }
+
+    // ------------------------------------------------------------------ Part 5: Levels
+
+    /// <summary>Scene and spawn point New Game starts at: Pip's bed in her house (P1 "Wake Up").</summary>
+    public const string FirstScene = "Tumbleton_PipHouse";
+    public const string FirstSpawn = "Bed";
+
+    private static void AddLevels(GameObject root)
+    {
+        root.AddComponent<PlayerAbilities>();
+
+        var gm = new SerializedObject(root.GetComponent<GameManager>());
+        gm.FindProperty("firstSceneName").stringValue = FirstScene;
+        gm.FindProperty("firstSpawnPointId").stringValue = FirstSpawn;
+        gm.ApplyModifiedPropertiesWithoutUndo();
+
+        // Level name card: big text in the upper middle of the screen, on the TaskCanvas.
+        Transform taskCanvas = root.transform.Find("TaskCanvas");
+        RectTransform card = CreateEmpty("LevelNameCard", taskCanvas);
+        Place(card, new Vector2(0.5f, 1f), new Vector2(0f, -100f), new Vector2(400f, 20f));
+        var group = card.gameObject.AddComponent<CanvasGroup>();
+        group.alpha = 0f;
+        group.blocksRaycasts = false;
+        TMP_Text text = CreateText("Name", card, "Level", 16f, TextAlignmentOptions.Center); // 16 = 2x the pixel font.
+        Stretch(text.rectTransform);
+        text.color = new Color(1f, 0.9f, 0.6f);
+        var nameCard = card.gameObject.AddComponent<LevelNameCard>();
+        SetField(nameCard, "group", group);
+        SetField(nameCard, "nameText", text);
     }
 
     // ------------------------------------------------------------------ Part 4: HUD
@@ -547,7 +579,8 @@ public static class GameSystemsPrefabBuilder
         Button button = go.GetComponent<Button>();
         button.targetGraphic = image;
         button.colors = SelectableColors();
-        UnityEditor.Events.UnityEventTools.AddPersistentListener(button.onClick, onClick);
+        if (onClick != null) // Null = the caller adds its own (e.g. one that passes a number).
+            UnityEditor.Events.UnityEventTools.AddPersistentListener(button.onClick, onClick);
 
         TMP_Text text = CreateText("Label", go.transform, label, PlaceholderArt.FontSize, TextAlignmentOptions.Center);
         Stretch(text.rectTransform);

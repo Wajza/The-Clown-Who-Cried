@@ -71,7 +71,10 @@ public static class PlayerInputLock
         // Unlocked: give control back, but never to a dead Pip.
         PlayerHealth health = PlayerController.Current.GetComponent<PlayerHealth>();
         if (health == null || !health.IsDead)
+        {
             map.Enable();
+            PlayerAbilities.Apply(); // Enable() switched every action on; re-apply locked abilities.
+        }
     }
 
     /// <summary>Removes every lock at once (e.g. when going back to the title screen).</summary>

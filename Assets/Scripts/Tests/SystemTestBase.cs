@@ -147,10 +147,10 @@ public abstract class SystemTestBase : MonoBehaviour
 
     protected static DialogueRunner Runner => DialogueRunner.Instance;
 
-    /// <summary>Puts Pip on the floor at x and waits for triggers and InteractionInput to notice.</summary>
-    protected IEnumerator MovePipTo(float x)
+    /// <summary>Puts Pip on the floor at x (and floor height y) and waits for triggers and InteractionInput to notice.</summary>
+    protected IEnumerator MovePipTo(float x, float y = TestFloorY)
     {
-        PlayerController.Current.Teleport(new Vector2(x, TestFloorY), 0f);
+        PlayerController.Current.Teleport(new Vector2(x, y), 0f);
         yield return new WaitForSeconds(0.15f); // A few physics steps for the triggers.
         yield return null;                      // One Update for InteractionInput.
     }

@@ -186,7 +186,7 @@ public static class Part1Setup
         BuildStandInPip(square);
     }
 
-    private static void BuildStandInPip(Sprite square)
+    internal static GameObject BuildStandInPip(Sprite square)
     {
         // The root's position is Pip's FEET (bottom centre), like the real Pip. Everything
         // visible/solid is shifted up by half her height (0.5 tiles) so it sits above the pivot.
@@ -225,6 +225,7 @@ public static class Part1Setup
         so.FindProperty("groundCheck").objectReferenceValue = feet.transform;
         so.FindProperty("groundLayer").intValue = 1 << RequireLayer(GroundLayerName);
         so.ApplyModifiedPropertiesWithoutUndo();
+        return pip;
     }
 
     internal static void AddSpawnPoint(string id, Vector2 position, bool isDefault)

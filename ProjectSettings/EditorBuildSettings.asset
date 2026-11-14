@@ -26,5 +26,38 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Tests/UITest.unity
     guid: 86d4e1405da9923419f784922d2eb338
+  - enabled: 1
+    path: Assets/Scenes/Levels/ChortleArena.unity
+    guid: 6d419cdde2e94844c8a51ca21a91b007
+  - enabled: 1
+    path: Assets/Scenes/Levels/EndOfDemo.unity
+    guid: 79d5c348ae1b6994da7c51fe9b03d0dd
+  - enabled: 1
+    path: Assets/Scenes/Levels/TrainMap.unity
+    guid: 5ce4398b212d1234289dd816a69cf05b
+  - enabled: 1
+    path: Assets/Scenes/Levels/Tumbleton.unity
+    guid: 3e31e132169d02d409d9a089f0d85b56
+  - enabled: 1
+    path: Assets/Scenes/Levels/Tumbleton_PipHouse.unity
+    guid: 4dc20923bfdccb94586397509d95083c
+  - enabled: 1
+    path: Assets/Scenes/Levels/Wonderwick_Hub.unity
+    guid: 79c1bd71b6d94364694460c4d2f9b83a
+  - enabled: 1
+    path: Assets/Scenes/Levels/Wonderwick_W1_Delivery.unity
+    guid: 4b74f524c9a7a5c45b4b628ae063ffe1
+  - enabled: 1
+    path: Assets/Scenes/Levels/Wonderwick_W2_MirrorMaze.unity
+    guid: a3032c83db9c199429f5eaa8f81304a8
+  - enabled: 1
+    path: Assets/Scenes/Levels/Wonderwick_W3_Coaster.unity
+    guid: a5f1f9141e2158842b08beee9a41ccb0
+  - enabled: 1
+    path: Assets/Scenes/Levels/Wonderwick_W4_Audition.unity
+    guid: 6a3d3fc0d5295b04c93ed623996f6145
+  - enabled: 1
+    path: Assets/Scenes/Tests/LevelTest.unity
+    guid: ebff2ef9e05127444a21fb9e6dd550e0
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

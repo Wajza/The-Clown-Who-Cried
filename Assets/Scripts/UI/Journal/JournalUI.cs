@@ -205,9 +205,12 @@ public class JournalUI : MonoBehaviour
         return result;
     }
 
-    /// <summary>If the scene name starts with a city's name (e.g. "Wonderwick_Hub"), open that board.</summary>
+    /// <summary>The board of the level's city (LevelInfo); otherwise guess from the scene name
+    /// (e.g. "Wonderwick_Hub" starts with "Wonderwick").</summary>
     private static int GuessCurrentCityTab()
     {
+        if (LevelInfo.Current != null)
+            return (int)LevelInfo.Current.City;
         string scene = SceneLoader.CurrentSceneName ?? "";
         foreach (TaskData.City city in Enum.GetValues(typeof(TaskData.City)))
             if (scene.StartsWith(city.ToString(), StringComparison.OrdinalIgnoreCase))
