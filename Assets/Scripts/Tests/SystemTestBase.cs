@@ -60,28 +60,30 @@ public abstract class SystemTestBase : MonoBehaviour
 
         // Survive scene loads, in case the test travels between scenes.
         DontDestroyOnLoad(gameObject);
+        _deadline = Time.realtimeSinceStartup + timeout;
+        _running = true;
+        Application.logMessageReceived += OnLog;
         StartCoroutine(RunWithTimeout());
     }
 
     // ------------------------------------------------------------------ Running
 
+    private const string BackupSuffix = ".before-test";
+    private float _deadline;
+    private bool _running;
+
     private IEnumerator RunWithTimeout()
     {
-        string backup = SaveSystem.SavePath + ".before-test";
-        BackUpRealSave(backup);
+        BackUpRealSave(SaveSystem.SavePath + BackupSuffix);
 
         IEnumerator test = RunTest();
-        float deadline = Time.realtimeSinceStartup + timeout;
         bool finished = false;
 
-        // Step through the test by hand so we can stop it if it runs too long or throws.
+        // Step through the test by hand so we can catch exceptions thrown in its own code.
         while (true)
         {
-            if (Time.realtimeSinceStartup > deadline)
-            {
-                Fail($"Timed out after {timeout} s");
-                break;
-            }
+            if (Time.realtimeSinceStartup > _deadline)
+                break; // The watchdog in Update reports it.
 
             bool hasMore;
             try { hasMore = test.MoveNext(); }
@@ -99,8 +101,49 @@ public abstract class SystemTestBase : MonoBehaviour
             yield return test.Current;
         }
 
-        RestoreRealSave(backup);
+        End(finished);
+    }
+
+    /// <summary>
+    /// WATCHDOG. An exception inside a NESTED step (e.g. "yield return Talk(...)") stops the whole
+    /// coroutine chain without passing through the try/catch above, so the loop above would never
+    /// continue. This checks the time limit independently, so a test can't hang forever.
+    /// </summary>
+    private void Update()
+    {
+        if (_running && Time.realtimeSinceStartup > _deadline)
+        {
+            StopAllCoroutines();
+            Fail($"Timed out after {timeout} s (or a test step stopped because of an exception; see the log)");
+            End(finished: false);
+        }
+    }
+
+    /// <summary>Unexpected exceptions anywhere (game code or a nested test step) count as a failure.</summary>
+    private void OnLog(string message, string stackTrace, LogType type)
+    {
+        if (_running && type == LogType.Exception)
+            Fail($"Exception: {message}");
+    }
+
+    private void End(bool finished)
+    {
+        if (!_running)
+            return;
+        _running = false;
+        Application.logMessageReceived -= OnLog;
+        RestoreRealSave(SaveSystem.SavePath + BackupSuffix);
         Finish(finished);
+    }
+
+    private void OnDestroy() => Application.logMessageReceived -= OnLog;
+
+    /// <summary>Skips a cutscene that is playing (e.g. the New Game opening) and waits a frame.</summary>
+    protected IEnumerator SkipCutsceneIfPlaying()
+    {
+        if (CutscenePlayer.Instance != null && CutscenePlayer.Instance.IsPlaying)
+            CutscenePlayer.Instance.Skip();
+        yield return null;
     }
 
     // ------------------------------------------------------------------ Helpers for tests

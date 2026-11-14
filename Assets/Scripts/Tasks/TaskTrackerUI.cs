@@ -135,7 +135,9 @@ public class TaskTrackerUI : MonoBehaviour
     public void Refresh()
     {
         TaskManager tasks = TaskManager.Instance;
-        bool playing = GameManager.Instance != null && GameManager.Instance.State == GameState.Playing;
+        // Only in normal play with Pip around (not on the train map or the End of Demo screen).
+        bool playing = GameManager.Instance != null && GameManager.Instance.State == GameState.Playing
+                       && PlayerController.Current != null;
         bool any = tasks != null && tasks.ActiveTasks.Count > 0;
 
         trackerPanel.SetActive(playing && any);
@@ -175,6 +177,10 @@ public class TaskTrackerUI : MonoBehaviour
     {
         while (_bannerQueue.Count > 0)
         {
+            // Wait for a cutscene to finish first (e.g. "New task: Wake Up" during the opening).
+            while (CutscenePlayer.Instance != null && CutscenePlayer.Instance.IsPlaying)
+                yield return null;
+
             bannerText.text = _bannerQueue.Dequeue();
             yield return Fade(0f, 1f);
 

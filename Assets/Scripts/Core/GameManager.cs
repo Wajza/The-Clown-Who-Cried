@@ -154,6 +154,19 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Saves the game as if Pip were standing at a spawn point in ANOTHER scene, so Continue starts
+    /// there. Used after beating Chortle: Continue puts Pip outside the Laugh Tower, not in the
+    /// End of Demo screen. (SaveGame always uses the current scene.)
+    /// </summary>
+    public void SaveGameAt(string sceneName, string spawnPointId)
+    {
+        Save.sceneName = sceneName;
+        Save.spawnPointId = spawnPointId ?? "";
+        if (SaveSystem.Write(Save))
+            GameEvents.RaiseGameSaved();
+    }
+
+    /// <summary>
     /// Makes a SpawnPoint/Checkpoint in the current scene Pip's respawn point (and the place
     /// Continue starts from). Called by Checkpoint.
     /// </summary>
@@ -189,7 +202,9 @@ public class GameManager : MonoBehaviour
         Save.sceneName = sceneName;
         Save.spawnPointId = spawnPointId ?? "";
 
-        if (saveOnSceneEnter && wasRealSceneChange)
+        // Some scenes (e.g. End of Demo) ask not to be saved: Continue must never start there.
+        bool levelAllowsSaving = LevelInfo.Current == null || LevelInfo.Current.SaveOnEnter;
+        if (saveOnSceneEnter && wasRealSceneChange && levelAllowsSaving)
             SaveGame();
     }
 

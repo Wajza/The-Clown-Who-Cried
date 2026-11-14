@@ -31,7 +31,7 @@ public enum GameState
 /// Only the Raise methods can fire an event (C# 'event' blocks outside Invoke), which keeps
 /// the code that fires each event easy to find.
 ///
-/// Each part adds its events here in its own section (Part 2: dialogue, Part 3: tasks, Part 4: menus; later: cutscenes).
+/// Each part adds its events here in its own section (Part 2: dialogue, Part 3: tasks, Part 4: menus, Part 8: cutscenes).
 /// </summary>
 public static class GameEvents
 {
@@ -115,6 +115,17 @@ public static class GameEvents
 
     public static void RaiseTaskFailed(TaskData task) => TaskFailed?.Invoke(task);
 
+    // ------------------------------------------------------------------ Cutscenes (Part 8)
+
+    /// <summary>Fired with the cutscene's name when it starts (Pip is locked, GameState.Cutscene).</summary>
+    public static event Action<string> CutsceneStarted;
+
+    /// <summary>Fired with the cutscene's name when it ends or is skipped.</summary>
+    public static event Action<string> CutsceneEnded;
+
+    public static void RaiseCutsceneStarted(string name) => CutsceneStarted?.Invoke(name);
+    public static void RaiseCutsceneEnded(string name) => CutsceneEnded?.Invoke(name);
+
     // ------------------------------------------------------------------ Menus and journal (Part 4)
 
     /// <summary>Fired with true when the game pauses (pause menu or journal) and false when it resumes.</summary>
@@ -151,6 +162,8 @@ public static class GameEvents
         TaskProgressed = null;
         TaskCompleted = null;
         GamePausedChanged = null;
+        CutsceneStarted = null;
+        CutsceneEnded = null;
         JournalPageFound = null;
     }
 }

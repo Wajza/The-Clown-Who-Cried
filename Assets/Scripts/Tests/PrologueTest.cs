@@ -43,6 +43,7 @@ public class PrologueTest : SystemTestBase
         yield return WaitUntil(() => GameManager.Instance != null && _sceneLoaded != null, 5f, "first SceneLoaded");
         Check("New Game starts", GameManager.Instance.NewGame());
         yield return WaitForScene("Tumbleton_PipHouse");
+        yield return SkipCutsceneIfPlaying(); // The New Game opening (Part 8) is tested in CutsceneTest.
 
         yield return WakeUp();
         yield return HonkStreet();

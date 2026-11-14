@@ -44,6 +44,7 @@ public class LevelSystemTest : SystemTestBase
         // 1. New Game starts in Pip's house, in bed.
         Check("New Game starts", GameManager.Instance.NewGame());
         yield return WaitForScene("Tumbleton_PipHouse");
+        yield return SkipCutsceneIfPlaying(); // The New Game opening (Part 8) is tested in CutsceneTest.
         CheckArrival("Pip's House", "Bed");
         yield return CheckStandsOnFloor("Pip's House");
         CheckCamera();
@@ -87,6 +88,7 @@ public class LevelSystemTest : SystemTestBase
         // 5. The Laugh Tower door leads to Chortle's arena.
         yield return UseDoor("LaughTowerDoor");
         yield return WaitForScene("ChortleArena");
+        yield return SkipCutsceneIfPlaying(); // The boss intro (Part 8) is tested in CutsceneTest.
         CheckArrival("The Laugh Tower", "Start");
         yield return CheckStandsOnFloor("The Laugh Tower");
         CheckCamera();

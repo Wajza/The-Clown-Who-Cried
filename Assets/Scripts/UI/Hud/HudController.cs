@@ -19,7 +19,8 @@ public class HudController : MonoBehaviour
     private void LateUpdate()
     {
         GameManager gm = GameManager.Instance;
-        bool show = PlayerController.Current != null && gm != null &&
+        bool inCutscene = CutscenePlayer.Instance != null && CutscenePlayer.Instance.IsPlaying; // Also during its conversations.
+        bool show = PlayerController.Current != null && gm != null && !inCutscene &&
                     gm.State != GameState.Title && gm.State != GameState.Cutscene;
         if (root.activeSelf != show)
             root.SetActive(show);

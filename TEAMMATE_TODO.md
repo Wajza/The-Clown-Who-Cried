@@ -19,10 +19,14 @@ Status: [ ] open, [x] done
   - After beating Chortle, Pip gets +1 max Smile Star (and journal page 2).
   - Problem: `PlayerStarFragments` calls `PlayerHealth.SetBonusMaxStars(fragments / 4)` on every
     collect and every load, which replaces any other bonus.
-  - Suggestion: in `PlayerHealth`, add something like
-    `public void SetPermanentBonusMaxStars(int bonus)` and count it next to the fragment bonus
-    (max = start + fragmentBonus + permanentBonus). My save system will call it on load and
-    after Chortle (Part 8). Tell me the final method name.
+  - **Exactly what to add (Part 8 is ready for it):** make `PlayerHealth` implement my interface
+    `IPermanentStarBonus` (in `Assets/Scripts/Core/SmileStarBonus.cs`):
+    `public class PlayerHealth : MonoBehaviour, IDamageable, IPermanentStarBonus` and
+    `public void SetPermanentBonusMaxStars(int bonus)`, so that
+    max = start + fragment bonus + permanent bonus (keep both bonuses in separate fields).
+    My `SmileStarBonus` finds it automatically and calls it on every level load.
+  - Until then a **stand-in** re-applies the +1 every time `PlayerStarFragments` overwrites it.
+    It works (tested), but collecting a fragment refills one star as a side effect.
 
 - [ ] **3. (Optional) A "Coin" damage type.**
   - P3 "Pop the Balloon Wall" should only count coin hits. Today `DamageInfo` can't tell a coin
@@ -83,6 +87,16 @@ Status: [ ] open, [x] done
     `Rigidbody2D.position` by as much as the gondola moved each physics step. If your
     `PlayerController` ever gets its own moving-platform code, tell me so they don't fight.
   - W2's real mirrors and P2's respawns use your `PlayerController.Teleport`.
+
+- [ ] **11. Put the real Chortle in the Laugh Tower.** `ChortleArena` has a
+  `PlaceholderBoss (replace with Chortle)` (a purple box that takes hits) so the whole boss flow
+  works now. When your Chortle prefab exists:
+  1. Drop it in `ChortleArena`, and **untick "Start Automatically"** (my `BossFightFlow` starts
+     him with `StartFight()` after the intro cutscene).
+  2. Add my `ChortleFight` and `ChortleHealthSource` components to him.
+  3. In `Boss (Part 8) > BossFightFlow`, drag him into **Boss**, then delete the PlaceholderBoss.
+  My code uses `ChortleBoss.StartFight()`, `IsDefeated`, `OnDefeated`, `Mask/MaxMask`, `Phase`,
+  `State` and the events listed in #5.
 
 ## For the artist
 

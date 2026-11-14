@@ -44,6 +44,9 @@ public class SaveData
     /// <summary>IDs of the torn journal pages Pip has found (Part 4).</summary>
     public List<string> journalPageIds = new List<string>();
 
+    /// <summary>Extra max Smile Stars from story rewards, e.g. +1 for beating Chortle (Part 8). Not from fragments.</summary>
+    public int bonusSmileStars;
+
     // ------------------------------------------------------------------ Flag helpers
 
     public bool HasFlag(string flag) => !string.IsNullOrEmpty(flag) && flags.Contains(flag);

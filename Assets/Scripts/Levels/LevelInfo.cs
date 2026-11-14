@@ -9,6 +9,7 @@ using UnityEngine;
 ///   Show Name Card   show the name for a moment when the level starts.
 ///   Lock Abilities Until Earned   Pip's mallet/Blue Sight/Juggle Shot only work once earned
 ///                    (see PlayerAbilities). Untick for test levels.
+///   Save On Enter    autosave when arriving (untick for End of Demo).
 ///   Spawn Player     if the scene has no Pip, create one (GameSettings > Player Prefab) here.
 ///                    SceneLoader then moves her to the right spawn point.
 ///   Camera Bounds    the area the camera may show (a BoxCollider2D or PolygonCollider2D,
@@ -28,6 +29,8 @@ public class LevelInfo : MonoBehaviour
     [SerializeField] private bool showNameCard = true;
     [SerializeField] private bool lockAbilitiesUntilEarned = true;
     [SerializeField] private bool spawnPlayer = true;
+    [SerializeField, Tooltip("Autosave when Pip arrives here. Untick for scenes Continue must never start in (e.g. End of Demo).")]
+    private bool saveOnEnter = true;
     [SerializeField, Tooltip("The camera stays inside this shape. Must be a BoxCollider2D or PolygonCollider2D (trigger).")]
     private Collider2D cameraBounds;
 
@@ -41,6 +44,7 @@ public class LevelInfo : MonoBehaviour
     public string MusicId => musicId;
     public bool ShowNameCard => showNameCard;
     public bool LockAbilitiesUntilEarned => lockAbilitiesUntilEarned;
+    public bool SaveOnEnter => saveOnEnter;
     public Collider2D CameraBounds => cameraBounds;
 
     // ------------------------------------------------------------------ Unity lifecycle
