@@ -17,14 +17,14 @@ public class TalkToNpcObjective : TaskObjective
     [Tooltip("The NPC's 'Npc Id' from their NpcTalk component, e.g. 'baker'.")]
     public string npcId;
 
-    public override Action Watch(Action onDone)
+    public override Action Watch(ObjectiveRun run)
     {
-        // A small local method that remembers onDone. It's added to the event now and
+        // A small local method that remembers 'run'. It's added to the event now and
         // removed again by the action we return.
         void OnNpcTalkedTo(string talkedTo)
         {
             if (talkedTo == npcId)
-                onDone();
+                run.Complete();
         }
 
         GameEvents.NpcTalkedTo += OnNpcTalkedTo;

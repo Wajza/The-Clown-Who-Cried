@@ -75,6 +75,16 @@ public class TaskManager : MonoBehaviour
         return step >= 0 && step < task.objectives.Count ? task.objectives[step] : null;
     }
 
+    /// <summary>
+    /// The current objective as the player should read it, with progress if it counts,
+    /// e.g. "Pop the balloons (3/8)". Empty if the task isn't running.
+    /// </summary>
+    public string GetObjectiveText(TaskData task)
+    {
+        TaskObjective objective = GetCurrentObjective(task);
+        return objective != null ? objective.Describe(_active[task.id].progress.count) : "";
+    }
+
     /// <summary>Every task TaskManager knows (all of Resources/Tasks). Used by the Journal's Task Board.</summary>
     public IEnumerable<TaskData> AllTasks
     {
@@ -108,6 +118,7 @@ public class TaskManager : MonoBehaviour
         save.activeTasks.Add(progress);
         save.SetFlag(task.ActiveFlag);
         AddRunning(task, progress);
+        UnlockAbilities(task.unlockOnStart); // e.g. P4 hands Pip the mallet.
 
         GameEvents.RaiseTaskStarted(task);
 
@@ -181,7 +192,11 @@ public class TaskManager : MonoBehaviour
             return;
         }
 
-        Action stop = objective.Watch(() => OnObjectiveDone(task, step));
+        // The run reports progress (saved count) and completion back to us.
+        var run = new ObjectiveRun(running.progress.count,
+            onProgress: count => OnObjectiveProgress(task, step, count),
+            onComplete: () => OnObjectiveDone(task, step));
+        Action stop = objective.Watch(run);
 
         // Normally we keep the "stop" for later. But if the objective was met during Watch
         // (and the task already moved on), stop listening right away.
@@ -189,6 +204,17 @@ public class TaskManager : MonoBehaviour
             running.stopWatching = stop;
         else
             stop?.Invoke();
+    }
+
+    /// <summary>Called by a counting objective: store the new count, update the tracker, save.</summary>
+    private void OnObjectiveProgress(TaskData task, int step, int count)
+    {
+        if (!_active.TryGetValue(task.id, out RunningTask running) || running.progress.step != step)
+            return;
+
+        running.progress.count = count;
+        GameEvents.RaiseTaskProgressed(task);
+        SaveIfWanted();
     }
 
     /// <summary>Called by an objective when it's met.</summary>
@@ -200,6 +226,7 @@ public class TaskManager : MonoBehaviour
 
         StopWatching(running);
         running.progress.step++;
+        running.progress.count = 0; // The next objective counts from zero.
 
         if (running.progress.step >= task.objectives.Count)
         {
@@ -226,9 +253,18 @@ public class TaskManager : MonoBehaviour
         save.ClearFlag(task.ActiveFlag);
         save.SetFlag(task.DoneFlag);
         save.SetFlag(task.setFlagWhenComplete);
+        UnlockAbilities(task.unlockOnComplete); // e.g. W3 rewards Juggle Shot.
 
         GameEvents.RaiseTaskCompleted(task);
         SaveIfWanted();
+    }
+
+    private static void UnlockAbilities(List<Ability> abilities)
+    {
+        if (abilities == null)
+            return;
+        foreach (Ability ability in abilities)
+            PlayerAbilities.Unlock(ability);
     }
 
     private void AddRunning(TaskData task, TaskProgress progress)

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 189068639114db043bd7d104618a7675, type: 3}
+  m_Name: Task_P2_HonkStreet
+  m_EditorClassIdentifier: Assembly-CSharp::TaskData
+  id: p2_honk_street
+  title: Cross Honk Street
+  description: Officer Honk dares Pip to cross the busy street.
+  objectives:
+  - {fileID: 11400000, guid: 7ac35857092da2e449666e3e22d0ec4f, type: 2}
+  setFlagWhenComplete: 
+  unlockOnStart: 
+  unlockOnComplete: 
+  city: 0
+  boardOrder: 2
+  showOnTaskBoard: 1
+  testOnly: 0

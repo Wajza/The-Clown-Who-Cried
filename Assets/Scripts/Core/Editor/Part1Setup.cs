@@ -235,7 +235,7 @@ public static class Part1Setup
         SetSpawnFields(go.AddComponent<SpawnPoint>(), id, isDefault);
     }
 
-    private static void AddCheckpoint(string id, Vector2 position, Sprite square)
+    internal static GameObject AddCheckpoint(string id, Vector2 position, Sprite square)
     {
         var go = new GameObject($"Checkpoint_{id}");
         go.transform.position = position; // On the floor: Pip's feet (her pivot) land here.
@@ -260,6 +260,7 @@ public static class Part1Setup
         var so = new SerializedObject(checkpoint);
         so.FindProperty("spriteRenderer").objectReferenceValue = sr;
         so.ApplyModifiedPropertiesWithoutUndo();
+        return go;
     }
 
     private static void SetSpawnFields(SpawnPoint point, string id, bool isDefault)

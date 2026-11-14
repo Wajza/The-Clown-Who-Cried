@@ -67,4 +67,7 @@ public class TaskProgress
 {
     public string taskId;
     public int step;
+
+    /// <summary>Progress inside the current step, for counting objectives ("3" in "3/8"). Part 6.</summary>
+    public int count;
 }

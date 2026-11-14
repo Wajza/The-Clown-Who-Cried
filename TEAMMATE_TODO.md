@@ -58,6 +58,17 @@ Status: [ ] open, [x] done
   `PlayerCoinThrower.JuggleShotUnlocked`. Please keep those action names, or tell me if they change.
   This only happens in my levels (scenes with a `LevelInfo`); your test scenes are untouched.
 
+- [ ] **8. Pip's coins and mallet must hit the Enemy layer.** P3's balloons and P4's pots
+  (`BreakableTarget`, my script, implements your `IDamageable`) are on the **Enemy** layer,
+  because it's the only target layer the project has (the tooltips mention a "Breakable" layer,
+  but it doesn't exist). On your Pip prefab, please include **Enemy** in
+  `PlayerCoinThrower > Hit Layers` and `PlayerMallet > Hit Layers`. The targets are triggers;
+  your mallet uses `useTriggers = true` already, and coins use a CircleCast (hits triggers when
+  Physics 2D "Queries Hit Triggers" is on, the default).
+  - The last P4 pot is tagged **"Pogo"**, so a down-swing on it bounces Pip over the spikes.
+  - Until your Pip prefab exists, P3/P4 can't be played by hand: `Placeholder_Pip` has no coin
+    thrower (no Star Coin prefab) and no mallet set-up. My automatic test hits the targets directly.
+
 ## For the artist
 
 Every placeholder lives in `Assets/Art/Placeholders`. **To replace one, overwrite the file and

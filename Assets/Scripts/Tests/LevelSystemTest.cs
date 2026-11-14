@@ -52,7 +52,9 @@ public class LevelSystemTest : SystemTestBase
 
         yield return CheckAbilities();
 
-        // 2. The front door leads to Tumbleton.
+        // 2. The front door leads to Tumbleton. (Since Part 6 it only opens after P1's mirror;
+        //    this test is about doors, so it sets that flag directly.)
+        GameManager.Instance.Save.SetFlag("p1_looked_in_mirror");
         yield return UseDoor("FrontDoor");
         yield return WaitForScene("Tumbleton");
         CheckArrival("Tumbleton", "FromHouse");

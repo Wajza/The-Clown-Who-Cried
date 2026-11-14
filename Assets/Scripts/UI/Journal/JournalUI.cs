@@ -147,7 +147,7 @@ public class JournalUI : MonoBehaviour
             if (done)
                 _detail.Append(Colour("Done!", doneColor));
             else if (active)
-                _detail.Append("Now: ").Append(manager.GetCurrentObjective(task)?.description ?? "");
+                _detail.Append("Now: ").Append(manager.GetObjectiveText(task));
             else
                 _detail.Append(Colour("Not started.", dimColor));
         }

@@ -97,6 +97,15 @@ public static class GameEvents
     /// <summary>Fired with the task when its last objective is done (its flags are already set).</summary>
     public static event Action<TaskData> TaskCompleted;
 
+    /// <summary>
+    /// A named "something happened" for tasks (Part 6): a mirror looked into ("p1_mirror"), an area
+    /// reached ("p2_crossed"), a balloon popped ("p3_balloon"), a pot broken ("p4_pot")...
+    /// World objects raise it; SignalObjectives count it. Nobody else needs to know.
+    /// </summary>
+    public static event Action<string> TaskSignal;
+
+    public static void RaiseTaskSignal(string key) => TaskSignal?.Invoke(key);
+
     public static void RaiseTaskStarted(TaskData task) => TaskStarted?.Invoke(task);
     public static void RaiseTaskProgressed(TaskData task) => TaskProgressed?.Invoke(task);
     public static void RaiseTaskCompleted(TaskData task) => TaskCompleted?.Invoke(task);
@@ -132,6 +141,7 @@ public static class GameEvents
         DialogueEnded = null;
         NpcTalkedTo = null;
         TaskStarted = null;
+        TaskSignal = null;
         TaskProgressed = null;
         TaskCompleted = null;
         GamePausedChanged = null;

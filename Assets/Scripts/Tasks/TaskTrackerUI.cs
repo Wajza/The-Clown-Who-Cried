@@ -134,9 +134,9 @@ public class TaskTrackerUI : MonoBehaviour
                 _sb.Append('\n');
             _sb.Append($"<color=#{colour}>{task.title}</color>");
 
-            TaskObjective objective = tasks.GetCurrentObjective(task);
-            if (objective != null)
-                _sb.Append($"\n- {objective.description}");
+            string objective = tasks.GetObjectiveText(task); // e.g. "Pop the balloons (3/8)"
+            if (!string.IsNullOrEmpty(objective))
+                _sb.Append($"\n- {objective}");
         }
         trackerText.text = _sb.ToString();
     }

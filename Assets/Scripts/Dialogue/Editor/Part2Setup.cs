@@ -223,10 +223,15 @@ public static class Part2Setup
     /// 5 tiles wide, and a yellow "!" prompt above the head.
     /// </summary>
     internal static NpcTalk AddNpc(string name, string npcId, float x, Color color, Sprite square,
+        DialogueData defaultDialogue, params NpcTalk.ConditionalDialogue[] conditional) =>
+        AddNpcAt(name, npcId, new Vector2(x, Part1Setup.FloorY), color, square, defaultDialogue, conditional);
+
+    /// <summary>Same as AddNpc, but standing at any point (feet at 'feet'), e.g. on a level's floor at y = 0.</summary>
+    internal static NpcTalk AddNpcAt(string name, string npcId, Vector2 feet, Color color, Sprite square,
         DialogueData defaultDialogue, params NpcTalk.ConditionalDialogue[] conditional)
     {
         var npc = new GameObject(name);
-        npc.transform.position = new Vector3(x, Part1Setup.FloorY, 0f);
+        npc.transform.position = feet;
 
         var body = new GameObject("Body", typeof(SpriteRenderer));
         body.transform.SetParent(npc.transform, false);

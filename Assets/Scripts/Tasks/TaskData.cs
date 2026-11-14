@@ -41,6 +41,13 @@ public class TaskData : ScriptableObject
     [Tooltip("Optional extra flag set when the task is finished.")]
     public string setFlagWhenComplete;
 
+    [Header("Rewards")]
+    [Tooltip("Abilities Pip gets when the task STARTS (e.g. the mallet for P4 Reflex Check).")]
+    public List<Ability> unlockOnStart = new List<Ability>();
+
+    [Tooltip("Abilities Pip gets when the task is FINISHED (e.g. Juggle Shot for W3).")]
+    public List<Ability> unlockOnComplete = new List<Ability>();
+
     [Header("Journal")]
     [Tooltip("Which city's Task Board lists this task.")]
     public City city = City.Tumbleton;
