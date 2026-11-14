@@ -31,7 +31,7 @@ public enum GameState
 /// Only the Raise methods can fire an event (C# 'event' blocks outside Invoke), which keeps
 /// the code that fires each event easy to find.
 ///
-/// Each part adds its events here in its own section (Part 2: dialogue, Part 3: tasks; later: cutscenes).
+/// Each part adds its events here in its own section (Part 2: dialogue, Part 3: tasks, Part 4: menus; later: cutscenes).
 /// </summary>
 public static class GameEvents
 {
@@ -101,6 +101,17 @@ public static class GameEvents
     public static void RaiseTaskProgressed(TaskData task) => TaskProgressed?.Invoke(task);
     public static void RaiseTaskCompleted(TaskData task) => TaskCompleted?.Invoke(task);
 
+    // ------------------------------------------------------------------ Menus and journal (Part 4)
+
+    /// <summary>Fired with true when the game pauses (pause menu or journal) and false when it resumes.</summary>
+    public static event Action<bool> GamePausedChanged;
+
+    /// <summary>Fired with the page when Pip finds a torn journal page.</summary>
+    public static event Action<JournalPageData> JournalPageFound;
+
+    public static void RaiseGamePausedChanged(bool paused) => GamePausedChanged?.Invoke(paused);
+    public static void RaiseJournalPageFound(JournalPageData page) => JournalPageFound?.Invoke(page);
+
     // ------------------------------------------------------------------ Reset
 
     /// <summary>
@@ -123,5 +134,7 @@ public static class GameEvents
         TaskStarted = null;
         TaskProgressed = null;
         TaskCompleted = null;
+        GamePausedChanged = null;
+        JournalPageFound = null;
     }
 }

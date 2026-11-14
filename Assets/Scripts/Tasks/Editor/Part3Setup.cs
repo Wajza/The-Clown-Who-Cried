@@ -148,6 +148,7 @@ public static class Part3Setup
         task.description = description;
         task.setFlagWhenComplete = flagWhenComplete;
         task.objectives = new List<TaskObjective>(objectives);
+        task.testOnly = true; // Kept out of the real Journal.
     }
 
     // ------------------------------------------------------------------ Test scene

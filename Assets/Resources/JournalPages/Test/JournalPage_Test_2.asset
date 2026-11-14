@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 984543604180d43448a26b580519e388, type: 3}
+  m_Name: JournalPage_Test_2
+  m_EditorClassIdentifier: Assembly-CSharp::JournalPageData
+  id: test_page_2
+  order: 2
+  title: Another Page
+  text: Nobody should ever read this.
+  picture: {fileID: 0}
+  testOnly: 1

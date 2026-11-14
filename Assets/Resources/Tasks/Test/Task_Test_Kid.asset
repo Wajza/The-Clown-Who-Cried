@@ -18,3 +18,7 @@ MonoBehaviour:
   objectives:
   - {fileID: 11400000, guid: a2e212a0b81b4bf45b036d24f62c0627, type: 2}
   setFlagWhenComplete: 
+  city: 1
+  boardOrder: 0
+  showOnTaskBoard: 1
+  testOnly: 1

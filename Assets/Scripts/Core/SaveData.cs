@@ -41,6 +41,9 @@ public class SaveData
     /// <summary>IDs of tasks that are finished (Part 3).</summary>
     public List<string> completedTaskIds = new List<string>();
 
+    /// <summary>IDs of the torn journal pages Pip has found (Part 4).</summary>
+    public List<string> journalPageIds = new List<string>();
+
     // ------------------------------------------------------------------ Flag helpers
 
     public bool HasFlag(string flag) => !string.IsNullOrEmpty(flag) && flags.Contains(flag);

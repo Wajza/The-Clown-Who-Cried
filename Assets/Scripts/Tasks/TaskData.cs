@@ -23,6 +23,9 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Clown Who Cried/Tasks/Task", fileName = "Task_")]
 public class TaskData : ScriptableObject
 {
+    /// <summary>Which city's Task Board (in the Journal) the task is listed on.</summary>
+    public enum City { Tumbleton, Wonderwick }
+
     [Tooltip("Unique id used in the save file and in flags. Short, lowercase, no spaces, e.g. 'bakery'. Don't change it once saves exist.")]
     public string id;
 
@@ -37,6 +40,19 @@ public class TaskData : ScriptableObject
 
     [Tooltip("Optional extra flag set when the task is finished.")]
     public string setFlagWhenComplete;
+
+    [Header("Journal")]
+    [Tooltip("Which city's Task Board lists this task.")]
+    public City city = City.Tumbleton;
+
+    [Tooltip("Position on the Task Board (lower = higher up).")]
+    public int boardOrder;
+
+    [Tooltip("Untick to keep the task off the Task Board (e.g. hidden or test tasks).")]
+    public bool showOnTaskBoard = true;
+
+    [Tooltip("Only for automatic tests: hidden from the Journal unless a test asks for it.")]
+    public bool testOnly;
 
     /// <summary>Flag set while the task is running.</summary>
     public string ActiveFlag => $"task_{id}_active";

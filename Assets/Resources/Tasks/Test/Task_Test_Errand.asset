@@ -19,3 +19,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c6b133c9120e5924484e1eabb97bd50c, type: 2}
   - {fileID: 11400000, guid: 54c3406141c18d441a51343ac8c796fa, type: 2}
   setFlagWhenComplete: test_errand_reward
+  city: 0
+  boardOrder: 0
+  showOnTaskBoard: 1
+  testOnly: 1

@@ -67,7 +67,7 @@ public class TaskSystemTest : SystemTestBase
         yield return WaitUntil(() => GameManager.Instance != null && _sceneLoaded, 5f, "first SceneLoaded");
         yield return null;
 
-        TaskTrackerUI tracker = FindFirstObjectByType<TaskTrackerUI>();
+        TaskTrackerUI tracker = FindAnyObjectByType<TaskTrackerUI>();
         Check("TaskManager and TaskTrackerUI exist", Tasks != null && tracker != null);
         Check("Tasks are found by id (loaded from Resources/Tasks)",
             Tasks.FindTask("test_errand") == errand && Tasks.FindTask("test_kid") == kidTask);
@@ -183,7 +183,7 @@ public class TaskSystemTest : SystemTestBase
 
     private void CheckGate(string label, bool open, int completed)
     {
-        TaskGate gate = FindFirstObjectByType<TaskGate>();
+        TaskGate gate = FindAnyObjectByType<TaskGate>();
         GameObject wall = gate != null ? gate.transform.Find("Wall").gameObject : null;
         bool ok = gate != null && gate.IsOpen == open && wall.activeSelf == !open &&
                   gate.CompletedCount == completed && gate.RequiredCount == 2;

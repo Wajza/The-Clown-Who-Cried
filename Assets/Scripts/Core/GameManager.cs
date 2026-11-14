@@ -100,11 +100,24 @@ public class GameManager : MonoBehaviour
 
     // ------------------------------------------------------------------ Starting and quitting
 
-    /// <summary>Starts a brand-new game. The old save file is only replaced once the game saves.</summary>
-    public void NewGame()
+    /// <summary>Scene that New Game starts in.</summary>
+    public string FirstSceneName => firstSceneName;
+
+    /// <summary>
+    /// Starts a brand-new game. The old save file is only replaced once the game saves.
+    /// Returns false (and changes nothing) if the first scene isn't in the Build Profile scene list.
+    /// </summary>
+    public bool NewGame()
     {
+        if (!Application.CanStreamedLevelBeLoaded(firstSceneName))
+        {
+            Debug.LogError($"GameManager: New Game can't start: scene '{firstSceneName}' is not in the Build Profile scene list.", this);
+            return false;
+        }
+
         Save = new SaveData();
         SceneLoader.Instance.LoadScene(firstSceneName, firstSpawnPointId);
+        return true;
     }
 
     /// <summary>Loads the save file and continues from it. Returns false if there is no usable save.</summary>

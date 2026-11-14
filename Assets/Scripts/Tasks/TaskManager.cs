@@ -75,6 +75,16 @@ public class TaskManager : MonoBehaviour
         return step >= 0 && step < task.objectives.Count ? task.objectives[step] : null;
     }
 
+    /// <summary>Every task TaskManager knows (all of Resources/Tasks). Used by the Journal's Task Board.</summary>
+    public IEnumerable<TaskData> AllTasks
+    {
+        get
+        {
+            LoadAllTasks();
+            return _tasksById.Values;
+        }
+    }
+
     /// <summary>The task with this id, or null. Knows every task in Resources/Tasks.</summary>
     public TaskData FindTask(string id)
     {

@@ -64,6 +64,7 @@ public class TaskTrackerUI : MonoBehaviour
         GameEvents.TaskProgressed += OnTaskProgressed;
         GameEvents.TaskCompleted += OnTaskCompleted;
         GameEvents.SceneLoaded += OnSceneLoaded;
+        GameEvents.SceneLoadStarted += OnSceneLoadStarted;
         GameEvents.GameStateChanged += OnGameStateChanged;
     }
 
@@ -73,8 +74,19 @@ public class TaskTrackerUI : MonoBehaviour
         GameEvents.TaskProgressed -= OnTaskProgressed;
         GameEvents.TaskCompleted -= OnTaskCompleted;
         GameEvents.SceneLoaded -= OnSceneLoaded;
+        GameEvents.SceneLoadStarted -= OnSceneLoadStarted;
         GameEvents.GameStateChanged -= OnGameStateChanged;
         _bannerRoutine = null; // Coroutines stop when disabled.
+    }
+
+    /// <summary>A scene change drops any banner on screen or waiting (e.g. quitting to the title).</summary>
+    private void OnSceneLoadStarted(string sceneName)
+    {
+        if (_bannerRoutine != null)
+            StopCoroutine(_bannerRoutine);
+        _bannerRoutine = null;
+        _bannerQueue.Clear();
+        banner.alpha = 0f;
     }
 
     // ------------------------------------------------------------------ Event handlers
