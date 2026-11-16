@@ -34,7 +34,9 @@ Status: [ ] open, [x] done
   - Suggestion: add `DamageType.Coin` and pass it in `StarCoin.OnHit`. Until then my balloons
     accept any hit and are placed out of mallet reach.
 
-- [ ] **4. Commit your prefabs.** No branch has any prefab from you yet, only scripts. My levels
+- [x] **4. Commit your prefabs.** DONE (teammate): placeholder prefabs in `Assets/Prefabs/{Player, Combat,
+  Pickups, Enemies, Boss, Effects}`, made by Tools > Clown Who Cried > Combat > Run Everything
+  (`CombatSetup.cs`). `GameSettings > Player Prefab` is now `Prefabs/Player/Pip`. No branch has any prefab from you yet, only scripts. My levels
   (Part 5) and the boss fight (Part 8) need, with every Inspector field filled in:
   - **Pip** (all player components, pivot at her feet, Player layer, input actions assigned).
   - **Star Coin** (for `PlayerCoinThrower.coinPrefab`).
@@ -62,7 +64,8 @@ Status: [ ] open, [x] done
   `PlayerCoinThrower.JuggleShotUnlocked`. Please keep those action names, or tell me if they change.
   This only happens in my levels (scenes with a `LevelInfo`); your test scenes are untouched.
 
-- [ ] **8. Pip's coins and mallet must hit the Enemy layer.** P3's balloons and P4's pots
+- [x] **8. Pip's coins and mallet must hit the Enemy layer.** DONE: on the Pip prefab, mallet = Enemy +
+  Default (for the Spikes strips), coins = Enemy + Ground. P3's balloons and P4's pots
   (`BreakableTarget`, my script, implements your `IDamageable`) are on the **Enemy** layer,
   because it's the only target layer the project has (the tooltips mention a "Breakable" layer,
   but it doesn't exist). On your Pip prefab, please include **Enemy** in
@@ -73,7 +76,8 @@ Status: [ ] open, [x] done
   - Until your Pip prefab exists, P3/P4 can't be played by hand: `Placeholder_Pip` has no coin
     thrower (no Star Coin prefab) and no mallet set-up. My automatic test hits the targets directly.
 
-- [ ] **9. Fill in the W3 "runaway riders" waves.** In `Wonderwick_W3_Coaster`, the object
+- [x] **9. Fill in the W3 "runaway riders" waves.** DONE: 3 waves (Wobblers, then a Pie Slinger joins).
+  `WonderwickTest` now pops the riders instead of expecting an empty spawner. In `Wonderwick_W3_Coaster`, the object
   `WaveSpawner_Riders` has your `WaveSpawner` with 2 spawn points and **no waves yet**. Please add
   the waves (your enemy prefabs). My `WaveSpawnerBridge` (same object) starts it after Pip flips
   the 4 switches and finishes the task on `OnAllWavesCleared`. Keep **Start On Player Enter**
@@ -88,7 +92,11 @@ Status: [ ] open, [x] done
     `PlayerController` ever gets its own moving-platform code, tell me so they don't fight.
   - W2's real mirrors and P2's respawns use your `PlayerController.Teleport`.
 
-- [ ] **11. Put the real Chortle in the Laugh Tower.** `ChortleArena` has a
+- [x] **11. Put the real Chortle in the Laugh Tower.** DONE: Chortle (with ChortleFight + ChortleHealthSource)
+  replaced the PlaceholderBoss, plus trapdoors over a pit, 3 platforms and 2 cannons (`Arena (Combat)`).
+  Small changes in your files, please check: `BossFightFlow` also hides a real boss that was already
+  beaten; `CutsceneTest`/`AudioSystemTest` find the boss through `BossFightFlow` (works for either boss)
+  and hit once per frame, because Chortle ignores hits during his phase intros. All 9 test parts pass. `ChortleArena` has a
   `PlaceholderBoss (replace with Chortle)` (a purple box that takes hits) so the whole boss flow
   works now. When your Chortle prefab exists:
   1. Drop it in `ChortleArena`, and **untick "Start Automatically"** (my `BossFightFlow` starts

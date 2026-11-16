@@ -158,16 +158,30 @@ public class AudioSystemTest : SystemTestBase
         yield return Go("ChortleArena", "Start");
         yield return SkipCutsceneIfPlaying(); // The intro.
         yield return null;
-        var boss = FindAnyObjectByType<PlaceholderBoss>();
-        Check("Fight on: boss music", boss != null && boss.IsFighting && Audio.CurrentMusicId == SoundIds.MusicBoss);
+        // The boss (real Chortle or placeholder) through BossFightFlow; its phase through the boss bar's source.
+        IBossFight boss = FindAnyObjectByType<BossFightFlow>()?.Boss;
+        var bossComponent = boss as Component;
+        IDamageable target = bossComponent != null ? bossComponent.GetComponent<IDamageable>() : null;
+        BossHealthSource bar = BossHealthSource.Active;
+        Check("Fight on: boss music", target != null && bar != null && bar.IsFighting && Audio.CurrentMusicId == SoundIds.MusicBoss);
+        if (target == null || bar == null)
+            yield break;
 
-        while (boss.Phase < 3)
-            boss.TakeDamage(new DamageInfo(1, Vector2.zero, boss.transform.position, null));
+        // One big hit per frame (the real Chortle ignores hits during his short phase intros).
+        float giveUp = Time.time + 20f;
+        while (bar.Phase < 3 && Time.time < giveUp)
+        {
+            target.TakeDamage(new DamageInfo(30, Vector2.zero, bossComponent.transform.position, null, DamageType.TearBurst));
+            yield return null;
+        }
         yield return null;
         Check("Last phase: final-phase music", Audio.CurrentMusicId == SoundIds.MusicBossFinal);
 
-        while (!boss.IsDefeated)
-            boss.TakeDamage(new DamageInfo(1, Vector2.zero, boss.transform.position, null));
+        while (!boss.IsDefeated && Time.time < giveUp)
+        {
+            target.TakeDamage(new DamageInfo(30, Vector2.zero, bossComponent.transform.position, null, DamageType.TearBurst));
+            yield return null;
+        }
         yield return null;
         Check("Victory sting", Audio.RecentSfx.Contains(SoundIds.BossDefeat));
         Check("Boss music stops after the fight", Audio.CurrentMusicId != SoundIds.MusicBoss && Audio.CurrentMusicId != SoundIds.MusicBossFinal);

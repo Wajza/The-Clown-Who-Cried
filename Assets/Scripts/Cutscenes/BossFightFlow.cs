@@ -69,6 +69,8 @@ public class BossFightFlow : MonoBehaviour
             Current = Stage.Done; // Already won: nothing to do here any more.
             if (boss is PlaceholderBoss placeholder)
                 placeholder.SetAlreadyDefeated();
+            else
+                boss.gameObject.SetActive(false); // The real Chortle: gone once he's been beaten.
             return;
         }
 
