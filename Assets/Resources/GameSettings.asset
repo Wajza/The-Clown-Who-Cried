@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb849ac0aea15b3439007e00d3098220, type: 3}
   m_Name: GameSettings
   m_EditorClassIdentifier: Assembly-CSharp::GameSettings
-  playerPrefab: {fileID: 6795981796699247671, guid: 1f53167d381ac5c45bfb1210ec260824, type: 3}
+  playerPrefab: {fileID: 7839649579301341066, guid: 7cca54306476bd448819800232ce144b, type: 3}

@@ -217,8 +217,20 @@ public class WonderwickTest : SystemTestBase
         }
         yield return null;
         Check("Switches are remembered in the save", GameManager.Instance.Save.HasFlag("switch_coaster_switch_4"));
-        Check("4 switches -> the waves start and (with no enemies yet) clear -> W3 done", TaskManager.IsCompleted(w3));
-        Check("The teammate's WaveSpawner ran", FindAnyObjectByType<WaveSpawner>().IsCleared);
+
+        // The riders' waves start. Pop every enemy that appears (what the mallet and coins do)
+        // until the spawner says all waves are cleared.
+        var spawner = FindAnyObjectByType<WaveSpawner>();
+        Check("4 switches -> the riders' waves start", spawner.IsRunning || spawner.IsCleared);
+        float giveUp = Time.time + 30f;
+        while (!spawner.IsCleared && Time.time < giveUp)
+        {
+            foreach (EnemyBase enemy in FindObjectsByType<EnemyBase>(FindObjectsInactive.Exclude))
+                enemy.TakeDamage(new DamageInfo(99, Vector2.zero, enemy.transform.position, Pip.gameObject));
+            yield return null;
+        }
+        Check("The teammate's WaveSpawner was cleared", spawner.IsCleared);
+        Check("Waves cleared -> W3 done", TaskManager.IsCompleted(w3));
         Check("Reward: Juggle Shot", GameManager.Instance.Save.HasFlag("ability_juggle") && PlayerAbilities.IsUnlocked(Ability.JuggleShot));
     }
 

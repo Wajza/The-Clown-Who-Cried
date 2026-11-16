@@ -90,15 +90,17 @@ public class CutsceneTest : SystemTestBase
     {
         yield return Go("ChortleArena", "Start");
         var flow = FindAnyObjectByType<BossFightFlow>();
-        var boss = FindAnyObjectByType<PlaceholderBoss>();
-        Check("Arena has the boss flow and the (placeholder) boss", flow != null && boss != null);
+        IBossFight boss = flow != null ? flow.Boss : null; // The real Chortle or the placeholder.
+        IDamageable bossTarget = (boss as Component) != null ? ((Component)boss).GetComponent<IDamageable>() : null;
+        Check("Arena has the boss flow and a boss", flow != null && boss != null && bossTarget != null);
         Check("Boss intro plays", Cutscenes.IsPlaying && _cutsceneStarted == "Timeline_ChortleIntro" && flow.Current == BossFightFlow.Stage.Intro);
 
         yield return new WaitForSeconds(0.8f);
         Cutscenes.Skip();
         yield return null;
         Check("Skipping ends the cutscene and closes its conversation", !Cutscenes.IsPlaying && !Runner.IsRunning);
-        Check("...and the fight starts", flow.Current == BossFightFlow.Stage.Fighting && boss.IsFighting);
+        Check("...and the fight starts", flow.Current == BossFightFlow.Stage.Fighting &&
+            BossHealthSource.Active != null && BossHealthSource.Active.IsFighting);
         Check("Boss health bar shows", FindAnyObjectByType<BossHealthBar>().Visible);
         Check("Pip free to fight", !PlayerInputLock.IsLocked && State == GameState.Playing);
         Check("The exit is locked during the fight", !GameObject.Find("ExitToHub").GetComponent<Door>().Requirement.IsMet);
@@ -106,10 +108,15 @@ public class CutsceneTest : SystemTestBase
         int baseMax = Pip.GetComponent<PlayerHealth>().MaxStars;
         _maxBeforeReward = baseMax;
 
-        // Hit until beaten (what the mallet and coins do).
-        for (int i = 0; i < 50 && !boss.IsDefeated; i++)
-            boss.TakeDamage(new DamageInfo(1, Vector2.zero, boss.transform.position, Pip.gameObject));
-        yield return null;
+        // Hit until beaten: one big hit per frame. (The real Chortle ignores hits during his short
+        // phase intros, and in phase 3 only Tear Burst really hurts, so hit like a Tear Burst.)
+        float giveUp = Time.time + 20f;
+        while (!boss.IsDefeated && Time.time < giveUp)
+        {
+            bossTarget.TakeDamage(new DamageInfo(30, Vector2.zero, ((Component)boss).transform.position,
+                Pip.gameObject, DamageType.TearBurst));
+            yield return null;
+        }
         Check("Boss defeated", boss.IsDefeated);
         Check("Outro plays", Cutscenes.IsPlaying && _cutsceneStarted == "Timeline_ChortleOutro");
 
@@ -166,8 +173,10 @@ public class CutsceneTest : SystemTestBase
         _cutsceneStarted = null;
         yield return Go("ChortleArena", "Start");
         Check("Back in the arena: no cutscene", !Cutscenes.IsPlaying && _cutsceneStarted == null);
-        Check("Back in the arena: no boss", FindAnyObjectByType<PlaceholderBoss>() == null &&
-            FindAnyObjectByType<BossFightFlow>().Current == BossFightFlow.Stage.Done);
+        var flowAfter = FindAnyObjectByType<BossFightFlow>();
+        var bossAfter = flowAfter.Boss as Component;
+        Check("Back in the arena: no boss", (bossAfter == null || !bossAfter.gameObject.activeInHierarchy) &&
+            flowAfter.Current == BossFightFlow.Stage.Done);
         Check("Back in the arena: the exit is open", GameObject.Find("ExitToHub").GetComponent<Door>().Requirement.IsMet);
         Check("No boss bar", !FindAnyObjectByType<BossHealthBar>().Visible);
     }
