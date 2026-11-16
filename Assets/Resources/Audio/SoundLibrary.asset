@@ -1,0 +1,245 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3c33c404e16a7e4cb14f3d9605f706b, type: 3}
+  m_Name: SoundLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::SoundLibrary
+  entries:
+  - id: music_title
+    clips:
+    - {fileID: 8300000, guid: 37098be364e7f7e4493ea9b4433d5c6f, type: 3}
+    volume: 0.55
+    pitchVariation: 0
+  - id: music_tumbleton
+    clips:
+    - {fileID: 8300000, guid: 31f20fa1dcb87f248b14ec453f3326b3, type: 3}
+    volume: 0.55
+    pitchVariation: 0
+  - id: music_train
+    clips:
+    - {fileID: 8300000, guid: 8f594d565ec72124799ec6492027053d, type: 3}
+    volume: 0.55
+    pitchVariation: 0
+  - id: music_wonderwick
+    clips:
+    - {fileID: 8300000, guid: 4fee2ab8eec52394ca6a319d9d0a81af, type: 3}
+    volume: 0.55
+    pitchVariation: 0
+  - id: music_audition
+    clips:
+    - {fileID: 8300000, guid: e283326062f589f4bbf7a50878cf6c45, type: 3}
+    volume: 0.55
+    pitchVariation: 0
+  - id: music_boss
+    clips:
+    - {fileID: 8300000, guid: 111959de57931f447b6c93ab092fe82a, type: 3}
+    volume: 0.55
+    pitchVariation: 0
+  - id: music_boss_final
+    clips:
+    - {fileID: 8300000, guid: aff9277acc5eeef44a3ab0fe9482bc98, type: 3}
+    volume: 0.55
+    pitchVariation: 0
+  - id: music_end
+    clips:
+    - {fileID: 8300000, guid: cda0c66c8fff68e43bd1f42cbb7e9afb, type: 3}
+    volume: 0.55
+    pitchVariation: 0
+  - id: sfx_jump
+    clips:
+    - {fileID: 8300000, guid: 42eda6c5cde01c14db979f7ac86a8e9d, type: 3}
+    volume: 0.8
+    pitchVariation: 0.08
+  - id: sfx_dash
+    clips:
+    - {fileID: 8300000, guid: 6820134cf7dbbcb4bb2507e98e92b38c, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_swing
+    clips:
+    - {fileID: 8300000, guid: aaa1b02e686b5874f88bc95eccb92df0, type: 3}
+    volume: 0.8
+    pitchVariation: 0.08
+  - id: sfx_hit
+    clips:
+    - {fileID: 8300000, guid: d7ac1343291e4004d8b9ba2faefd5882, type: 3}
+    volume: 0.8
+    pitchVariation: 0.08
+  - id: sfx_pogo
+    clips:
+    - {fileID: 8300000, guid: ee8f673db5b1afe4dbe6e1f94afd0f50, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_coin_throw
+    clips:
+    - {fileID: 8300000, guid: 5ac1031ffcc8e58499014698bf6062b9, type: 3}
+    volume: 0.8
+    pitchVariation: 0.08
+  - id: sfx_star_lost
+    clips:
+    - {fileID: 8300000, guid: 5db2634c6e05a374bba498a8a891b335, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_death
+    clips:
+    - {fileID: 8300000, guid: a13b8ba01673fda4ab4fd09006cff1a7, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_shield
+    clips:
+    - {fileID: 8300000, guid: 31e059a6629b34148a52fbe641511298, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_tear_burst
+    clips:
+    - {fileID: 8300000, guid: 16404c5c7b5b5b44a858c10b5d10edfd, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_tear_full
+    clips:
+    - {fileID: 8300000, guid: 1f265202fd795444783774547cb6d152, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_bluesight_on
+    clips:
+    - {fileID: 8300000, guid: 75dda826d129f3840bbbc8e8512ad785, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_bluesight_off
+    clips:
+    - {fileID: 8300000, guid: 9461fe1e86d9c84409b8d8ba01ed9fb9, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_hazard
+    clips:
+    - {fileID: 8300000, guid: 721e7b9175c8c894989a15cd05f47672, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_fragment
+    clips:
+    - {fileID: 8300000, guid: 3d0e380569607574d95265a3a5b5631f, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_pickup
+    clips:
+    - {fileID: 8300000, guid: 496925c6d2fce354988bc90ee078f707, type: 3}
+    volume: 0.8
+    pitchVariation: 0.08
+  - id: sfx_bomb
+    clips:
+    - {fileID: 8300000, guid: d889835dba4caff4b930f74120715b8f, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_cannon
+    clips:
+    - {fileID: 8300000, guid: e5025d500a4328b4e9614a1dac2e6b0d, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_checkpoint
+    clips:
+    - {fileID: 8300000, guid: 1516c1e9051f622448d67d2fad22ba9e, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_break
+    clips:
+    - {fileID: 8300000, guid: c97ba29fd9d5aa84394c4744bf614f0c, type: 3}
+    volume: 0.8
+    pitchVariation: 0.08
+  - id: sfx_switch
+    clips:
+    - {fileID: 8300000, guid: 8ff98acd4dcf6c34f9173f373de2425a, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_mirror
+    clips:
+    - {fileID: 8300000, guid: 5084ad2e660bff24aaef6bdc174c0666, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_box_pick
+    clips:
+    - {fileID: 8300000, guid: 27a2dfb835964cf49ae13f040f70f287, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_box_deliver
+    clips:
+    - {fileID: 8300000, guid: 3536ea11d4469d446aaa19fb06040242, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_rhythm_hit
+    clips:
+    - {fileID: 8300000, guid: 5b0fe0a5bb70a134a92a7b899a939013, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_rhythm_miss
+    clips:
+    - {fileID: 8300000, guid: 435be7fa1d17943448e221ad8993e7d3, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_boss_warn
+    clips:
+    - {fileID: 8300000, guid: 28927c8421e405a4a9e58c837bad32f3, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_boss_attack
+    clips:
+    - {fileID: 8300000, guid: 0d4918c507274a040b06c73237a94ddf, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_boss_phase
+    clips:
+    - {fileID: 8300000, guid: 55085ce4583a33345899a05cd1575aaf, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_boss_defeat
+    clips:
+    - {fileID: 8300000, guid: 8de6f45b4fccfee49863bd0913264343, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: ui_pause
+    clips:
+    - {fileID: 8300000, guid: 50daf469a89ea4241a55704356f3fd0c, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: ui_unpause
+    clips:
+    - {fileID: 8300000, guid: 3828be0f206309c4ab75a999ce8cca28, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: ui_dialogue
+    clips:
+    - {fileID: 8300000, guid: 00da57fb5beb6e148b9f83180f2cc322, type: 3}
+    volume: 0.8
+    pitchVariation: 0.08
+  - id: jingle_task_new
+    clips:
+    - {fileID: 8300000, guid: e0f38e41bbed59d4d97fbb57de65cdd8, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: jingle_task_done
+    clips:
+    - {fileID: 8300000, guid: 2a01f4eec70560045b6f15c062202b61, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: jingle_task_fail
+    clips:
+    - {fileID: 8300000, guid: 2512e896aabd3174fbab4c32938a39b2, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: jingle_page
+    clips:
+    - {fileID: 8300000, guid: 7d1fa70b4d25986418f6cbec443afe95, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+  - id: sfx_land
+    clips:
+    - {fileID: 8300000, guid: 73ca0481bb07dde49bd04070441f8ee0, type: 3}
+    volume: 0.8
+    pitchVariation: 0

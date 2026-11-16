@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9be1a34b3b09200499edfc1e51c2739e, type: 3}
+  m_Name: Dialogue_P1_Mirror
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  lines:
+  - speaker: {fileID: 11400000, guid: 1082da33e546bda4997571ad75b67f86, type: 2}
+    text: Morning, Pip! Big smile for the mirror...
+  - speaker: {fileID: 0}
+    text: (Something is running down Pip's cheek.)
+  - speaker: {fileID: 11400000, guid: 1082da33e546bda4997571ad75b67f86, type: 2}
+    text: Is that... a tear? Clowns in Tumbleton don't cry. Do they?
+  choices: []
+  setFlagWhenFinished: p1_looked_in_mirror

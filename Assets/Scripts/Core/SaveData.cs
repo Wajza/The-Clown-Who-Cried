@@ -35,11 +35,17 @@ public class SaveData
     /// </summary>
     public List<string> flags = new List<string>();
 
-    /// <summary>IDs of tasks that are started but not finished (Part 3).</summary>
-    public List<string> activeTaskIds = new List<string>();
+    /// <summary>Tasks that are started but not finished, with how far along each one is (Part 3).</summary>
+    public List<TaskProgress> activeTasks = new List<TaskProgress>();
 
     /// <summary>IDs of tasks that are finished (Part 3).</summary>
     public List<string> completedTaskIds = new List<string>();
+
+    /// <summary>IDs of the torn journal pages Pip has found (Part 4).</summary>
+    public List<string> journalPageIds = new List<string>();
+
+    /// <summary>Extra max Smile Stars from story rewards, e.g. +1 for beating Chortle (Part 8). Not from fragments.</summary>
+    public int bonusSmileStars;
 
     // ------------------------------------------------------------------ Flag helpers
 
@@ -53,4 +59,18 @@ public class SaveData
     }
 
     public void ClearFlag(string flag) => flags.Remove(flag);
+}
+
+/// <summary>
+/// One started task in the save file: which task, and which of its objectives Pip is on
+/// (0 = the first). TaskManager writes and reads these.
+/// </summary>
+[Serializable]
+public class TaskProgress
+{
+    public string taskId;
+    public int step;
+
+    /// <summary>Progress inside the current step, for counting objectives ("3" in "3/8"). Part 6.</summary>
+    public int count;
 }

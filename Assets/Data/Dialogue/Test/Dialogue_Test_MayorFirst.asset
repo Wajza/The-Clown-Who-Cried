@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9be1a34b3b09200499edfc1e51c2739e, type: 3}
+  m_Name: Dialogue_Test_MayorFirst
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  lines:
+  - speaker: {fileID: 11400000, guid: 68b55f842e7fd2141a1a01a5e6d0d861, type: 2}
+    text: Hello, Pip! This is a <color=#ffd34d>test</color> conversation.
+  - speaker: {fileID: 11400000, guid: 64911d6ebcb55084082a426703f8858c, type: 2}
+    text: Hi! Can I help?
+  - speaker: {fileID: 11400000, guid: 68b55f842e7fd2141a1a01a5e6d0d861, type: 2}
+    text: Will you help me test the choices?
+  choices:
+  - text: Yes!
+    setFlag: test_said_yes
+    next: {fileID: 11400000, guid: 7b5ed709ba87431499202bcc6ca6f2fe, type: 2}
+  - text: Not now.
+    setFlag: 
+    next: {fileID: 11400000, guid: 2ef3f4e13d0650f42a9fdc6ea2dceed2, type: 2}
+  setFlagWhenFinished: test_met_mayor

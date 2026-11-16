@@ -31,7 +31,7 @@ public enum GameState
 /// Only the Raise methods can fire an event (C# 'event' blocks outside Invoke), which keeps
 /// the code that fires each event easy to find.
 ///
-/// Later parts add more events here (dialogue, tasks, cutscenes).
+/// Each part adds its events here in its own section (Part 2: dialogue, Part 3: tasks, Part 4: menus, Part 8: cutscenes).
 /// </summary>
 public static class GameEvents
 {
@@ -71,6 +71,72 @@ public static class GameEvents
     public static void RaisePlayerRespawned() => PlayerRespawned?.Invoke();
     public static void RaiseGameSaved() => GameSaved?.Invoke();
 
+    // ------------------------------------------------------------------ Dialogue (Part 2)
+
+    /// <summary>Fired with the conversation when the dialogue box opens.</summary>
+    public static event Action<DialogueData> DialogueStarted;
+
+    /// <summary>Fired with the SAME conversation (the one that was started) when the box closes.</summary>
+    public static event Action<DialogueData> DialogueEnded;
+
+    /// <summary>Fired with the NPC's id after a conversation with that NPC finishes. Tasks use this.</summary>
+    public static event Action<string> NpcTalkedTo;
+
+    public static void RaiseDialogueStarted(DialogueData dialogue) => DialogueStarted?.Invoke(dialogue);
+    public static void RaiseDialogueEnded(DialogueData dialogue) => DialogueEnded?.Invoke(dialogue);
+    public static void RaiseNpcTalkedTo(string npcId) => NpcTalkedTo?.Invoke(npcId);
+
+    // ------------------------------------------------------------------ Tasks (Part 3)
+
+    /// <summary>Fired with the task when TaskManager starts it.</summary>
+    public static event Action<TaskData> TaskStarted;
+
+    /// <summary>Fired with the task when one of its objectives is done but the task isn't finished yet.</summary>
+    public static event Action<TaskData> TaskProgressed;
+
+    /// <summary>Fired with the task when its last objective is done (its flags are already set).</summary>
+    public static event Action<TaskData> TaskCompleted;
+
+    /// <summary>
+    /// A named "something happened" for tasks (Part 6): a mirror looked into ("p1_mirror"), an area
+    /// reached ("p2_crossed"), a balloon popped ("p3_balloon"), a pot broken ("p4_pot")...
+    /// World objects raise it; SignalObjectives count it. Nobody else needs to know.
+    /// </summary>
+    public static event Action<string> TaskSignal;
+
+    public static void RaiseTaskSignal(string key) => TaskSignal?.Invoke(key);
+
+    public static void RaiseTaskStarted(TaskData task) => TaskStarted?.Invoke(task);
+    public static void RaiseTaskProgressed(TaskData task) => TaskProgressed?.Invoke(task);
+    public static void RaiseTaskCompleted(TaskData task) => TaskCompleted?.Invoke(task);
+
+    /// <summary>Fired with the task when it's given up (a timed step ran out, Part 7). It can be started again.</summary>
+    public static event Action<TaskData> TaskFailed;
+
+    public static void RaiseTaskFailed(TaskData task) => TaskFailed?.Invoke(task);
+
+    // ------------------------------------------------------------------ Cutscenes (Part 8)
+
+    /// <summary>Fired with the cutscene's name when it starts (Pip is locked, GameState.Cutscene).</summary>
+    public static event Action<string> CutsceneStarted;
+
+    /// <summary>Fired with the cutscene's name when it ends or is skipped.</summary>
+    public static event Action<string> CutsceneEnded;
+
+    public static void RaiseCutsceneStarted(string name) => CutsceneStarted?.Invoke(name);
+    public static void RaiseCutsceneEnded(string name) => CutsceneEnded?.Invoke(name);
+
+    // ------------------------------------------------------------------ Menus and journal (Part 4)
+
+    /// <summary>Fired with true when the game pauses (pause menu or journal) and false when it resumes.</summary>
+    public static event Action<bool> GamePausedChanged;
+
+    /// <summary>Fired with the page when Pip finds a torn journal page.</summary>
+    public static event Action<JournalPageData> JournalPageFound;
+
+    public static void RaiseGamePausedChanged(bool paused) => GamePausedChanged?.Invoke(paused);
+    public static void RaiseJournalPageFound(JournalPageData page) => JournalPageFound?.Invoke(page);
+
     // ------------------------------------------------------------------ Reset
 
     /// <summary>
@@ -87,5 +153,17 @@ public static class GameEvents
         CheckpointReached = null;
         PlayerRespawned = null;
         GameSaved = null;
+        DialogueStarted = null;
+        DialogueEnded = null;
+        NpcTalkedTo = null;
+        TaskStarted = null;
+        TaskSignal = null;
+        TaskFailed = null;
+        TaskProgressed = null;
+        TaskCompleted = null;
+        GamePausedChanged = null;
+        CutsceneStarted = null;
+        CutsceneEnded = null;
+        JournalPageFound = null;
     }
 }

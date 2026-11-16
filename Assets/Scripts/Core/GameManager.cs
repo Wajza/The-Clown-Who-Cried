@@ -26,10 +26,10 @@ public class GameManager : MonoBehaviour
     private string titleSceneName = "Title";
 
     [SerializeField, Tooltip("Scene that New Game starts in.")]
-    private string firstSceneName = "Tumbleton";
+    private string firstSceneName = "Tumbleton_PipHouse";
 
     [SerializeField, Tooltip("Spawn point id New Game uses in that scene. Empty = the scene's default spawn point.")]
-    private string firstSpawnPointId = "";
+    private string firstSpawnPointId = "Bed";
 
     [Header("Saving")]
     [SerializeField, Tooltip("Save automatically every time a new scene is entered through SceneLoader.")]
@@ -100,11 +100,24 @@ public class GameManager : MonoBehaviour
 
     // ------------------------------------------------------------------ Starting and quitting
 
-    /// <summary>Starts a brand-new game. The old save file is only replaced once the game saves.</summary>
-    public void NewGame()
+    /// <summary>Scene that New Game starts in.</summary>
+    public string FirstSceneName => firstSceneName;
+
+    /// <summary>
+    /// Starts a brand-new game. The old save file is only replaced once the game saves.
+    /// Returns false (and changes nothing) if the first scene isn't in the Build Profile scene list.
+    /// </summary>
+    public bool NewGame()
     {
+        if (!Application.CanStreamedLevelBeLoaded(firstSceneName))
+        {
+            Debug.LogError($"GameManager: New Game can't start: scene '{firstSceneName}' is not in the Build Profile scene list.", this);
+            return false;
+        }
+
         Save = new SaveData();
         SceneLoader.Instance.LoadScene(firstSceneName, firstSpawnPointId);
+        return true;
     }
 
     /// <summary>Loads the save file and continues from it. Returns false if there is no usable save.</summary>
@@ -123,6 +136,7 @@ public class GameManager : MonoBehaviour
     public void ReturnToTitle()
     {
         PlayerInputLock.ClearAll(); // Drop any leftover dialogue/cutscene locks.
+        PlayerAbilities.ClearBlocks(); // And any "can't attack while carrying" blocks.
         SceneLoader.Instance.LoadScene(titleSceneName);
     }
 
@@ -135,6 +149,19 @@ public class GameManager : MonoBehaviour
             return;
 
         Save.sceneName = SceneLoader.CurrentSceneName;
+        if (SaveSystem.Write(Save))
+            GameEvents.RaiseGameSaved();
+    }
+
+    /// <summary>
+    /// Saves the game as if Pip were standing at a spawn point in ANOTHER scene, so Continue starts
+    /// there. Used after beating Chortle: Continue puts Pip outside the Laugh Tower, not in the
+    /// End of Demo screen. (SaveGame always uses the current scene.)
+    /// </summary>
+    public void SaveGameAt(string sceneName, string spawnPointId)
+    {
+        Save.sceneName = sceneName;
+        Save.spawnPointId = spawnPointId ?? "";
         if (SaveSystem.Write(Save))
             GameEvents.RaiseGameSaved();
     }
@@ -175,7 +202,9 @@ public class GameManager : MonoBehaviour
         Save.sceneName = sceneName;
         Save.spawnPointId = spawnPointId ?? "";
 
-        if (saveOnSceneEnter && wasRealSceneChange)
+        // Some scenes (e.g. End of Demo) ask not to be saved: Continue must never start there.
+        bool levelAllowsSaving = LevelInfo.Current == null || LevelInfo.Current.SaveOnEnter;
+        if (saveOnSceneEnter && wasRealSceneChange && levelAllowsSaving)
             SaveGame();
     }
 

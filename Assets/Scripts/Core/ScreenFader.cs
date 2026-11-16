@@ -98,4 +98,8 @@ public class ScreenFader : MonoBehaviour
 
         SetAlpha(target);
     }
+
+    // Forget the old instance when Play starts (needed if Domain Reload is turned off).
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics() => Instance = null;
 }

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 189068639114db043bd7d104618a7675, type: 3}
+  m_Name: Task_P4_ReflexCheck
+  m_EditorClassIdentifier: Assembly-CSharp::TaskData
+  id: p4_reflex_check
+  title: Reflex Check
+  description: Old Tumbles wants to see how quick Pip is.
+  objectives:
+  - {fileID: 11400000, guid: 708fd79106bdc7d45b55bcd1d9e0f9ad, type: 2}
+  setFlagWhenComplete: 
+  unlockOnStart: 00000000
+  unlockOnComplete: 
+  city: 0
+  boardOrder: 4
+  showOnTaskBoard: 1
+  testOnly: 0
