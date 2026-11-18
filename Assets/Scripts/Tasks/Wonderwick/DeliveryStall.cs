@@ -6,7 +6,8 @@ using UnityEngine;
 /// served, and the task signal "w1_delivered" is sent (the task counts 5 of them).
 ///
 /// Each stall takes ONE box per attempt. If the task fails (time ran out) or starts again, every
-/// stall is ready again.
+/// stall is ready again. A served stall is REMEMBERED for the current attempt (SavedState), so
+/// leaving W1 and coming back doesn't empty the stalls (teammate's change).
 ///
 /// Setup: a GameObject with a stall sprite, a trigger BoxCollider2D (the counter Pip walks
 /// into), this script, the W1 task, and optionally a "Served Marker" child (e.g. a green flag).
@@ -24,7 +25,7 @@ public class DeliveryStall : MonoBehaviour
     private void Awake()
     {
         GetComponent<Collider2D>().isTrigger = true;
-        SetServed(false);
+        SetServed(SavedState.Get(ServedKey)); // Still served if this attempt already delivered here.
         GameEvents.TaskStarted += OnTaskReset;
         GameEvents.TaskFailed += OnTaskReset;
     }
@@ -53,8 +54,12 @@ public class DeliveryStall : MonoBehaviour
         box.Deliver();
         AudioManager.Play(SoundIds.BoxDeliver);
         SetServed(true);
+        SavedState.Set(ServedKey);
         GameEvents.RaiseTaskSignal(signalKey);
     }
+
+    // Wiped by SavedState when the task fails or starts again.
+    private string ServedKey => SavedState.TaskKey(task, "served_" + SavedState.ObjectId(this));
 
     private void SetServed(bool served)
     {

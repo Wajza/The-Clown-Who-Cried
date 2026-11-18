@@ -4892,6 +4892,7 @@ GameObject:
   - component: {fileID: 5470167192684448091}
   - component: {fileID: 4509053104558503421}
   - component: {fileID: 7950929151171648072}
+  - component: {fileID: 2264119732431807981}
   m_Layer: 7
   m_Name: Pip
   m_TagString: Untagged
@@ -5273,6 +5274,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MalletSwingVisual
   swingSprite: {fileID: 4866435783729073171}
   color: {r: 1, g: 1, b: 0.85, a: 0.45}
+--- !u!114 &2264119732431807981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1420371116168578081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f54845d750f1597499e591bbb8d4306d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCarryOver
 --- !u!1 &3257029056065395192
 GameObject:
   m_ObjectHideFlags: 0

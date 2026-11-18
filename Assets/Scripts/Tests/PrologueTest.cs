@@ -86,8 +86,11 @@ public class PrologueTest : SystemTestBase
         Hit("Balloon_1");
         Check("Balloons ignore hits before P3", GameObject.Find("Balloon_1") != null);
 
+        Check("Before P2: no Dash, no coins, no mallet", !ActionEnabled("Dash") && !ActionEnabled("Throw") && !ActionEnabled("Swing"));
         yield return Talk("NPC_OfficerHonk");
         Check("Officer Honk gives P2 (after P1)", Tasks.IsActive(p2));
+        yield return null; // PlayerAbilities applies in LateUpdate.
+        Check("...and teaches Dash", ActionEnabled("Dash") && !ActionEnabled("Throw"));
 
         // The bumper cars drive around and hurt Pip.
         Transform car = GameObject.Find("BumperCar_1").transform;
@@ -116,6 +119,8 @@ public class PrologueTest : SystemTestBase
     {
         yield return Talk("NPC_BalloonBetty");
         Check("Betty gives P3 (after P2)", Tasks.IsActive(p3));
+        yield return null;
+        Check("...and the Star Coins (Throw works now)", ActionEnabled("Throw"));
         Check("Tracker counts: 'Pop the balloons (0/8)'", Tasks.GetObjectiveText(p3) == "Pop the balloons (0/8)");
         Check("Balloon wall is closed", WallUp("TaskGate_BalloonWall"));
 
@@ -158,7 +163,31 @@ public class PrologueTest : SystemTestBase
         Hit("Pot_5_Pogo");
         yield return null;
         Check("All 5 pots finish P4", TaskManager.IsCompleted(p4));
-        Check("The station gate opens after P1-P4", !WallUp("TaskGate_Station"));
+        yield return DoctorsVisit();
+    }
+
+    // ------------------------------------------------------------------ P5 (teammate: the doctor's office)
+
+    private IEnumerator DoctorsVisit()
+    {
+        TaskData p5 = Tasks.FindTask("p5_doctor_visit");
+        Check("Finishing P4 starts P5 'Doctor's Visit'", p5 != null && Tasks.IsActive(p5));
+        Check("The station stays closed until the doctor's visit", WallUp("TaskGate_Station"));
+        Check("No Tear Burst before the doctor", !ActionEnabled("TearBurst"));
+
+        yield return MovePipTo(X("DoctorDoor"), FloorY);
+        Check("The doctor's door opens after P4", InteractionInput.Instance.TryInteract());
+        yield return WaitForScene("Tumbleton_DoctorOffice");
+        yield return Use("NPC_DrMellow");
+        yield return null;
+        Check("Talking to the doctor finishes P5", p5 != null && TaskManager.IsCompleted(p5));
+        Check("...and teaches Tear Burst", ActionEnabled("TearBurst") && GameManager.Instance.Save.HasFlag("ability_tearburst"));
+
+        yield return MovePipTo(X("FrontDoor"), FloorY);
+        Check("The office door leads back to town", InteractionInput.Instance.TryInteract());
+        yield return WaitForScene("Tumbleton");
+        CheckNear("Back outside the doctor's door", PipPosition(), SpawnPoint.Find("FromDoctor").Position);
+        Check("The station gate opens after P1-P5", !WallUp("TaskGate_Station"));
     }
 
     // ------------------------------------------------------------------ After
@@ -169,9 +198,10 @@ public class PrologueTest : SystemTestBase
         yield return null;
         JournalUI journal = MenuController.Instance.Journal;
         journal.SetTab((int)TaskData.City.Tumbleton);
-        Check("Journal: all four prologue tasks done",
+        Check("Journal: all five prologue tasks done",
             journal.ListText.Contains("[x] Wake Up") && journal.ListText.Contains("[x] Cross Honk Street") &&
-            journal.ListText.Contains("[x] Pop the Balloon Wall") && journal.ListText.Contains("[x] Reflex Check"));
+            journal.ListText.Contains("[x] Pop the Balloon Wall") && journal.ListText.Contains("[x] Reflex Check") &&
+            journal.ListText.Contains("[x] Doctor's Visit"));
         MenuController.Instance.CloseAll();
         yield return null;
 

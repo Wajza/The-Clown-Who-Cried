@@ -14,6 +14,9 @@ using UnityEngine.Events;
 ///
 /// Starting: tick "Start On Player Enter" and give this object a trigger collider covering
 /// the room, or call StartWaves() from another script. It only ever runs once.
+///
+/// Remembering: give it a Save Id and every cleared wave is saved. Leaving and coming back
+/// continues from the next wave, and a finished spawner stays finished (no reset rooms).
 /// </summary>
 public class WaveSpawner : MonoBehaviour
 {
@@ -35,6 +38,8 @@ public class WaveSpawner : MonoBehaviour
     private bool startOnPlayerEnter = true;
     [SerializeField, Tooltip("Optional effect shown where each enemy appears (e.g. a puff of smoke).")]
     private GameObject spawnEffectPrefab;
+    [SerializeField, Tooltip("Optional. Set it (unique, e.g. 'w3_riders') to remember cleared waves in the save.")]
+    private string saveId;
 
     [Header("Events (hook up doors, music, etc.)")]
     [SerializeField] private UnityEvent onWavesStarted;
@@ -57,6 +62,17 @@ public class WaveSpawner : MonoBehaviour
 
     private readonly List<EnemyBase> _alive = new List<EnemyBase>();
     private int _nextSpawnPoint;
+
+    private string WaveKey(int index) => $"waves_{saveId}_{index}";
+    private string DoneKey => $"waves_{saveId}_done";
+    private bool Remembers => !string.IsNullOrEmpty(saveId);
+
+    private void Awake()
+    {
+        // Already beaten in this save? Then this room stays cleared.
+        if (Remembers && SavedState.Get(DoneKey))
+            IsCleared = true;
+    }
 
     /// <summary>Starts the fight. Does nothing if it is already running or finished.</summary>
     public void StartWaves()
@@ -87,6 +103,9 @@ public class WaveSpawner : MonoBehaviour
 
         for (int i = 0; i < waves.Count; i++)
         {
+            if (Remembers && SavedState.Get(WaveKey(i)))
+                continue; // Cleared on an earlier visit: carry on from the next wave.
+
             Wave wave = waves[i];
             CurrentWave = i;
             yield return new WaitForSeconds(wave.delayBefore);
@@ -107,7 +126,13 @@ public class WaveSpawner : MonoBehaviour
                 _alive.RemoveAll(enemy => enemy == null || enemy.IsPopped);
                 yield return null;
             }
+
+            if (Remembers)
+                SavedState.Set(WaveKey(i));
         }
+
+        if (Remembers)
+            SavedState.Set(DoneKey);
 
         IsRunning = false;
         IsCleared = true;

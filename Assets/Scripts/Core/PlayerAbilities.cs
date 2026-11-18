@@ -6,11 +6,12 @@ using UnityEngine.InputSystem;
 /// <summary>Pip's abilities that the story unlocks, or that something can block for a while.</summary>
 public enum Ability
 {
-    Mallet,     // Swing (and pogo). Given in P4 "Reflex Check".
-    Coins,      // Throw Star Coins. Available from the start.
-    Dash,       // Dash. Available from the start.
+    Mallet,     // Swing (and pogo). Given in P4 "Reflex Check" (Old Tumbles).
+    Coins,      // Throw Star Coins. Given in P3 "Pop the Balloon Wall" (Balloon Betty).
+    Dash,       // Dash. Given in P2 "Cross Honk Street" (Officer Honk).
     BlueSight,  // Blue Sight. Given in W2 "Crooked Mirror Maze".
     JuggleShot, // Coin upgrade: throw up to 3 at once. Reward for W3 "Runaway Coaster".
+    TearBurst,  // Tear Burst. Learned at the doctor's office (P5 "Doctor's Visit"). (Added last: keeps saved enum numbers.)
 }
 
 /// <summary>
@@ -23,8 +24,9 @@ public enum Ability
 ///
 /// TWO REASONS AN ABILITY CAN BE OFF
 ///   1. Not earned yet. Earned abilities are flags in the save: "ability_mallet",
-///      "ability_bluesight", "ability_juggle". Give one with PlayerAbilities.Unlock(Ability.Mallet)
-///      (from a task reward, dialogue flag or cutscene). Coins and Dash start unlocked.
+///      "ability_coins", "ability_dash", "ability_bluesight", "ability_juggle", "ability_tearburst".
+///      Give one with PlayerAbilities.Unlock(Ability.Mallet)
+///      (from a task reward, dialogue flag or cutscene). Only Move and Jump work from the start.
 ///      This only applies in MY levels: scenes whose LevelInfo has "Lock Abilities Until Earned"
 ///      ticked. Everywhere else (my teammate's test scenes, my test scenes) everything works.
 ///   2. Blocked for a while, e.g. while carrying a box in W1: Block(owner, Mallet, Coins, Dash)
@@ -47,12 +49,18 @@ public class PlayerAbilities : MonoBehaviour
         { Ability.Coins, "Throw" },
         { Ability.Dash, "Dash" },
         { Ability.BlueSight, "BlueSight" },
+        { Ability.TearBurst, "TearBurst" },
     };
 
-    // Save flags for abilities that must be earned. Others start unlocked.
+    // Save flags for abilities that must be earned. (Move and Jump always work.)
+    // Teammate: Coins, Dash and Tear Burst are now earned too, so nothing works in the prologue
+    // until it's taught there (Dash P2, Coins P3, Mallet P4, Tear Burst at the doctor's).
     private static readonly Dictionary<Ability, string> UnlockFlags = new Dictionary<Ability, string>
     {
         { Ability.Mallet, "ability_mallet" },
+        { Ability.Coins, "ability_coins" },
+        { Ability.Dash, "ability_dash" },
+        { Ability.TearBurst, "ability_tearburst" },
         { Ability.BlueSight, "ability_bluesight" },
         { Ability.JuggleShot, "ability_juggle" },
     };

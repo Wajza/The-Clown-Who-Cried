@@ -55,7 +55,11 @@ public class CarryableBox : Interactable
     {
         Release();
         gameObject.SetActive(false);
+        SavedState.Set(DeliveredKey); // Stays delivered if Pip leaves W1 and comes back (teammate's change).
     }
+
+    // Wiped by SavedState when the task fails or starts again (the box comes back then).
+    private string DeliveredKey => SavedState.TaskKey(onlyWhileTaskActive, "delivered_" + SavedState.ObjectId(this));
 
     /// <summary>Back to where it started (and visible again).</summary>
     public void ReturnHome()
@@ -86,6 +90,13 @@ public class CarryableBox : Interactable
         GameEvents.TaskFailed += OnTaskReset;
         GameEvents.PlayerRespawned += OnPlayerRespawned;
         GameEvents.SceneLoadStarted += OnSceneLoadStarted;
+    }
+
+    // Delivered during this attempt before Pip left the level? Then it's still gone.
+    private void Start()
+    {
+        if (SavedState.Get(DeliveredKey))
+            gameObject.SetActive(false);
     }
 
     private void OnDestroy()

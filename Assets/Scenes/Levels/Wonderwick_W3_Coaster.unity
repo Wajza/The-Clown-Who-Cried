@@ -1227,6 +1227,7 @@ GameObject:
   - component: {fileID: 492812317}
   - component: {fileID: 492812316}
   - component: {fileID: 492812319}
+  - component: {fileID: 492812320}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1400,6 +1401,14 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!81 &492812320
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 492812314}
+  m_Enabled: 1
 --- !u!1 &500434114
 GameObject:
   m_ObjectHideFlags: 0
@@ -4913,6 +4922,7 @@ MonoBehaviour:
     spawnInterval: 0.4
   startOnPlayerEnter: 0
   spawnEffectPrefab: {fileID: 0}
+  saveId: w3_riders
   onWavesStarted:
     m_PersistentCalls:
       m_Calls: []

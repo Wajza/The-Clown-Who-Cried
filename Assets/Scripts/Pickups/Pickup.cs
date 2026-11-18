@@ -26,6 +26,10 @@ public abstract class Pickup : MonoBehaviour
     [SerializeField, Min(0f), Tooltip("Bobs per second.")]
     private float bobSpeed = 0.75f;
 
+    [Header("Remembering")]
+    [SerializeField, Tooltip("Optional, unique per pickup placed in a level (e.g. 'w2_candy_1'). Once collected, it stays collected after leaving the level. Leave empty for enemy drops.")]
+    private string saveId;
+
     [Header("Feedback")]
     [SerializeField, Tooltip("Runs when collected. Hook up particles or a one-shot sound here in the Inspector.")]
     private UnityEvent onCollected;
@@ -58,6 +62,12 @@ public abstract class Pickup : MonoBehaviour
 
     protected virtual void Awake()
     {
+        if (!string.IsNullOrEmpty(saveId) && SavedState.Get(CollectedKey))
+        {
+            gameObject.SetActive(false); // Collected on an earlier visit.
+            return;
+        }
+
         if (visual == null)
             visual = transform;
 
@@ -77,6 +87,8 @@ public abstract class Pickup : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other) => TryCollect(other);
     private void OnTriggerStay2D(Collider2D other) => TryCollect(other);
 
+    private string CollectedKey => $"pickup_{saveId}";
+
     // ------------------------------------------------------------------ Collecting
 
     private void TryCollect(Collider2D other)
@@ -89,6 +101,8 @@ public abstract class Pickup : MonoBehaviour
             return;
 
         _collected = true;
+        if (!string.IsNullOrEmpty(saveId))
+            SavedState.Set(CollectedKey);
         onCollected?.Invoke();
         AnyCollected?.Invoke(this);
 

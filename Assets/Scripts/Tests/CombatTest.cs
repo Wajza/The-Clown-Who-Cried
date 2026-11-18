@@ -12,6 +12,7 @@ using UnityEngine.InputSystem.LowLevel;
 ///   3. Spikes: landing on them costs a star and puts Pip back on safe ground.
 ///   4. Dying inside the pots area: Pip respawns at a checkpoint and the camera follows her.
 ///   5. The prologue checkpoints, the Console log (PlayerDebugLog) and the Controls menu screen.
+///   6. Pip keeps her stars and Tear Gauge through a door (PlayerCarryOver); one AudioListener.
 ///
 /// Run: Tools > Clown Who Cried > Combat > Run Test (or CombatSetup.RunTestsFromCommandLine in
 /// batch mode). Results: Logs/CombatTestResults.txt.
@@ -69,6 +70,7 @@ public class CombatTest : SystemTestBase
             yield return Spikes();
             yield return DeathInThePotsArea();
             yield return ControlsScreenAndCheckpoints();
+            yield return StateSurvivesDoors();
         }
         finally
         {
@@ -85,6 +87,11 @@ public class CombatTest : SystemTestBase
         // Before the mallet is earned, K is ignored, and the Console log says why.
         yield return MovePipTo(96f, FloorY);
         Check("Swing is off before the mallet is earned", !ActionEnabled("Swing"));
+        Check("Throw and Dash are off too before the prologue teaches them", !ActionEnabled("Throw") && !ActionEnabled("Dash"));
+        int listeners = 0;
+        foreach (AudioListener l in FindObjectsByType<AudioListener>(FindObjectsInactive.Exclude))
+            if (l.enabled) listeners++;
+        Check($"The level has exactly one active AudioListener ({listeners})", listeners == 1);
         _logs.Clear();
         yield return Hold(Key.K, 0.1f);
         Check("The log explains an ignored Swing press", LogContains("Pressed Swing", "IGNORED", "Old Tumbles"));
@@ -216,6 +223,28 @@ public class CombatTest : SystemTestBase
         Check("Back returns to the pause menu", menu.Current == MenuController.Screen.Pause);
         menu.CloseAll();
         yield return null;
+    }
+
+    // ------------------------------------------------------------------ 6. Through a door
+
+    private IEnumerator StateSurvivesDoors()
+    {
+        PlayerHealth health = Pip.GetComponent<PlayerHealth>();
+        health.TakeHazardDamage(); // -1 star (and +20 tears).
+        TearGauge gauge = Pip.GetComponent<TearGauge>();
+        gauge.Add(30);
+        int stars = health.CurrentStars, tears = gauge.Value;
+
+        _sceneLoaded = null;
+        SceneLoader.Instance.LoadScene("Tumbleton_PipHouse", "FromTown");
+        yield return WaitForScene("Tumbleton_PipHouse");
+        yield return WaitUntil(() => !SceneLoader.Instance.IsLoading, 5f, "the fade-in");
+        yield return new WaitForSeconds(0.3f);
+
+        health = Pip.GetComponent<PlayerHealth>();
+        gauge = Pip.GetComponent<TearGauge>();
+        Check($"Stars survive a door ({stars} -> {health.CurrentStars})", health.CurrentStars == stars);
+        Check($"The Tear Gauge survives a door ({tears} -> {gauge.Value})", gauge.Value == tears);
     }
 
     // ------------------------------------------------------------------ Helpers

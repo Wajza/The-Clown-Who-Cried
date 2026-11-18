@@ -76,6 +76,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IStunnable
     private List<Drop> drops = new List<Drop>();
     [SerializeField, Tooltip("Tag of pit triggers. Falling into one pops the enemy (no drop).")]
     private string pitTag = "Pit";
+    [SerializeField, Tooltip("Optional, unique per enemy PLACED in a level (e.g. 'w2_jack_1'): once popped it stays popped. Leave empty for wave enemies.")]
+    private string saveId;
 
     // ------------------------------------------------------------------ Public API
 
@@ -149,6 +151,13 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IStunnable
 
     protected virtual void OnEnable()
     {
+        if (!string.IsNullOrEmpty(saveId) && SavedState.Get(PoppedKey))
+        {
+            IsPopped = true;
+            gameObject.SetActive(false); // Popped on an earlier visit.
+            return;
+        }
+
         // Reset everything, so an enemy can also be re-used (pooled or respawned).
         Health = maxHealth;
         IsPopped = false;
@@ -321,9 +330,13 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IStunnable
         if (allowDrop)
             TryDrop();
 
+        if (!string.IsNullOrEmpty(saveId))
+            SavedState.Set(PoppedKey);
         Popped?.Invoke(this);
         gameObject.SetActive(false); // No death animation: it just pops.
     }
+
+    private string PoppedKey => $"popped_{saveId}";
 
     private void TryDrop()
     {

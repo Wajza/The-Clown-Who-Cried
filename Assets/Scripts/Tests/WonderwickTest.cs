@@ -56,6 +56,9 @@ public class WonderwickTest : SystemTestBase
 
         yield return WaitUntil(() => GameManager.Instance != null && _sceneLoaded != null, 5f, "first SceneLoaded");
         Check("New Game starts", GameManager.Instance.NewGame());
+        // This test jumps straight to Wonderwick: give Pip what the prologue teaches (Dash P2, Coins P3).
+        PlayerAbilities.Unlock(Ability.Dash);
+        PlayerAbilities.Unlock(Ability.Coins);
         yield return WaitForScene("Tumbleton_PipHouse");
 
         yield return Go("Wonderwick_W1_Delivery");

@@ -18,5 +18,8 @@ MonoBehaviour:
   - speaker: {fileID: 11400000, guid: bd7a17e8574df2347a003396da4a7477, type: 2}
     text: Make it to the other side without a bump and I'll call you the bravest
       clown in town!
+  - speaker: {fileID: 11400000, guid: bd7a17e8574df2347a003396da4a7477, type: 2}
+    text: 'Here''s a trick every brave clown knows: DASH! A quick zip, and those
+      cars won''t touch you.'
   choices: []
   setFlagWhenFinished: 

@@ -210,6 +210,25 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         return true;
     }
 
+    /// <summary>
+    /// Puts back stars and shield exactly as they were (PlayerCarryOver uses it when Pip changes
+    /// scene). Clamped to 1..MaxStars; never revives a dead Pip.
+    /// </summary>
+    public void RestoreState(int stars, bool shield)
+    {
+        if (IsDead)
+            return;
+
+        CurrentStars = Mathf.Clamp(stars, 1, MaxStars);
+        StarsChanged?.Invoke(CurrentStars, MaxStars);
+
+        if (HasShield != shield)
+        {
+            HasShield = shield;
+            ShieldChanged?.Invoke(shield);
+        }
+    }
+
     /// <summary>Gives a Balloon Shield. Returns false if Pip already has one (only one at a time).</summary>
     public bool GiveShield()
     {

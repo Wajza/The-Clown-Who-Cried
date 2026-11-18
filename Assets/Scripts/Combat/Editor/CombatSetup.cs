@@ -28,6 +28,8 @@ using P6 = Part6Setup;
 ///   6. Pip prefab extras: the Console log (PlayerDebugLog) and the placeholder swing (MalletSwingVisual).
 ///   7. Prologue checkpoints after each challenge (Pip's house, then after P2, P3 and P4 in Tumbleton).
 ///   8. Rebuilds the GameSystems prefab (Sarah's builder), which includes the Controls menu screen.
+///   9. Story additions (StorySetup): AudioListeners everywhere, prologue ability lessons, the doctor's office.
+///  10. W3's riders remember cleared waves (WaveSpawner Save Id), so the room never resets.
 /// Steps 3-7 are skipped where already done.
 ///
 /// To swap in real art later: replace the sprites on the prefabs' child objects (e.g. Pip/Visual/Sprite).
@@ -63,6 +65,8 @@ public static class CombatSetup
         AddScreenEffectsToLevels();
         UpgradePipPrefab();
         AddPrologueCheckpoints();
+        StorySetup.RunEverything();
+        RememberW3Waves();
         GameSystemsPrefabBuilder.Build();
         AssetDatabase.SaveAssets();
         Debug.Log("CombatSetup: done.");
@@ -260,6 +264,11 @@ public static class CombatSetup
             pip.AddComponent<PlayerDebugLog>();
             changed = true;
         }
+        if (pip.GetComponent<PlayerCarryOver>() == null)
+        {
+            pip.AddComponent<PlayerCarryOver>(); // Stars, shield, Tear Gauge... survive doors.
+            changed = true;
+        }
         if (pip.GetComponent<MalletSwingVisual>() == null)
         {
             // Directly under Pip (not under Visual, which squash & stretch scales).
@@ -284,7 +293,7 @@ public static class CombatSetup
             if (AddPipExtras(root))
             {
                 PrefabUtility.SaveAsPrefabAsset(root, path);
-                Debug.Log("CombatSetup: Pip prefab now has PlayerDebugLog and MalletSwingVisual.");
+                Debug.Log("CombatSetup: added the missing extras (log, carry-over, swing visual) to the Pip prefab.");
             }
         }
         finally
@@ -807,6 +816,23 @@ public static class CombatSetup
 
             EditorSceneManager.SaveScene(scene);
         }
+    }
+
+    private static void RememberW3Waves()
+    {
+        Scene? opened = OpenLevel("Wonderwick_W3_Coaster");
+        if (opened == null)
+            return;
+        WaveSpawner spawner = P6.FindNamed<WaveSpawner>("WaveSpawner_Riders");
+        if (spawner == null)
+            return;
+        var so = new SerializedObject(spawner);
+        if (!string.IsNullOrEmpty(so.FindProperty("saveId").stringValue))
+            return;
+        so.FindProperty("saveId").stringValue = "w3_riders";
+        so.ApplyModifiedPropertiesWithoutUndo();
+        EditorSceneManager.SaveScene(opened.Value);
+        Debug.Log("CombatSetup: W3 riders remember cleared waves.");
     }
 
     // ------------------------------------------------------------------ 7. Prologue checkpoints

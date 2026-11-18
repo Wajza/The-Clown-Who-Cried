@@ -78,7 +78,7 @@ public static class Part8Setup
             (null, "Tumbleton. The happiest town in the whole wide world."),
             (null, "Everyone here smiles. All day. Every day."));
         DialogueData opening2 = Talk("Dialogue_CS_Opening_2",
-            (pip, "Mmm... morning already? Something feels... wet."));
+            (pip, "Mmm... morning already? Something feels... wrong with me."));
 
         // ---- Chortle intro (Laugh Tower)
         DialogueData intro1 = Talk("Dialogue_CS_ChortleIntro_1",

@@ -74,5 +74,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Tests/CombatTest.unity
     guid: dacb2786d024ea040b865abcf71d31b5
+  - enabled: 1
+    path: Assets/Scenes/Levels/Tumbleton_DoctorOffice.unity
+    guid: ffd8543903ea5774d93f55007eff049a
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
