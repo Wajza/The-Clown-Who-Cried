@@ -72,8 +72,8 @@ public class CombatTest : SystemTestBase
         _keyboard = InputSystem.AddDevice<Keyboard>();
         try
         {
-            yield return Animations();
             yield return Mallet();
+            yield return Animations(); // After Mallet: it unlocks Dash, which Mallet checks is still locked.
             yield return CameraLeavesThePotsArea();
             yield return Spikes();
             yield return DeathInThePotsArea();
@@ -116,6 +116,15 @@ public class CombatTest : SystemTestBase
         Check("Jumping plays Jump", !Pip.IsGrounded && animator.GetCurrentAnimatorStateInfo(0).IsName("Pip_Jump"));
         yield return new WaitForSeconds(1.2f);                              // ...and land.
         Check("Landing goes back to Idle", Pip.IsGrounded && animator.GetCurrentAnimatorStateInfo(0).IsName("Pip_Idle"));
+
+        PlayerAbilities.Unlock(Ability.Dash); // What Officer Honk teaches in P2.
+        yield return null;
+        InputSystem.QueueStateEvent(_keyboard, new KeyboardState(Key.LeftShift)); // Dash...
+        yield return new WaitForSeconds(0.06f);
+        Check("Dashing plays Dash", Pip.IsDashing && animator.GetCurrentAnimatorStateInfo(0).IsName("Pip_Dash"));
+        InputSystem.QueueStateEvent(_keyboard, new KeyboardState());
+        yield return new WaitForSeconds(0.4f);                                    // ...and stop.
+        Check("After the dash Pip is back to Idle", !Pip.IsDashing && animator.GetCurrentAnimatorStateInfo(0).IsName("Pip_Idle"));
     }
 
     // ------------------------------------------------------------------ 1. Mallet

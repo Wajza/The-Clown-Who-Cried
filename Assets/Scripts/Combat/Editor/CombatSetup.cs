@@ -36,6 +36,8 @@ using P6 = Part6Setup;
 ///      and "SwingSpeed" so the clip lasts exactly one swing.
 ///  13. The Jump animation: a "Grounded" bool; Idle/Walk -> Pip_Jump in the air, back to Idle on
 ///      landing. Pip_Jump starts as a PLACEHOLDER clip (one Walk frame) that the artist replaces.
+///  14. The Dash animation: a "Dashing" bool; any state -> Pip_Dash while dashing, back to Idle
+///      after. Pip_Dash is also a PLACEHOLDER clip (one Walk frame) for the artist to replace.
 /// Steps 3-7 are skipped where already done.
 ///
 /// To swap in real art later: replace the sprites on the prefabs' child objects (e.g. Pip/Visual/Sprite).
@@ -76,6 +78,7 @@ public static class CombatSetup
         WirePipAnimations();
         WireMalletAnimation();
         WireJumpAnimation();
+        WireDashAnimation();
         GameSystemsPrefabBuilder.Build();
         AssetDatabase.SaveAssets();
         Debug.Log("CombatSetup: done.");
@@ -988,26 +991,82 @@ public static class CombatSetup
     }
 
     /// <summary>Pip_Jump.anim: loads it, or creates the placeholder (one Walk frame, looping).</summary>
-    private static AnimationClip PlaceholderJumpClip()
+    private static AnimationClip PlaceholderJumpClip() =>
+        PlaceholderClip(JumpClipPath, "Assets/Art/Pip Animation/Jump", "Pip_Jump", JumpPlaceholderFrame);
+
+    private const string DashClipPath = "Assets/Art/Pip Animation/Dash/Pip_Dash.anim";
+    private const string DashPlaceholderFrame = "Assets/Art/Pip Animation/Walk/Timeline 1_0006.png";
+
+    /// <summary>
+    /// Dash: a "Dashing" bool (PipAnimator sets it). While Pip dashes, ANY state switches to Pip_Dash
+    /// (on the ground or in the air); when the dash ends it goes to Idle, and Jump/Walk take over
+    /// from there if she is in the air or moving. Skipped once the controller has "Dashing".
+    ///
+    /// Pip_Dash.anim is a PLACEHOLDER (one Walk frame) until the artist draws a dash: replace the
+    /// clip's frames (or the whole file, keeping its name) and nothing else changes.
+    /// </summary>
+    private static void WireDashAnimation()
     {
-        var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(JumpClipPath);
+        var controller = AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController>(PipControllerPath);
+        if (controller == null)
+            return;
+        foreach (AnimatorControllerParameter p in controller.parameters)
+            if (p.name == "Dashing")
+                return; // Already wired.
+
+        UnityEditor.Animations.AnimatorStateMachine machine = controller.layers[0].stateMachine;
+        UnityEditor.Animations.AnimatorState idle = null;
+        foreach (UnityEditor.Animations.ChildAnimatorState child in machine.states)
+            if (child.state.name == "Pip_Idle")
+                idle = child.state;
+        if (idle == null)
+        {
+            Debug.LogWarning("CombatSetup: Pip's controller has no Pip_Idle state; dash not wired.");
+            return;
+        }
+
+        AnimationClip clip = PlaceholderClip(DashClipPath, "Assets/Art/Pip Animation/Dash", "Pip_Dash", DashPlaceholderFrame);
+        controller.AddParameter("Dashing", AnimatorControllerParameterType.Bool);
+        UnityEditor.Animations.AnimatorState dash = machine.AddState("Pip_Dash");
+        dash.motion = clip;
+
+        UnityEditor.Animations.AnimatorStateTransition start = machine.AddAnyStateTransition(dash);
+        start.hasExitTime = false;
+        start.duration = 0f;
+        start.canTransitionToSelf = false; // Stay in Dash for the whole dash (no restart every frame).
+        start.AddCondition(UnityEditor.Animations.AnimatorConditionMode.If, 0f, "Dashing");
+
+        UnityEditor.Animations.AnimatorStateTransition end = dash.AddTransition(idle);
+        end.hasExitTime = false;
+        end.duration = 0f;
+        end.AddCondition(UnityEditor.Animations.AnimatorConditionMode.IfNot, 0f, "Dashing");
+
+        EditorUtility.SetDirty(controller);
+        AssetDatabase.SaveAssets();
+        Debug.Log("CombatSetup: Pip's Dash animation (placeholder) now plays while she dashes.");
+    }
+
+    /// <summary>Loads a clip, or creates a looping PLACEHOLDER clip that shows one sprite.</summary>
+    private static AnimationClip PlaceholderClip(string path, string folder, string name, string framePath)
+    {
+        var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(path);
         if (clip != null)
             return clip;
 
-        Part1Setup.EnsureFolder("Assets/Art/Pip Animation/Jump");
-        clip = new AnimationClip { name = "Pip_Jump", frameRate = 12f };
+        Part1Setup.EnsureFolder(folder);
+        clip = new AnimationClip { name = name, frameRate = 12f };
         var settings = AnimationUtility.GetAnimationClipSettings(clip);
         settings.loopTime = true;
         AnimationUtility.SetAnimationClipSettings(clip, settings);
 
         // The Animator sits on the Sprite object itself, so the path is "" (this object).
         var binding = EditorCurveBinding.PPtrCurve("", typeof(SpriteRenderer), "m_Sprite");
-        Sprite frame = AssetDatabase.LoadAssetAtPath<Sprite>(JumpPlaceholderFrame);
+        Sprite frame = AssetDatabase.LoadAssetAtPath<Sprite>(framePath);
         AnimationUtility.SetObjectReferenceCurve(clip, binding, new[]
         {
             new ObjectReferenceKeyframe { time = 0f, value = frame },
         });
-        AssetDatabase.CreateAsset(clip, JumpClipPath);
+        AssetDatabase.CreateAsset(clip, path);
         return clip;
     }
 
