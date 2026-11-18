@@ -54,6 +54,13 @@ public class CombatTest : SystemTestBase
         yield return WaitForScene("Tumbleton");
         Check("Pip is the real prefab (has the mallet)", Pip != null && Pip.GetComponent<PlayerMallet>() != null);
 
+        // The animation art (800px frames) must show at Pip's real size, standing on the floor.
+        yield return new WaitForSeconds(0.3f);
+        Bounds art = Pip.GetComponentInChildren<SpriteRenderer>().bounds;
+        Check($"Pip's sprite is about her collider's size ({art.size.x:F2} x {art.size.y:F2} tiles)", art.size.y > 1.1f && art.size.y < 2.3f);
+        Check($"...and her feet are on the floor (sprite bottom {art.min.y - Pip.transform.position.y:F2} from her feet)",
+            Mathf.Abs(art.min.y - Pip.transform.position.y) < 0.35f);
+
         // In batch mode there is no focused Game view, and by default the Input System ignores
         // input while the game isn't focused. Let the virtual keyboard through for this test.
         InputSettings settings = InputSystem.settings;
