@@ -122,6 +122,9 @@ public class PlayerMallet : MonoBehaviour
 
     private float SwingTotalTime => windupTime + activeTime + recoveryTime;
 
+    /// <summary>Seconds one whole swing takes (wind-up + hit + recovery). PipAnimator fits the animation to it.</summary>
+    public float SwingDuration => SwingTotalTime;
+
     // ------------------------------------------------------------------ Unity lifecycle
 
     private void Awake()
