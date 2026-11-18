@@ -25,7 +25,10 @@ using P6 = Part6Setup;
 ///      floating platforms, rubber-chicken cannons, stage points and clone points.
 ///   4. Wonderwick_W3_Coaster: the "runaway riders" waves.
 ///   5. Every level: the Blue Sight / washed-out screen Volumes, and post-processing on the camera.
-/// Steps 3-5 are skipped where already done.
+///   6. Pip prefab extras: the Console log (PlayerDebugLog) and the placeholder swing (MalletSwingVisual).
+///   7. Prologue checkpoints after each challenge (Pip's house, then after P2, P3 and P4 in Tumbleton).
+///   8. Rebuilds the GameSystems prefab (Sarah's builder), which includes the Controls menu screen.
+/// Steps 3-7 are skipped where already done.
 ///
 /// To swap in real art later: replace the sprites on the prefabs' child objects (e.g. Pip/Visual/Sprite).
 /// </summary>
@@ -58,6 +61,9 @@ public static class CombatSetup
         SetUpChortleArena();
         FillW3Waves();
         AddScreenEffectsToLevels();
+        UpgradePipPrefab();
+        AddPrologueCheckpoints();
+        GameSystemsPrefabBuilder.Build();
         AssetDatabase.SaveAssets();
         Debug.Log("CombatSetup: done.");
     }
@@ -73,6 +79,46 @@ public static class CombatSetup
         s_overwritePrefabs = true;
         try { RunEverything(); }
         finally { s_overwritePrefabs = false; }
+    }
+
+    private const string TestScenePath = "Assets/Scenes/Tests/CombatTest.unity";
+
+    [MenuItem("Tools/Clown Who Cried/Combat/Run Test (play mode)")]
+    public static void RunTestInEditor()
+    {
+        RunEverything();
+        BuildTestScene();
+        EditorSceneManager.OpenScene(TestScenePath);
+        EditorApplication.EnterPlaymode();
+    }
+
+    /// <summary>For batch mode: set up, then play CombatTest (it exits Unity with 0 = passed, 1 = failed).</summary>
+    public static void RunTestsFromCommandLine()
+    {
+        RunEverything();
+        BuildTestScene();
+        if (Part1Setup.CheckMissingScripts() > 0)
+        {
+            EditorApplication.Exit(1);
+            return;
+        }
+        EditorSceneManager.OpenScene(TestScenePath);
+        EditorApplication.EnterPlaymode();
+    }
+
+    private static void BuildTestScene()
+    {
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        var cam = new GameObject("Main Camera", typeof(Camera));
+        cam.tag = "MainCamera";
+        cam.GetComponent<Camera>().orthographic = true;
+        cam.transform.position = new Vector3(0f, 0f, -10f);
+
+        var driver = new GameObject("Combat Test Driver").AddComponent<CombatTest>();
+        Set(driver, ("timeout", 120f));
+
+        EditorSceneManager.SaveScene(scene, TestScenePath);
+        Part1Setup.AddScenesToBuildProfile(TestScenePath);
     }
 
     /// <summary>For batch mode: runs everything, then exits with 1 if any scene/prefab has a missing script.</summary>
@@ -201,7 +247,50 @@ public static class CombatSetup
         ParticleSystem dash = Particles(pip.transform, "DashDust", new Vector3(0f, -90f, 0f), 20f, dustColor, 1.5f, 3f, -0.1f, 0, false);
         dash.transform.localPosition = new Vector3(0f, 0.1f, 0f);
         Set(pip.AddComponent<PlayerDust>(), ("jumpDust", jump), ("landDust", land), ("dashDust", dash));
+        AddPipExtras(pip);
         return pip;
+    }
+
+    /// <summary>The Console log and the placeholder swing. Safe to call again (adds only what's missing).</summary>
+    private static bool AddPipExtras(GameObject pip)
+    {
+        bool changed = false;
+        if (pip.GetComponent<PlayerDebugLog>() == null)
+        {
+            pip.AddComponent<PlayerDebugLog>();
+            changed = true;
+        }
+        if (pip.GetComponent<MalletSwingVisual>() == null)
+        {
+            // Directly under Pip (not under Visual, which squash & stretch scales).
+            GameObject swing = P6.Box(pip.transform, "MalletSwing", Vector2.zero, Vector2.one, Color.white, 11);
+            swing.layer = pip.layer;
+            swing.GetComponent<SpriteRenderer>().enabled = false;
+            Set(pip.AddComponent<MalletSwingVisual>(), ("swingSprite", swing.GetComponent<SpriteRenderer>()));
+            changed = true;
+        }
+        return changed;
+    }
+
+    /// <summary>Adds the extras to an EXISTING Pip prefab, keeping any edits made to it.</summary>
+    private static void UpgradePipPrefab()
+    {
+        string path = $"{PrefabFolder}/Player/Pip.prefab";
+        if (!File.Exists(path))
+            return;
+        GameObject root = PrefabUtility.LoadPrefabContents(path);
+        try
+        {
+            if (AddPipExtras(root))
+            {
+                PrefabUtility.SaveAsPrefabAsset(root, path);
+                Debug.Log("CombatSetup: Pip prefab now has PlayerDebugLog and MalletSwingVisual.");
+            }
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+        }
     }
 
     private static PhysicsMaterial2D NoFrictionMaterial()
@@ -718,6 +807,37 @@ public static class CombatSetup
 
             EditorSceneManager.SaveScene(scene);
         }
+    }
+
+    // ------------------------------------------------------------------ 7. Prologue checkpoints
+
+    private const string CheckpointRootName = "Checkpoints (Combat)";
+
+    /// <summary>A checkpoint after each prologue challenge, so dying doesn't send Pip far back.</summary>
+    private static void AddPrologueCheckpoints()
+    {
+        AddCheckpoints("Tumbleton_PipHouse", ("PipHouse_Mirror", 16f));        // After P1's mirror.
+        AddCheckpoints("Tumbleton",
+            ("Tumbleton_AfterHonkStreet", 44.5f),                             // After P2 (the far kerb).
+            ("Tumbleton_AfterBalloonWall", 59f),                              // After P3 (behind the balloon wall).
+            ("Tumbleton_AfterReflexCheck", 88f));                             // After P4 (right of the spikes).
+    }
+
+    private static void AddCheckpoints(string level, params (string id, float x)[] checkpoints)
+    {
+        Scene? opened = OpenLevel(level);
+        if (opened == null)
+            return;
+        if (GameObject.Find(CheckpointRootName) != null)
+            return; // Already added.
+
+        Sprite square = Part1Setup.GetOrCreatePlaceholderSprite();
+        var root = new GameObject(CheckpointRootName).transform;
+        foreach ((string id, float x) in checkpoints)
+            Part1Setup.AddCheckpoint(id, new Vector2(x, 0f), square).transform.SetParent(root);
+
+        EditorSceneManager.SaveScene(opened.Value);
+        Debug.Log($"CombatSetup: {checkpoints.Length} checkpoint(s) added to {level}.");
     }
 
     // ------------------------------------------------------------------ Helpers

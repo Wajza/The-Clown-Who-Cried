@@ -8,9 +8,10 @@ using UnityEngine.UI;
 /// Opens and closes the menu screens and pauses the game while they're open.
 ///
 /// SCREENS
-///   Pause     Resume / Journal / Settings / Quit to Title
+///   Pause     Resume / Journal / Settings / Controls / Quit to Title
 ///   Journal   Task Board, torn pages, Star Fragments (JournalUI)
-///   Settings  volumes and game-feel options (SettingsMenu)
+///   Settings  volumes and game-feel options (SettingsMenu); also has a Controls button
+///   Controls  every button for every action (ControlsScreen)
 ///
 /// BUTTONS (SystemInput)
 ///   Pause (Esc / Start):     gameplay -> pause menu; pause menu -> resume; other screens -> back
@@ -32,7 +33,7 @@ using UnityEngine.UI;
 /// </summary>
 public class MenuController : MonoBehaviour
 {
-    public enum Screen { None, Pause, Journal, Settings }
+    public enum Screen { None, Pause, Journal, Settings, Controls }
 
     // ------------------------------------------------------------------ Inspector fields
 
@@ -47,6 +48,8 @@ public class MenuController : MonoBehaviour
     [Header("Other screens")]
     [SerializeField] private JournalUI journal;
     [SerializeField] private SettingsMenu settings;
+    [SerializeField, Tooltip("Optional: the Controls screen.")]
+    private ControlsScreen controls;
 
     // ------------------------------------------------------------------ Public API
 
@@ -67,6 +70,7 @@ public class MenuController : MonoBehaviour
     public Button QuitToTitleButton => quitToTitleButton;
     public JournalUI Journal => journal;
     public SettingsMenu Settings => settings;
+    public ControlsScreen Controls => controls;
 
     /// <summary>True when a menu may pause the game right now.</summary>
     public static bool CanPause
@@ -97,6 +101,13 @@ public class MenuController : MonoBehaviour
 
     /// <summary>Opens Settings: from the pause menu, or from the title screen (no pausing there).</summary>
     public void OpenSettings() => Show(Screen.Settings, remember: Current != Screen.None);
+
+    /// <summary>Opens the Controls list: from the pause menu or from Settings (also on the title screen).</summary>
+    public void OpenControls()
+    {
+        if (controls != null)
+            Show(Screen.Controls, remember: Current != Screen.None);
+    }
 
     /// <summary>One screen back. Leaving the last screen closes the menus (and resumes).</summary>
     public void Back()
@@ -183,12 +194,15 @@ public class MenuController : MonoBehaviour
         pausePanel.SetActive(screen == Screen.Pause);
         journal.gameObject.SetActive(screen == Screen.Journal);
         settings.gameObject.SetActive(screen == Screen.Settings);
+        if (controls != null)
+            controls.gameObject.SetActive(screen == Screen.Controls);
 
         // Tell the EventSystem which button is highlighted, so keyboard/gamepad work at once.
         GameObject select = screen switch
         {
             Screen.Pause => resumeButton.gameObject,
             Screen.Settings => settings.FirstSelectable,
+            Screen.Controls => controls != null ? controls.FirstSelectable : null,
             _ => null, // The Journal reads the keys itself.
         };
         if (EventSystem.current != null)
