@@ -81,6 +81,9 @@ public class PlayerCoinThrower : MonoBehaviour
     /// <summary>True while a damage boost (Confetti Popper) is active.</summary>
     public bool DamageBoostActive => Time.time < _boostEndsAt;
 
+    /// <summary>The damage boost's multiplier while it's active (e.g. 1.5), otherwise 1.</summary>
+    public float DamageBoostMultiplier => DamageBoostActive ? _boostMultiplier : 1f;
+
     /// <summary>Seconds left on the damage boost (0 when none). For a UI timer.</summary>
     public float DamageBoostTimeLeft => Mathf.Max(0f, _boostEndsAt - Time.time);
 

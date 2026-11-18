@@ -17,5 +17,8 @@ MonoBehaviour:
     text: Oh no, oh no! My balloons got stuck and made a wall across the road!
   - speaker: {fileID: 11400000, guid: e81380d622d5954479c4e3a4f27653d7, type: 2}
     text: Could you pop them with your Star Coins? All eight of them!
+  - speaker: {fileID: 11400000, guid: e81380d622d5954479c4e3a4f27653d7, type: 2}
+    text: Here, take my lucky Star Coins! Throw them, and they always come back to
+      you.
   choices: []
   setFlagWhenFinished: 

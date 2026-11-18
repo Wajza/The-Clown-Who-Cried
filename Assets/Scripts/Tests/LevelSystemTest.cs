@@ -159,13 +159,17 @@ public class LevelSystemTest : SystemTestBase
         yield return null; // PlayerAbilities applies in LateUpdate.
         Check("Mallet locked at the start (Swing off)", !ActionEnabled("Swing") && !PlayerAbilities.CanUse(Ability.Mallet));
         Check("Blue Sight locked at the start", !ActionEnabled("BlueSight"));
-        Check("Coins and Dash work from the start", ActionEnabled("Throw") && ActionEnabled("Dash"));
+        Check("Coins and Dash locked at the start (taught in the prologue)", !ActionEnabled("Throw") && !ActionEnabled("Dash"));
         Check("Movement unaffected", ActionEnabled("Move") && ActionEnabled("Jump"));
         Check("HUD hides the Blue Sight meter", !FindAnyObjectByType<HudBlueSight>().ContentVisible);
 
         PlayerAbilities.Unlock(Ability.Mallet);
         yield return null;
         Check("Unlocking the mallet turns Swing on", ActionEnabled("Swing"));
+        PlayerAbilities.Unlock(Ability.Coins); // What P3 and P2 teach.
+        PlayerAbilities.Unlock(Ability.Dash);
+        yield return null;
+        Check("Unlocking Coins and Dash turns Throw and Dash on", ActionEnabled("Throw") && ActionEnabled("Dash"));
         Check("Unlock is saved as a flag", GameManager.Instance.Save.HasFlag("ability_mallet") &&
             SaveSystem.Read()?.HasFlag("ability_mallet") == true);
 

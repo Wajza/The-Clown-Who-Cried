@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueData
   lines:
   - speaker: {fileID: 11400000, guid: 1082da33e546bda4997571ad75b67f86, type: 2}
-    text: Mmm... morning already? Something feels... wet.
+    text: Mmm... morning already? Something feels... wrong with me.
   choices: []
   setFlagWhenFinished: 

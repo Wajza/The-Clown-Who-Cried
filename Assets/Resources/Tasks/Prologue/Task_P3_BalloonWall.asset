@@ -18,7 +18,7 @@ MonoBehaviour:
   objectives:
   - {fileID: 11400000, guid: 2fe53f0a260fb97429ee8684010a9400, type: 2}
   setFlagWhenComplete: 
-  unlockOnStart: 
+  unlockOnStart: 01000000
   unlockOnComplete: 
   city: 0
   boardOrder: 3
