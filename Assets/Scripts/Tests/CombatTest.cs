@@ -79,6 +79,7 @@ public class CombatTest : SystemTestBase
             yield return DeathInThePotsArea();
             yield return ControlsScreenAndCheckpoints();
             yield return StateSurvivesDoors();
+            yield return ChortleIdles();
         }
         finally
         {
@@ -296,6 +297,33 @@ public class CombatTest : SystemTestBase
         gauge = Pip.GetComponent<TearGauge>();
         Check($"Stars survive a door ({stars} -> {health.CurrentStars})", health.CurrentStars == stars);
         Check($"The Tear Gauge survives a door ({tears} -> {gauge.Value})", gauge.Value == tears);
+    }
+
+    // ------------------------------------------------------------------ 7. Chortle
+
+    private IEnumerator ChortleIdles()
+    {
+        _sceneLoaded = null;
+        SceneLoader.Instance.LoadScene("ChortleArena", "Start");
+        yield return WaitForScene("ChortleArena");
+        yield return new WaitForSeconds(0.5f);
+
+        ChortleBoss chortle = FindAnyObjectByType<ChortleBoss>();
+        Animator animator = chortle != null ? chortle.GetComponentInChildren<Animator>() : null;
+        Check("Chortle has an Animator (from his prefab)", animator != null && animator.runtimeAnimatorController != null);
+        if (animator == null)
+            yield break;
+        Check("Chortle plays his Idle animation", animator.GetCurrentAnimatorStateInfo(0).IsName("Chortle_Idle"));
+
+        // The frames really change (10 frames at 25 per second).
+        SpriteRenderer sprite = animator.GetComponent<SpriteRenderer>();
+        var seen = new System.Collections.Generic.HashSet<Sprite>();
+        for (int i = 0; i < 20; i++)
+        {
+            seen.Add(sprite.sprite);
+            yield return new WaitForSeconds(0.03f);
+        }
+        Check($"Chortle's frames change ({seen.Count} different frames seen)", seen.Count >= 3);
     }
 
     // ------------------------------------------------------------------ Helpers
