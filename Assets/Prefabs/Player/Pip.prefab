@@ -4893,6 +4893,7 @@ GameObject:
   - component: {fileID: 4509053104558503421}
   - component: {fileID: 7950929151171648072}
   - component: {fileID: 2264119732431807981}
+  - component: {fileID: 4757916976253977317}
   m_Layer: 7
   m_Name: Pip
   m_TagString: Untagged
@@ -5286,6 +5287,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f54845d750f1597499e591bbb8d4306d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCarryOver
+--- !u!114 &4757916976253977317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1420371116168578081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1a1e9cc34659d545b52857dbe763367, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PipAnimator
+  animator: {fileID: 0}
 --- !u!1 &3257029056065395192
 GameObject:
   m_ObjectHideFlags: 0
@@ -15051,6 +15065,28 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!95 &1028738902827367110
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5463648075089130234}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 83be473535c090749bbedde6b287cab6, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5560314429069597638
 GameObject:
   m_ObjectHideFlags: 0
@@ -15175,25 +15211,3 @@ Transform:
   - {fileID: 2761607660339878067}
   m_Father: {fileID: 5999948592470118260}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &1028738902827367110
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5463648075089130234}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 83be473535c090749bbedde6b287cab6, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
