@@ -72,6 +72,7 @@ public class CombatTest : SystemTestBase
         _keyboard = InputSystem.AddDevice<Keyboard>();
         try
         {
+            yield return Animations();
             yield return Mallet();
             yield return CameraLeavesThePotsArea();
             yield return Spikes();
@@ -85,6 +86,28 @@ public class CombatTest : SystemTestBase
             settings.backgroundBehavior = oldBackground;
             settings.editorInputBehaviorInPlayMode = oldEditor;
         }
+    }
+
+    // ------------------------------------------------------------------ 0. Animations
+
+    private IEnumerator Animations()
+    {
+        Animator animator = Pip.GetComponentInChildren<Animator>();
+        Check("Pip has an Animator with a controller", animator != null && animator.runtimeAnimatorController != null);
+        if (animator == null)
+            yield break;
+
+        yield return MovePipTo(99f, FloorY);
+        yield return new WaitForSeconds(0.2f);
+        Check("Standing still plays Idle", animator.GetCurrentAnimatorStateInfo(0).IsName("Pip_Idle"));
+
+        InputSystem.QueueStateEvent(_keyboard, new KeyboardState(Key.D)); // Hold right...
+        yield return new WaitForSeconds(0.3f);
+        Check("Walking plays Walk", animator.GetCurrentAnimatorStateInfo(0).IsName("Pip_Walk"));
+
+        InputSystem.QueueStateEvent(_keyboard, new KeyboardState());       // ...and let go.
+        yield return new WaitForSeconds(0.4f);
+        Check("Stopping goes back to Idle", animator.GetCurrentAnimatorStateInfo(0).IsName("Pip_Idle"));
     }
 
     // ------------------------------------------------------------------ 1. Mallet

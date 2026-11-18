@@ -30,6 +30,8 @@ using P6 = Part6Setup;
 ///   8. Rebuilds the GameSystems prefab (Sarah's builder), which includes the Controls menu screen.
 ///   9. Story additions (StorySetup): AudioListeners everywhere, prologue ability lessons, the doctor's office.
 ///  10. W3's riders remember cleared waves (WaveSpawner Save Id), so the room never resets.
+///  11. Pip's animations: a "Speed" parameter and Idle <-> Walk transitions in the artist's
+///      controller, and PipAnimator on Pip to feed it.
 /// Steps 3-7 are skipped where already done.
 ///
 /// To swap in real art later: replace the sprites on the prefabs' child objects (e.g. Pip/Visual/Sprite).
@@ -67,6 +69,7 @@ public static class CombatSetup
         AddPrologueCheckpoints();
         StorySetup.RunEverything();
         RememberW3Waves();
+        WirePipAnimations();
         GameSystemsPrefabBuilder.Build();
         AssetDatabase.SaveAssets();
         Debug.Log("CombatSetup: done.");
@@ -262,6 +265,11 @@ public static class CombatSetup
         if (pip.GetComponent<PlayerDebugLog>() == null)
         {
             pip.AddComponent<PlayerDebugLog>();
+            changed = true;
+        }
+        if (pip.GetComponent<PipAnimator>() == null)
+        {
+            pip.AddComponent<PipAnimator>(); // Idle/Walk follow her movement.
             changed = true;
         }
         if (pip.GetComponent<PlayerCarryOver>() == null)
@@ -816,6 +824,56 @@ public static class CombatSetup
 
             EditorSceneManager.SaveScene(scene);
         }
+    }
+
+    private const string PipControllerPath = "Assets/Art/Pip Animation/Walk/Sprite.controller";
+
+    /// <summary>
+    /// The artist's controller has Idle, Walk and Mallet states but nothing that switches between
+    /// them. Adds a float "Speed" and Idle <-> Walk transitions (instant, no exit time); Idle is
+    /// the starting state. Leaves everything else (e.g. Mallet) alone. Skipped once done.
+    /// </summary>
+    private static void WirePipAnimations()
+    {
+        var controller = AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController>(PipControllerPath);
+        if (controller == null)
+        {
+            Debug.LogWarning($"CombatSetup: {PipControllerPath} not found; Pip's animations not wired.");
+            return;
+        }
+        foreach (AnimatorControllerParameter p in controller.parameters)
+            if (p.name == "Speed")
+                return; // Already wired (maybe edited by hand since).
+
+        UnityEditor.Animations.AnimatorStateMachine machine = controller.layers[0].stateMachine;
+        UnityEditor.Animations.AnimatorState idle = null, walk = null;
+        foreach (UnityEditor.Animations.ChildAnimatorState child in machine.states)
+        {
+            if (child.state.name == "Pip_Idle") idle = child.state;
+            if (child.state.name == "Pip_Walk") walk = child.state;
+        }
+        if (idle == null || walk == null)
+        {
+            Debug.LogWarning("CombatSetup: Pip's controller has no Pip_Idle / Pip_Walk state; not wired.");
+            return;
+        }
+
+        controller.AddParameter("Speed", AnimatorControllerParameterType.Float);
+        machine.defaultState = idle;
+        Transition(idle, walk, UnityEditor.Animations.AnimatorConditionMode.Greater);
+        Transition(walk, idle, UnityEditor.Animations.AnimatorConditionMode.Less);
+        EditorUtility.SetDirty(controller);
+        AssetDatabase.SaveAssets();
+        Debug.Log("CombatSetup: Pip's Idle/Walk animations now follow her Speed.");
+    }
+
+    private static void Transition(UnityEditor.Animations.AnimatorState from, UnityEditor.Animations.AnimatorState to,
+                                   UnityEditor.Animations.AnimatorConditionMode mode)
+    {
+        UnityEditor.Animations.AnimatorStateTransition t = from.AddTransition(to);
+        t.hasExitTime = false;  // Switch the moment Pip starts/stops, not at the end of the loop.
+        t.duration = 0f;        // Pixel art: no blending between frames.
+        t.AddCondition(mode, 0.1f, "Speed");
     }
 
     private static void RememberW3Waves()
