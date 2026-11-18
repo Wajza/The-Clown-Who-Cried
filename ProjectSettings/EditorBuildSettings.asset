@@ -71,5 +71,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Tests/AudioTest.unity
     guid: 096f5f2b2639c4549abe2b375d580349
+  - enabled: 1
+    path: Assets/Scenes/Tests/CombatTest.unity
+    guid: dacb2786d024ea040b865abcf71d31b5
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

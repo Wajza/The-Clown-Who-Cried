@@ -30,6 +30,9 @@ public class StarCoin : MonoBehaviour
     [SerializeField, Tooltip("Spin speed of the sprite in degrees per second (visual only).")]
     private float spinSpeed = 720f;
 
+    /// <summary>Fired when any coin hits something (wall or target), with what it hit. For logs/sounds.</summary>
+    public static event Action<StarCoin, Collider2D> AnyHit;
+
     private LaunchData _data;
     private float _distanceLeft;
     private bool _inFlight;
@@ -74,6 +77,8 @@ public class StarCoin : MonoBehaviour
     private void OnHit(RaycastHit2D hit)
     {
         // Walls simply stop the coin; anything IDamageable also takes damage.
+        AnyHit?.Invoke(this, hit.collider);
+
         IDamageable target = hit.collider.GetComponentInParent<IDamageable>();
         if (target != null)
         {

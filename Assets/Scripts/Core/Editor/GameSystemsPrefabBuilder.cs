@@ -390,21 +390,23 @@ public static class GameSystemsPrefabBuilder
         canvas.AddComponent<GraphicRaycaster>(); // Mouse clicks on buttons.
         var menu = canvas.AddComponent<MenuController>();
 
-        // ---- Pause menu: dimmed screen, a box with 4 buttons.
+        // ---- Pause menu: dimmed screen, a box with 5 buttons.
         Image pause = CreateImage("PausePanel", canvas.transform, new Color(0f, 0f, 0f, 0.55f));
         Stretch(pause.rectTransform);
         Image pauseBox = CreateImage("Box", pause.transform, MenuBoxColor);
-        Place(pauseBox.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(150f, 110f));
+        Place(pauseBox.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(150f, 128f));
         TMP_Text pauseTitle = CreateText("Title", pauseBox.transform, "PAUSED", PlaceholderArt.FontSize, TextAlignmentOptions.Center);
         Place(pauseTitle.rectTransform, new Vector2(0.5f, 1f), new Vector2(0f, -8f), new Vector2(140f, 10f));
-        RectTransform buttons = CreateButtonColumn(pauseBox.transform, new Vector2(0f, -26f), 4);
+        RectTransform buttons = CreateButtonColumn(pauseBox.transform, new Vector2(0f, -26f), 5);
         Button resume = CreateButton("ResumeButton", buttons, "Resume", menu.CloseAll);
         Button journalButton = CreateButton("JournalButton", buttons, "Journal", menu.OpenJournal);
         Button settingsButton = CreateButton("SettingsButton", buttons, "Settings", menu.OpenSettings);
+        CreateButton("ControlsButton", buttons, "Controls", menu.OpenControls); // Teammate: the Controls list.
         Button quit = CreateButton("QuitToTitleButton", buttons, "Quit to Title", menu.QuitToTitle);
 
         JournalUI journal = BuildJournal(canvas.transform);
         SettingsMenu settings = BuildSettings(canvas.transform, menu);
+        ControlsScreen controls = BuildControls(canvas.transform, menu);
 
         var so = new SerializedObject(menu);
         so.FindProperty("pausePanel").objectReferenceValue = pause.gameObject;
@@ -414,11 +416,13 @@ public static class GameSystemsPrefabBuilder
         so.FindProperty("quitToTitleButton").objectReferenceValue = quit;
         so.FindProperty("journal").objectReferenceValue = journal;
         so.FindProperty("settings").objectReferenceValue = settings;
+        so.FindProperty("controls").objectReferenceValue = controls;
         so.ApplyModifiedPropertiesWithoutUndo();
 
         pause.gameObject.SetActive(false);
         journal.gameObject.SetActive(false);
         settings.gameObject.SetActive(false);
+        controls.gameObject.SetActive(false);
 
         // ---- One EventSystem for the whole game (keyboard/gamepad/mouse on menu buttons).
         // InputSystemUIInputModule uses the Input System's default UI keys when it has none set.
@@ -482,7 +486,9 @@ public static class GameSystemsPrefabBuilder
         Toggle hitPause = SettingsToggleRow(panel.transform, "Hit pause", 4);
 
         Button back = CreateButton("BackButton", panel.transform, "Back", menu.Back);
-        Place((RectTransform)back.transform, new Vector2(0.5f, 0f), new Vector2(0f, 8f), new Vector2(80f, 14f));
+        Place((RectTransform)back.transform, new Vector2(0.5f, 0f), new Vector2(45f, 8f), new Vector2(80f, 14f));
+        Button controlsButton = CreateButton("ControlsButton", panel.transform, "Controls", menu.OpenControls);
+        Place((RectTransform)controlsButton.transform, new Vector2(0.5f, 0f), new Vector2(-45f, 8f), new Vector2(80f, 14f));
 
         var so = new SerializedObject(settings);
         so.FindProperty("musicSlider").objectReferenceValue = music;
@@ -495,6 +501,38 @@ public static class GameSystemsPrefabBuilder
         so.FindProperty("shakeStrengthValue").objectReferenceValue = shakeValue;
         so.ApplyModifiedPropertiesWithoutUndo();
         return settings;
+    }
+
+    /// <summary>
+    /// Full-screen Controls list (teammate's ControlsScreen): every action with its keyboard/mouse
+    /// and gamepad buttons, read from the input assets when it opens. Back returns to the previous screen.
+    /// </summary>
+    private static ControlsScreen BuildControls(Transform canvas, MenuController menu)
+    {
+        Image panel = CreateImage("ControlsPanel", canvas, new Color(0.1f, 0.08f, 0.15f, 1f));
+        Stretch(panel.rectTransform);
+        var controls = panel.gameObject.AddComponent<ControlsScreen>();
+
+        TMP_Text title = CreateText("Title", panel.transform, "CONTROLS", PlaceholderArt.FontSize, TextAlignmentOptions.Center);
+        SetRect(title.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(8f, -16f), new Vector2(-8f, -6f));
+        title.color = new Color(1f, 0.85f, 0.3f);
+
+        TMP_Text list = CreateText("List", panel.transform, "", PlaceholderArt.FontSize, TextAlignmentOptions.TopLeft);
+        SetRect(list.rectTransform, Vector2.zero, Vector2.one, new Vector2(14f, 26f), new Vector2(-10f, -24f));
+        list.lineSpacing = 30f;
+
+        Button back = CreateButton("BackButton", panel.transform, "Back", menu.Back);
+        Place((RectTransform)back.transform, new Vector2(0.5f, 0f), new Vector2(0f, 6f), new Vector2(80f, 14f));
+
+        var so = new SerializedObject(controls);
+        so.FindProperty("playerControls").objectReferenceValue =
+            AssetDatabase.LoadAssetAtPath<UnityEngine.InputSystem.InputActionAsset>("Assets/Scripts/Player/PlayerControls.inputactions");
+        so.FindProperty("systemControls").objectReferenceValue =
+            AssetDatabase.LoadAssetAtPath<UnityEngine.InputSystem.InputActionAsset>(SystemControlsPath);
+        so.FindProperty("listText").objectReferenceValue = list;
+        so.FindProperty("backButton").objectReferenceValue = back;
+        so.ApplyModifiedPropertiesWithoutUndo();
+        return controls;
     }
 
     private static float RowY(int row) => -26f - row * 18f;

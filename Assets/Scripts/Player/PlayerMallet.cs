@@ -84,6 +84,17 @@ public class PlayerMallet : MonoBehaviour
     /// <summary>Direction of the current (or last) swing.</summary>
     public SwingDirection CurrentDirection { get; private set; }
 
+    /// <summary>
+    /// True while the hitbox is live; gives its world-space centre and size (for the swing visual).
+    /// </summary>
+    public bool TryGetActiveHitbox(out Vector2 center, out Vector2 size)
+    {
+        float elapsed = Time.time - _swingStartTime;
+        bool active = IsSwinging && elapsed >= windupTime && elapsed < windupTime + activeTime;
+        GetHitboxWorld(CurrentDirection, _swingFacing, out center, out size);
+        return active;
+    }
+
     /// <summary>Fired when a swing starts. Use it to play the right swing animation.</summary>
     public event Action<SwingDirection> SwingStarted;
 
