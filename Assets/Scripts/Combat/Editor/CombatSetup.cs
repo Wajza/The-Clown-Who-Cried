@@ -34,6 +34,8 @@ using P6 = Part6Setup;
 ///      controller, and PipAnimator on Pip to feed it.
 ///  12. The Mallet animation: a "Swing" trigger (any state -> Mallet, back to Idle at the end)
 ///      and "SwingSpeed" so the clip lasts exactly one swing.
+///  13. The Jump animation: a "Grounded" bool; Idle/Walk -> Pip_Jump in the air, back to Idle on
+///      landing. Pip_Jump starts as a PLACEHOLDER clip (one Walk frame) that the artist replaces.
 /// Steps 3-7 are skipped where already done.
 ///
 /// To swap in real art later: replace the sprites on the prefabs' child objects (e.g. Pip/Visual/Sprite).
@@ -73,6 +75,7 @@ public static class CombatSetup
         RememberW3Waves();
         WirePipAnimations();
         WireMalletAnimation();
+        WireJumpAnimation();
         GameSystemsPrefabBuilder.Build();
         AssetDatabase.SaveAssets();
         Debug.Log("CombatSetup: done.");
@@ -922,6 +925,90 @@ public static class CombatSetup
         EditorUtility.SetDirty(controller);
         AssetDatabase.SaveAssets();
         Debug.Log("CombatSetup: Pip's Mallet animation now plays on each swing.");
+    }
+
+    private const string JumpClipPath = "Assets/Art/Pip Animation/Jump/Pip_Jump.anim";
+    private const string JumpPlaceholderFrame = "Assets/Art/Pip Animation/Walk/Timeline 1_0003.png";
+
+    /// <summary>
+    /// Jump: a "Grounded" bool (PipAnimator sets it). In the air (jumping or falling) Idle and Walk
+    /// switch to Pip_Jump; landing goes back to Idle (Walk follows if she's moving). Mallet swings
+    /// still work in the air (from any state). Skipped once the controller has "Grounded".
+    ///
+    /// Pip_Jump.anim is a PLACEHOLDER (one mid-stride Walk frame) until the artist draws a jump:
+    /// replace the clip's frames (or the whole file, keeping its name) and nothing else changes.
+    /// </summary>
+    private static void WireJumpAnimation()
+    {
+        var controller = AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController>(PipControllerPath);
+        if (controller == null)
+            return;
+        foreach (AnimatorControllerParameter p in controller.parameters)
+            if (p.name == "Grounded")
+                return; // Already wired.
+
+        UnityEditor.Animations.AnimatorStateMachine machine = controller.layers[0].stateMachine;
+        UnityEditor.Animations.AnimatorState idle = null, walk = null;
+        foreach (UnityEditor.Animations.ChildAnimatorState child in machine.states)
+        {
+            if (child.state.name == "Pip_Idle") idle = child.state;
+            if (child.state.name == "Pip_Walk") walk = child.state;
+        }
+        if (idle == null || walk == null)
+        {
+            Debug.LogWarning("CombatSetup: Pip's controller has no Pip_Idle / Pip_Walk state; jump not wired.");
+            return;
+        }
+
+        AnimationClip clip = PlaceholderJumpClip();
+        controller.AddParameter(new AnimatorControllerParameter
+        {
+            name = "Grounded",
+            type = AnimatorControllerParameterType.Bool,
+            defaultBool = true,
+        });
+        UnityEditor.Animations.AnimatorState jump = machine.AddState("Pip_Jump");
+        jump.motion = clip;
+
+        foreach (UnityEditor.Animations.AnimatorState from in new[] { idle, walk })
+        {
+            UnityEditor.Animations.AnimatorStateTransition t = from.AddTransition(jump);
+            t.hasExitTime = false;
+            t.duration = 0f;
+            t.AddCondition(UnityEditor.Animations.AnimatorConditionMode.IfNot, 0f, "Grounded");
+        }
+        UnityEditor.Animations.AnimatorStateTransition land = jump.AddTransition(idle);
+        land.hasExitTime = false;
+        land.duration = 0f;
+        land.AddCondition(UnityEditor.Animations.AnimatorConditionMode.If, 0f, "Grounded");
+
+        EditorUtility.SetDirty(controller);
+        AssetDatabase.SaveAssets();
+        Debug.Log("CombatSetup: Pip's Jump animation (placeholder) now plays in the air.");
+    }
+
+    /// <summary>Pip_Jump.anim: loads it, or creates the placeholder (one Walk frame, looping).</summary>
+    private static AnimationClip PlaceholderJumpClip()
+    {
+        var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(JumpClipPath);
+        if (clip != null)
+            return clip;
+
+        Part1Setup.EnsureFolder("Assets/Art/Pip Animation/Jump");
+        clip = new AnimationClip { name = "Pip_Jump", frameRate = 12f };
+        var settings = AnimationUtility.GetAnimationClipSettings(clip);
+        settings.loopTime = true;
+        AnimationUtility.SetAnimationClipSettings(clip, settings);
+
+        // The Animator sits on the Sprite object itself, so the path is "" (this object).
+        var binding = EditorCurveBinding.PPtrCurve("", typeof(SpriteRenderer), "m_Sprite");
+        Sprite frame = AssetDatabase.LoadAssetAtPath<Sprite>(JumpPlaceholderFrame);
+        AnimationUtility.SetObjectReferenceCurve(clip, binding, new[]
+        {
+            new ObjectReferenceKeyframe { time = 0f, value = frame },
+        });
+        AssetDatabase.CreateAsset(clip, JumpClipPath);
+        return clip;
     }
 
     private static void Transition(UnityEditor.Animations.AnimatorState from, UnityEditor.Animations.AnimatorState to,
