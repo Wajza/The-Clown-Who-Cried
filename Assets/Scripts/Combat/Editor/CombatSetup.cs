@@ -38,6 +38,8 @@ using P6 = Part6Setup;
 ///      landing. Pip_Jump starts as a PLACEHOLDER clip (one Walk frame) that the artist replaces.
 ///  14. The Dash animation: a "Dashing" bool; any state -> Pip_Dash while dashing, back to Idle
 ///      after. Pip_Dash is also a PLACEHOLDER clip (one Walk frame) for the artist to replace.
+///  15. Chortle's Idle animation lives IN the Chortle prefab (the artist had added the Animator to
+///      the arena's copy only), so every Chortle animates.
 /// Steps 3-7 are skipped where already done.
 ///
 /// To swap in real art later: replace the sprites on the prefabs' child objects (e.g. Pip/Visual/Sprite).
@@ -79,6 +81,7 @@ public static class CombatSetup
         WireMalletAnimation();
         WireJumpAnimation();
         WireDashAnimation();
+        PutChortleAnimatorInPrefab();
         GameSystemsPrefabBuilder.Build();
         AssetDatabase.SaveAssets();
         Debug.Log("CombatSetup: done.");
@@ -1044,6 +1047,60 @@ public static class CombatSetup
         EditorUtility.SetDirty(controller);
         AssetDatabase.SaveAssets();
         Debug.Log("CombatSetup: Pip's Dash animation (placeholder) now plays while she dashes.");
+    }
+
+    private const string ChortleControllerPath = "Assets/Art/Chortle Animation/Idle/Sprite.controller";
+
+    /// <summary>
+    /// The artist added Chortle's Animator (Idle) to the Chortle in ChortleArena only, as a scene
+    /// change on top of the prefab. This moves it INTO the prefab (Unity's "Apply to Prefab"), so
+    /// every Chortle animates, and the arena keeps working exactly as before. If there's no scene
+    /// Animator to move, it adds one to the prefab's Sprite. Skipped once the prefab has one.
+    /// </summary>
+    private static void PutChortleAnimatorInPrefab()
+    {
+        string prefabPath = $"{PrefabFolder}/Boss/Chortle.prefab";
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+        if (prefab == null || prefab.GetComponentInChildren<Animator>(true) != null)
+            return; // No prefab, or already done.
+
+        // 1. Move the arena's Animator into the prefab, if it's there.
+        Scene? opened = OpenLevel("ChortleArena");
+        if (opened != null)
+        {
+            ChortleBoss chortle = Object.FindAnyObjectByType<ChortleBoss>(FindObjectsInactive.Include);
+            Animator added = chortle != null ? chortle.GetComponentInChildren<Animator>(true) : null;
+            if (added != null && PrefabUtility.IsAddedComponentOverride(added))
+            {
+                PrefabUtility.ApplyAddedComponent(added, prefabPath, InteractionMode.AutomatedAction);
+                EditorSceneManager.SaveScene(opened.Value);
+                Debug.Log("CombatSetup: moved Chortle's Animator from ChortleArena into the Chortle prefab.");
+                return;
+            }
+        }
+
+        // 2. Otherwise add a fresh one to the prefab's Sprite.
+        var controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(ChortleControllerPath);
+        if (controller == null)
+        {
+            Debug.LogWarning($"CombatSetup: {ChortleControllerPath} not found; Chortle has no animation.");
+            return;
+        }
+        GameObject root = PrefabUtility.LoadPrefabContents(prefabPath);
+        try
+        {
+            Transform sprite = root.transform.Find("Sprite");
+            if (sprite != null && sprite.GetComponent<Animator>() == null)
+            {
+                sprite.gameObject.AddComponent<Animator>().runtimeAnimatorController = controller;
+                PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
+                Debug.Log("CombatSetup: added Chortle's Idle Animator to the Chortle prefab.");
+            }
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+        }
     }
 
     /// <summary>Loads a clip, or creates a looping PLACEHOLDER clip that shows one sprite.</summary>

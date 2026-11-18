@@ -1876,10 +1876,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1504923194111652590, guid: aa8c3c64fd8fe5043a517fcfd946e4ab, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1071785063}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aa8c3c64fd8fe5043a517fcfd946e4ab, type: 3}
 --- !u!114 &1071785059 stripped
 MonoBehaviour:
@@ -1908,33 +1905,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ef3b592f7fa4284f9a00dd8086681c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChortleFight
---- !u!1 &1071785062 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1504923194111652590, guid: aa8c3c64fd8fe5043a517fcfd946e4ab, type: 3}
-  m_PrefabInstance: {fileID: 1071785058}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &1071785063
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1071785062}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 5ac2ea108a66c3d47b4687e5bc7682ec, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1141365549
 GameObject:
   m_ObjectHideFlags: 0
