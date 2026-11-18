@@ -32,6 +32,8 @@ using P6 = Part6Setup;
 ///  10. W3's riders remember cleared waves (WaveSpawner Save Id), so the room never resets.
 ///  11. Pip's animations: a "Speed" parameter and Idle <-> Walk transitions in the artist's
 ///      controller, and PipAnimator on Pip to feed it.
+///  12. The Mallet animation: a "Swing" trigger (any state -> Mallet, back to Idle at the end)
+///      and "SwingSpeed" so the clip lasts exactly one swing.
 /// Steps 3-7 are skipped where already done.
 ///
 /// To swap in real art later: replace the sprites on the prefabs' child objects (e.g. Pip/Visual/Sprite).
@@ -70,6 +72,7 @@ public static class CombatSetup
         StorySetup.RunEverything();
         RememberW3Waves();
         WirePipAnimations();
+        WireMalletAnimation();
         GameSystemsPrefabBuilder.Build();
         AssetDatabase.SaveAssets();
         Debug.Log("CombatSetup: done.");
@@ -865,6 +868,60 @@ public static class CombatSetup
         EditorUtility.SetDirty(controller);
         AssetDatabase.SaveAssets();
         Debug.Log("CombatSetup: Pip's Idle/Walk animations now follow her Speed.");
+    }
+
+    /// <summary>
+    /// Mallet: a "Swing" trigger jumps from ANY state into Pip_Mallet (instantly, and it can restart
+    /// itself for quick swings); when the clip has played once it goes back to Pip_Idle (Walk takes
+    /// over from there if she's moving). "SwingSpeed" scales the clip to the swing's length.
+    /// Skipped once the controller has a "Swing" parameter.
+    /// </summary>
+    private static void WireMalletAnimation()
+    {
+        var controller = AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController>(PipControllerPath);
+        if (controller == null)
+            return;
+        foreach (AnimatorControllerParameter p in controller.parameters)
+            if (p.name == "Swing")
+                return; // Already wired.
+
+        UnityEditor.Animations.AnimatorStateMachine machine = controller.layers[0].stateMachine;
+        UnityEditor.Animations.AnimatorState idle = null, mallet = null;
+        foreach (UnityEditor.Animations.ChildAnimatorState child in machine.states)
+        {
+            if (child.state.name == "Pip_Idle") idle = child.state;
+            if (child.state.name == "Pip_Mallet") mallet = child.state;
+        }
+        if (idle == null || mallet == null)
+        {
+            Debug.LogWarning("CombatSetup: Pip's controller has no Pip_Idle / Pip_Mallet state; mallet not wired.");
+            return;
+        }
+
+        controller.AddParameter("Swing", AnimatorControllerParameterType.Trigger);
+        controller.AddParameter(new AnimatorControllerParameter
+        {
+            name = "SwingSpeed",
+            type = AnimatorControllerParameterType.Float,
+            defaultFloat = 1f,
+        });
+        mallet.speedParameter = "SwingSpeed";
+        mallet.speedParameterActive = true;
+
+        UnityEditor.Animations.AnimatorStateTransition start = machine.AddAnyStateTransition(mallet);
+        start.hasExitTime = false;
+        start.duration = 0f;
+        start.canTransitionToSelf = true; // A new swing restarts the animation.
+        start.AddCondition(UnityEditor.Animations.AnimatorConditionMode.If, 0f, "Swing");
+
+        UnityEditor.Animations.AnimatorStateTransition end = mallet.AddTransition(idle);
+        end.hasExitTime = true;  // When the swing animation has played once...
+        end.exitTime = 1f;
+        end.duration = 0f;       // ...snap back to Idle (Walk follows if she's moving).
+
+        EditorUtility.SetDirty(controller);
+        AssetDatabase.SaveAssets();
+        Debug.Log("CombatSetup: Pip's Mallet animation now plays on each swing.");
     }
 
     private static void Transition(UnityEditor.Animations.AnimatorState from, UnityEditor.Animations.AnimatorState to,

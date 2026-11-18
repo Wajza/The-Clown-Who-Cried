@@ -148,12 +148,16 @@ public class CombatTest : SystemTestBase
 
         Check("Swing action is on after the mallet is unlocked", ActionEnabled("Swing"));
         _logs.Clear();
+        Animator animator = Pip.GetComponentInChildren<Animator>();
         yield return Hold(Key.K, 0.1f);
+        Check("Swinging plays the Mallet animation", animator != null && animator.GetCurrentAnimatorStateInfo(0).IsName("Pip_Mallet"));
         yield return new WaitForSeconds(0.3f); // Wind-up + active frames.
         Check($"Pressing K swings the mallet (swings: {swings})", swings == 1);
         Check($"The swing hits the target in front of Pip (hits: {hits})", hits == 1);
         Check("The log shows the K press, the swing and the hit",
             LogContains("Pressed Swing: K") && LogContains("Mallet swing") && LogContains("Mallet hit CombatTest_Dummy"));
+        yield return new WaitForSeconds(0.2f);
+        Check("...and Pip is back to Idle when the swing is over", animator != null && animator.GetCurrentAnimatorStateInfo(0).IsName("Pip_Idle"));
         Object.Destroy(dummy);
     }
 
