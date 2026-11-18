@@ -6,9 +6,11 @@ using UnityEngine;
 ///   Swing (trigger)     = fired the moment a mallet swing starts.
 ///   SwingSpeed (float)  = how fast to play the Mallet clip so it lasts exactly one swing
 ///                         (the clip is 0.8 s, a swing ~0.3 s; retuning the swing keeps them in sync).
+///   Grounded (bool)     = Pip is standing on something (false while jumping or falling).
 /// The controller (Assets/Art/Pip Animation/Walk/Sprite.controller) uses them:
 ///   Idle -> Walk when Speed > 0.1, Walk -> Idle when Speed < 0.1,
-///   any state -> Mallet on Swing, Mallet -> Idle when the clip ends.
+///   any state -> Mallet on Swing, Mallet -> Idle when the clip ends,
+///   Idle/Walk -> Jump when Grounded is false, Jump -> Idle when she lands.
 ///
 /// Facing left/right is NOT done here: PlayerController flips the sprite already.
 /// New animations (jump, hurt, mallet...) can get their own parameters later.
@@ -21,6 +23,7 @@ public class PipAnimator : MonoBehaviour
     private static readonly int SpeedParam = Animator.StringToHash("Speed");
     private static readonly int SwingParam = Animator.StringToHash("Swing");
     private static readonly int SwingSpeedParam = Animator.StringToHash("SwingSpeed");
+    private static readonly int GroundedParam = Animator.StringToHash("Grounded");
     private const string MalletClipName = "Pip_Mallet";
 
     [SerializeField, Tooltip("Pip's Animator (on Visual/Sprite). Found automatically if empty.")]
@@ -31,6 +34,7 @@ public class PipAnimator : MonoBehaviour
     private bool _hasSpeed;
     private bool _hasSwing;
     private bool _hasSwingSpeed;
+    private bool _hasGrounded;
     private float _malletClipLength;
 
     private void Awake()
@@ -48,6 +52,7 @@ public class PipAnimator : MonoBehaviour
                 if (p.nameHash == SpeedParam && p.type == AnimatorControllerParameterType.Float) _hasSpeed = true;
                 if (p.nameHash == SwingParam && p.type == AnimatorControllerParameterType.Trigger) _hasSwing = true;
                 if (p.nameHash == SwingSpeedParam && p.type == AnimatorControllerParameterType.Float) _hasSwingSpeed = true;
+                if (p.nameHash == GroundedParam && p.type == AnimatorControllerParameterType.Bool) _hasGrounded = true;
             }
             foreach (AnimationClip clip in animator.runtimeAnimatorController.animationClips)
                 if (clip.name == MalletClipName)
@@ -86,5 +91,7 @@ public class PipAnimator : MonoBehaviour
     {
         if (_hasSpeed)
             animator.SetFloat(SpeedParam, Mathf.Abs(_controller.Velocity.x));
+        if (_hasGrounded)
+            animator.SetBool(GroundedParam, _controller.IsGrounded);
     }
 }

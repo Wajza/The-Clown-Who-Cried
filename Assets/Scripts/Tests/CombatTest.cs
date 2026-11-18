@@ -108,6 +108,14 @@ public class CombatTest : SystemTestBase
         InputSystem.QueueStateEvent(_keyboard, new KeyboardState());       // ...and let go.
         yield return new WaitForSeconds(0.4f);
         Check("Stopping goes back to Idle", animator.GetCurrentAnimatorStateInfo(0).IsName("Pip_Idle"));
+
+        InputSystem.QueueStateEvent(_keyboard, new KeyboardState(Key.Space)); // Jump...
+        yield return new WaitForSeconds(0.15f);
+        InputSystem.QueueStateEvent(_keyboard, new KeyboardState());
+        yield return new WaitForSeconds(0.1f);
+        Check("Jumping plays Jump", !Pip.IsGrounded && animator.GetCurrentAnimatorStateInfo(0).IsName("Pip_Jump"));
+        yield return new WaitForSeconds(1.2f);                              // ...and land.
+        Check("Landing goes back to Idle", Pip.IsGrounded && animator.GetCurrentAnimatorStateInfo(0).IsName("Pip_Idle"));
     }
 
     // ------------------------------------------------------------------ 1. Mallet
