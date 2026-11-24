@@ -1,8 +1,8 @@
 # The Clown Who Cried — Phase 2 Checkpoint: Systems Vertical Slice
 
-**Course:** SWE 402 · **Engine:** Unity 6000.5.9f1 (URP 2D) · **Repository:** `Wajza/The-Clown-Who-Cried` · **Date:** 2026-11-24
+**Course:** SWE 402 · **Engine:** Unity 6000.5.9f1 (URP 2D) · **Repository:** `Wajza/The-Clown-Who-Cried` · **Date:** 2026-11-25
 
-> Items marked **[TEAM TODO]** need input the repository cannot provide, such as board links, outside playtesters and screenshots. Fill them in before you submit.
+**▶ Play the slice:** [The Clown Who Cried on Unity Play](https://play.unity.com/en/games/e31d1144-ad83-414e-82d4-0e443815c874/the-clown-who-cried) (Web build)
 
 ---
 
@@ -14,7 +14,7 @@ The slice is one continuous run of the demo. It starts on the **Title screen** a
 
 | # | Segment | Scene(s) | Start trigger | End condition |
 |---|---------|----------|---------------|---------------|
-| 0 | Title | `Title` | Launch the build | **New Game** or **Continue** (Continue reads the save) |
+| 0 | Title | `Title` | Launch the build (Web or Windows) | **New Game** or **Continue** (Continue reads the save) |
 | 1 | Opening cutscene | `Tumbleton_PipHouse` | New Game | Timeline ends or is skipped. Plays once and is remembered in the save |
 | 2 | Prologue P1 | `Tumbleton_PipHouse` | Starts by itself | Use the mirror, then walk out the right side |
 | 3 | Prologue P2–P4 | `Tumbleton` | Talk to Officer Honk, Balloon Betty and Old Tumbles in turn | Cross the bumper-car street (unlocks **Dash**), pop 8 balloons (unlocks **Star Coins**), break 5 pots with a pogo over spikes (unlocks the **Mallet**) |
@@ -40,10 +40,11 @@ The loop is **talk → get a task → use the abilities you have to beat a platf
 
 ### Known limitations
 
-- **Audio is placeholder only.** 41 generated `.wav` clips live in `Assets/Audio/Placeholders`. The music and SFX are wired up but are not final assets.
+- **Audio is placeholder only.** 46 generated `.wav` clips (38 SFX, 8 music) live in `Assets/Audio/Placeholders`. The music and SFX are wired up but are not final assets.
 - **Difficulty** (`Cozy / Standard / Showstopper` in `ChortleBoss`) exists in code but has no menu option yet.
 - **The world never regains its colour.** `WashedOutView.Depth` is designed to rise after each boss, but the slice has only one boss, so the depth is never raised.
 - **No profiler numbers yet** (see §6).
+- **Whoopee Wobbler:** the fix for it sinking into the floor has not been confirmed in play yet (§4.3 #2).
 - Tilemaps still hold some unused references to deleted placeholder tiles. They are harmless, but a cleanup is planned.
 
 ---
@@ -125,7 +126,7 @@ The challenge mix includes a timed delivery (W1), a Blue Sight puzzle with fake 
 | SFX hooks: player (`PlayerSounds`), world (`WorldSounds`), game events (`GameEventSounds`), boss (`BossSounds`). Jumps get slight random pitch | ✅ |
 | Mixing | 🟡 Separate music and SFX volumes stored in PlayerPrefs. No AudioMixer yet (volumes are set directly in code; see the `AudioManager` comment) |
 | Spatial audio | ⬜ Deliberately 2D (`spatialBlend = 0`). For a single-screen 2D platformer, a panning pass is planned for Phase 3 |
-| Final assets | ⬜ All 41 clips are placeholders |
+| Final assets | ⬜ All 46 clips are placeholders |
 
 ---
 
@@ -136,9 +137,9 @@ The challenge mix includes a timed delivery (W1), a Blue Sight puzzle with fake 
 | | |
 |---|---|
 | **Automated playtests** | 11 scripted test scenes in `Assets/Scenes/Tests` (driven by `SystemTestBase`). They play through the real systems, for example pressing K to swing, and write PASS/FAIL lines to `Logs/*TestResults.txt` |
-| **Manual playtests** | Internal team sessions in the Unity Editor at 16:9, on keyboard and mouse. Wajza, Nov 18–24 |
-| **Outside playtesters** | **[TEAM TODO]** names or count, build used, date |
-| **Build** | Windows build plus `BuildSmokeTest` (Part 10) |
+| **Manual playtests** | Internal sessions in the Unity Editor by Wajza, Nov 18–24. Full report: [`playtest_internal_wajza.md`](playtest_internal_wajza.md) (20 findings: 3 P0, 13 P1, 4 P2) |
+| **Outside playtesters** | Session script and form: [`playtest_form.md`](playtest_form.md). **In progress:** the first session (Raneem, Nov 24, keyboard and mouse) has its header filled in. Times, deaths and ratings are not recorded yet. The target is 3 players |
+| **Build** | Web build on [Unity Play](https://play.unity.com/en/games/e31d1144-ad83-414e-82d4-0e443815c874/the-clown-who-cried) (`Build Profiles/Web.asset`), plus the Windows build and `BuildSmokeTest` (Part 10) |
 
 ### 4.2 Automated results (latest log for each suite)
 
@@ -156,7 +157,7 @@ The challenge mix includes a timed delivery (W1), a Blue Sight puzzle with fake 
 | Combat | 45 | ✅ | Nov 18 |
 | **Total** | **564** | **558 pass / 6 fail** | |
 
-**The 6 Part 5 failures** were `no Pixel Perfect Camera` and `same camera zoom (7)` in three levels. They were caused by the camera work in progress during that run. The fix was to turn off Pixel Perfect when a scene loads and to use a fixed zoom for single-room scenes. The test was updated to expect this fixed-room zoom. **The suites must be re-run after the Nov 24 fixes** (see §4.4).
+**The 6 Part 5 failures** were `no Pixel Perfect Camera` and `same camera zoom (7)` in three levels. They were caused by the camera work in progress during that run. The fix was to turn off Pixel Perfect when a scene loads and to use a fixed zoom for single-room scenes. The test was updated to expect this fixed-room zoom, but **the suites have not been re-run since then**. Seven of the ten logs are from Nov 18, before the Nov 24 polish commit. The table will be updated after the re-run (§4.4, item 1).
 
 ### 4.3 Manual findings and triage
 
@@ -179,8 +180,9 @@ Severity: **P0** blocks progress · **P1** clearly wrong, harms play · **P2** p
 
 1. **Re-run all 11 test scenes** on the current `main`, then commit the new logs. *(Owner: Wajza)*
 2. Confirm finding #2 in a manual session in W1 and W3, where Wobblers appear most.
-3. Run a structured session with **at least 3 outside players** using a short script: start → boss, timed, with deaths and points where they got stuck. **[TEAM TODO]**
+3. Finish the outside playtest with **at least 3 players** using [`playtest_form.md`](playtest_form.md) (one copy for each player). Run start → End of Demo, timed for each segment, with deaths, times the facilitator helped, and 1–5 ratings. Then add the findings to §4.3. The first session (Raneem) has started.
 4. Clean up the unused tile references in the tilemaps.
+5. Set **Company Name** in Project Settings > Player. It is still `DefaultCompany`, which is also the save folder's name.
 
 ---
 
@@ -189,10 +191,9 @@ Severity: **P0** blocks progress · **P1** clearly wrong, harms play · **P2** p
 ### 5.1 Workflow
 
 - **Branches and PRs:** we work in feature branches and merge to `main` through PRs. So far: `feature/player-combat-boss` (#1), `studentB-core` (#3), `combat-fixes` (#4), `character-art` (#7), and smaller merges for `chortle-animation`, `dash-animation`, `jump-animation`, `mallet-animation`, `pip-animations` and `art-import-fix`.
-- **History:** 45 commits on `main` since Nov 13.
-- **Documentation:** every script starts with a summary comment that explains its setup. `TEAMMATE_TODO.md` carries handoff notes between team members.
-- **GitHub Project board:** **[TEAM TODO]** add the link, a screenshot and the column counts (To do / In progress / Done).
-
+- **History:** 46 commits on `main` since Nov 13.
+- **Documentation:** every script starts with a summary comment that explains its setup. [`README.md`](../../README.md) covers how to play, the controls and the project setup. [`Assets/TEAMMATE_TODO.md`](../../Assets/TEAMMATE_TODO.md) carries the handoff notes: open tasks by owner, and the names other code depends on.
+- **GitHub Project board:** it was not used as out main production update, we inform each other in whatsapp
 ### 5.2 Ownership and completed work
 
 | Member | Area | Delivered in Phase 2 |
@@ -201,7 +202,6 @@ Severity: **P0** blocks progress · **P1** clearly wrong, harms play · **P2** p
 | Sarah Almas | Core systems | Parts 1–10: core, save, scene loading, dialogue, tasks, UI, levels, prologue, Wonderwick, cutscenes, audio, Windows build and smoke test, and the automated test scenes |
 | Dana Alyahya | Character art and animation | Pip, Chortle, Wobbler and Pie Slinger animations. Environment art and backgrounds |
 
-**[TEAM TODO]:** link each row to its issues on the board.
 
 ### 5.3 Carry-over to Phase 3
 
@@ -211,13 +211,14 @@ Severity: **P0** blocks progress · **P1** clearly wrong, harms play · **P2** p
 | Add an AudioMixer with music, SFX and UI groups, plus ducking during dialogue | First pass used direct volume control |
 | Profile the build and fix bottlenecks (§6) | No profiler pass yet |
 | Add a Difficulty setting to the menu | The code is ready, the UI isn't |
-| Outside playtest round | §4.4, item 3 |
-| Commit the current polish work on a branch, open a PR and review it | The polish changes are not committed yet |
+| Finish the outside playtest round (3+ players) | §4.4, item 3 |
+| Review the demo polish commit (`798f003`) as a team | It was committed straight to `main`. Future work goes through branches and PRs again |
 
 ### 5.4 Phase 3 readiness
 
 - ✅ The full start → end flow is playable and saved. The win state has been checked by tests and by manual play.
-- ✅ 558 of 564 automated checks passed on their latest runs. The 6 failures were an old camera expectation, and the test has since been updated.
+- ✅ 558 of 564 automated checks passed on their latest runs. The 6 failures were an old camera expectation, and the test has since been updated. ⚠️ A re-run on the current `main` is still due.
+- ✅ A playable Web build is public on Unity Play.
 - ✅ Every core system (input, physics, AI FSM, state flow, UI and audio hooks) is integrated, not stubbed.
 - ⚠️ We still need a profiling baseline, an outside playtest and final audio before calling it content-complete.
 
@@ -241,7 +242,7 @@ Severity: **P0** blocks progress · **P1** clearly wrong, harms play · **P2** p
 
 ## 7. Evidence
 
+- Playable build: [Unity Play](https://play.unity.com/en/games/e31d1144-ad83-414e-82d4-0e443815c874/the-clown-who-cried)
 - Test logs: `Logs/Part1TestResults.txt` … `Part9TestResults.txt`, `Logs/CombatTestResults.txt`
 - Test scenes: `Assets/Scenes/Tests/*.unity`, scripts in `Assets/Scripts/Tests/`
-- **[TEAM TODO]** screenshots or a short clip: title, prologue task, W2 Blue Sight, the boss phase 2 clones with Blue Sight on, End of Demo
-- **[TEAM TODO]** a screenshot of the Project board
+- Screenshots: `docs/phase2/images/`. Press **F12** in Play Mode to save one (`ScreenshotKey`, editor only). Planned shots: title, a prologue task, W2 with Blue Sight, Chortle's phase 2 clones with Blue Sight on, End of Demo. (It was not provided, u can clone the project and test from the unity diractly)
