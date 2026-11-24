@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3606695743656726108}
   - component: {fileID: 4832501369911954443}
+  - component: {fileID: 3128165598810702373}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -82,7 +83,7 @@ SpriteRenderer:
   m_SortingOrder: 6
   m_MaskInteraction: 0
   m_Sprite: {fileID: 5212313863364658681, guid: 04aa9a54ba3715e469d245c3116a524b, type: 3}
-  m_Color: {r: 1, g: 0.55, b: 0.25, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -92,6 +93,28 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!95 &3128165598810702373
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2657768920929551294}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2e0c70cbc76daa44a95397ed3c22f86c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &3655769484923867528
 GameObject:
   m_ObjectHideFlags: 0
@@ -238,6 +261,7 @@ MonoBehaviour:
   - prefab: {fileID: 2401337379016529314, guid: b49b9f07adbf6cb4396ae7667b647629, type: 3}
     chance: 0.05
   pitTag: Pit
+  saveId: 
   piePrefab: {fileID: 546233470479851034, guid: b15a051d27a10464da6a8e9464ba2daf, type: 3}
   throwStyle: 2
   attackRange: 9
