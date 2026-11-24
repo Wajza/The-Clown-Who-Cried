@@ -13,8 +13,10 @@ public class PieSlinger : EnemyBase
     public enum ThrowStyle { Straight, Arc, Alternate }
 
     [Header("Pie Slinger")]
-    [SerializeField, Tooltip("Pie prefab (must have PieProjectile).")]
+    [SerializeField, Tooltip("Pie thrown when Pip is on his LEFT (Pie_Left). Must have PieProjectile.")]
     private PieProjectile piePrefab;
+    [SerializeField, Tooltip("Pie thrown when Pip is on his RIGHT (Pie_Right). Empty = always use the one above.")]
+    private PieProjectile piePrefabRight;
     [SerializeField, Tooltip("Straight = aimed line, Arc = lobbed, Alternate = switch every throw.")]
     private ThrowStyle throwStyle = ThrowStyle.Alternate;
     [SerializeField, Min(0f), Tooltip("Throws when Pip is this close (tiles).")]
@@ -86,7 +88,9 @@ public class PieSlinger : EnemyBase
             gravity = 0f;
         }
 
-        PieProjectile pie = Instantiate(piePrefab, from, Quaternion.identity);
+        // The pie drawing that faces the way it flies: right-facing pie when Pip is on his right.
+        PieProjectile prefab = facing > 0 && piePrefabRight != null ? piePrefabRight : piePrefab;
+        PieProjectile pie = Instantiate(prefab, from, Quaternion.identity);
         pie.Launch(velocity, gravity, pieDamage, playerLayer, groundLayer);
     }
 

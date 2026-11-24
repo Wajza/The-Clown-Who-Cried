@@ -4,9 +4,9 @@ using UnityEngine;
 /// Project-wide settings that several systems need, kept in ONE asset:
 /// Assets/Resources/GameSettings.asset (loaded by name, so it must stay in Resources).
 ///
-///   Player Prefab   The Pip that levels spawn (LevelInfo). Right now it's Placeholder_Pip.
-///                   When my teammate commits the real Pip prefab, drag it in here, and
-///                   every level uses it with no other changes.
+///   Player Prefab   The Pip that levels spawn (LevelInfo): Assets/Prefabs/Player/Pip.
+///                   Drag a different Pip prefab in here and every level uses it with no
+///                   other changes.
 /// </summary>
 [CreateAssetMenu(menuName = "Clown Who Cried/Game Settings", fileName = "GameSettings")]
 public class GameSettings : ScriptableObject

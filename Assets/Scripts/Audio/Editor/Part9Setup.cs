@@ -36,7 +36,9 @@ public static class Part9Setup
         { "EndOfDemo", SoundIds.MusicEnd },
     };
 
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Part 9/Run Everything")]
+#endif
     public static void RunEverything()
     {
         PlaceholderAudio.EnsureAll();

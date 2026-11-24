@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4388126589500987780}
   - component: {fileID: 5391256225378391859}
   - component: {fileID: 5042839473702248173}
+  - component: {fileID: 5613934649050292282}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -27,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 864778085925597063}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.45, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.9, y: 0.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -82,7 +83,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 6
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 5212313863364658681, guid: 04aa9a54ba3715e469d245c3116a524b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 08ac9fd9fffc73643b02ca59a5eac93b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -115,6 +116,22 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5613934649050292282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 864778085925597063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74883834a73b9ba49a6f6a3294679421, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteBreathe
+  amount: 0.03
+  period: 2.4
+  onlyWhenStill: 1
+  stillSpeed: 0.2
 --- !u!1 &2031947899774287074
 GameObject:
   m_ObjectHideFlags: 0
@@ -141,8 +158,8 @@ Transform:
   m_GameObject: {fileID: 2031947899774287074}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.5, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.6, z: 1}
+  m_LocalPosition: {x: 0, y: 2.0029998, z: 0}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7227569032576927991}
@@ -196,8 +213,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 20
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 5212313863364658681, guid: 04aa9a54ba3715e469d245c3116a524b, type: 3}
-  m_Color: {r: 1, g: 0.9, b: 0.2, a: 1}
+  m_Sprite: {fileID: 21300000, guid: d26a921af771a4c44a5561b85c79aa90, type: 3}
+  m_Color: {r: 1, g: 0.55, b: 0.45, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -219,6 +236,7 @@ GameObject:
   - component: {fileID: 7112039326202079768}
   - component: {fileID: 971978629848892162}
   - component: {fileID: 8895553211580161311}
+  - component: {fileID: 798633058852328633}
   m_Layer: 8
   m_Name: WhoopeeWobbler
   m_TagString: Untagged
@@ -314,7 +332,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!114 &8895553211580161311
 MonoBehaviour:
@@ -359,3 +377,21 @@ MonoBehaviour:
   hopHeight: 1
   hopDistance: 1.5
   restTime: 0.2
+--- !u!114 &798633058852328633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2428981786288272709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db66078faaf57974b964063014726b79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySpriteAnimator
+  idleState: WhoopeeWobbler_Idle
+  moveState: WhoopeeWobbler_Hop
+  attackState: 
+  alertSprite: {fileID: -8230601752291895124, guid: 8176562bdd5f8304b8a6664636582f9a, type: 3}
+  attackHold: 0.3
+  moveSpeed: 0.25

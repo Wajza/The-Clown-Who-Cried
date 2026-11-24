@@ -50,7 +50,10 @@ public class ControlsScreen : MonoBehaviour
         "Hold Up + Swing: hit above you.\n" +
         "In the air, hold Down + Swing: pogo bounce.\n" +
         "Hold Up + Throw: throw a coin upward.\n" +
-        "The mallet is earned from Old Tumbles (Reflex Check).";
+        "Abilities are earned on the way: Dash from Officer Honk, Star Coins from\n" +
+        "Balloon Betty, the mallet from Old Tumbles, Tear Burst from Dr. Mellow,\n" +
+        "and Blue Sight from Madame Mirabel (Mirror Maze).\n" +
+        "To leave Pip's house, the doctor's office or the Laugh Tower, walk out the right side.";
 
     private void OnEnable() => Refresh();
 

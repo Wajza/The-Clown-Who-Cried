@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.65, y: 0.65, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8481894763440725998}
@@ -106,6 +106,7 @@ GameObject:
   - component: {fileID: 1428449027589758365}
   - component: {fileID: 3643285394550686185}
   - component: {fileID: 7507895060962156521}
+  - component: {fileID: 746053016885905819}
   m_Layer: 8
   m_Name: ChortleCopy
   m_TagString: Untagged
@@ -250,6 +251,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChortleCopy
   popEffectPrefab: {fileID: 4601737024632956749, guid: 8b8ea9642d80acd429f38f9a602a02e1, type: 3}
+--- !u!114 &746053016885905819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6098545847284219296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a43a73b0d6c827c4f94fd3c3dca7388d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FadeInBlueSight
+  blueSightOpacity: 0.25
+  fadeTime: 0.2
 --- !u!1 &6961332009286061155
 GameObject:
   m_ObjectHideFlags: 0
@@ -276,8 +291,8 @@ Transform:
   m_GameObject: {fileID: 6961332009286061155}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 4.3, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.7, z: 1}
+  m_LocalPosition: {x: 0, y: 5.115, z: 0}
+  m_LocalScale: {x: 0.9, y: 0.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8481894763440725998}
@@ -331,8 +346,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 20
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 5212313863364658681, guid: 04aa9a54ba3715e469d245c3116a524b, type: 3}
-  m_Color: {r: 1, g: 0.9, b: 0.2, a: 1}
+  m_Sprite: {fileID: 21300000, guid: d26a921af771a4c44a5561b85c79aa90, type: 3}
+  m_Color: {r: 1, g: 0.55, b: 0.45, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

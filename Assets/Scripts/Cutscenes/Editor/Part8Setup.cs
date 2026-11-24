@@ -19,7 +19,7 @@ using P6 = Part6Setup;
 ///        Assets/Resources/JournalPages              JournalPage_02_JestersTear (the reward page)
 ///   2. Levels (each only once: skipped if its Part 8 object exists):
 ///        Tumbleton_PipHouse   "Cutscenes (Part 8)": the opening cutscene, played once on New Game
-///        ChortleArena         "Boss (Part 8)": PlaceholderBoss, intro/outro, BossFightFlow, exit door
+///        ChortleArena         "Boss (Part 8)": intro/outro, BossFightFlow, exit (Chortle: Combat setup)
 ///        EndOfDemo            "End Of Demo (Part 8)": credits + EndOfDemoSequence; no autosave
 ///   3. Assets/Scenes/Tests/CutsceneTest + driver.
 ///
@@ -33,7 +33,9 @@ public static class Part8Setup
     private const string PageFolder = "Assets/Resources/JournalPages";
     private const string TestScenePath = Part1Setup.TestScenesFolder + "/CutsceneTest.unity";
 
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Part 8/Run Everything")]
+#endif
     public static void RunEverything()
     {
         GameSystemsPrefabBuilder.Build();
@@ -195,21 +197,7 @@ public static class Part8Setup
         Scene? scene = Open("ChortleArena", "Boss (Part 8)", out Transform root);
         if (scene == null)
             return;
-        float bossX = P6.TakeMarker("Chortle (Part 8)", 24f);
-
-        // PLACEHOLDER boss until my teammate's Chortle prefab exists (see ChortleFight).
-        var bossGo = new GameObject("PlaceholderBoss (replace with Chortle)", typeof(BoxCollider2D));
-        bossGo.transform.SetParent(root);
-        bossGo.transform.position = new Vector3(bossX, 0f, 0f);
-        bossGo.layer = Part1Setup.RequireLayer("Enemy");
-        var hitbox = bossGo.GetComponent<BoxCollider2D>();
-        hitbox.isTrigger = true;
-        hitbox.size = new Vector2(3f, 4f);
-        hitbox.offset = new Vector2(0f, 2f);
-        GameObject body = P6.Box(bossGo.transform, "Sprite", new Vector2(0f, 2f), new Vector2(3f, 4f), new Color(0.6f, 0.3f, 0.8f), 5);
-        P6.Box(bossGo.transform, "Mask", new Vector2(0f, 3f), new Vector2(1.8f, 1f), Color.white, 6);
-        var boss = bossGo.AddComponent<PlaceholderBoss>();
-        B.SetField(boss, "sprite", body.GetComponent<SpriteRenderer>());
+        P6.TakeMarker("Chortle (Part 8)", 16f); // Chortle himself is added by Combat > Run Everything.
 
         PlayableDirector intro = Director(root, "Cutscene_ChortleIntro", Timeline("Timeline_ChortleIntro"));
         PlayableDirector outro = Director(root, "Cutscene_ChortleOutro", Timeline("Timeline_ChortleOutro"));
@@ -217,7 +205,6 @@ public static class Part8Setup
         var flow = new GameObject("BossFightFlow").AddComponent<BossFightFlow>();
         flow.transform.SetParent(root);
         var so = new SerializedObject(flow);
-        so.FindProperty("boss").objectReferenceValue = boss;
         so.FindProperty("intro").objectReferenceValue = intro;
         so.FindProperty("outro").objectReferenceValue = outro;
         so.FindProperty("rewardPage").objectReferenceValue = RewardPage();

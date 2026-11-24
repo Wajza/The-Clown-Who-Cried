@@ -2,8 +2,8 @@ using System;
 
 /// <summary>
 /// What BossFightFlow needs from a boss: start the fight, and say when it's beaten.
-/// Implemented by ChortleFight (my teammate's real Chortle) and PlaceholderBoss (a stand-in
-/// until Chortle's prefab exists). BossFightFlow never needs to know which one it has.
+/// Implemented by ChortleFight (on Chortle). BossFightFlow only talks to this interface, so a
+/// future boss can plug in the same way.
 /// </summary>
 public interface IBossFight
 {

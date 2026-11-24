@@ -40,7 +40,9 @@ public static class GameSystemsPrefabBuilder
     private const string SystemControlsPath = "Assets/Settings/SystemControls.inputactions";
     private static readonly Vector2 ReferenceResolution = new Vector2(480f, 270f);
 
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Rebuild GameSystems Prefab")]
+#endif
     public static void Build()
     {
         Part1Setup.EnsureFolder(Part1Setup.ResourcesFolder);

@@ -28,7 +28,9 @@ public static class Part2Setup
 
     // ------------------------------------------------------------------ TextMeshPro
 
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Part 2/1. Import TMP Essentials")]
+#endif
     public static void ImportTmpEssentials()
     {
         if (TmpEssentialsPresent())
@@ -61,7 +63,9 @@ public static class Part2Setup
 
     // ------------------------------------------------------------------ Everything else
 
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Part 2/2. Run Everything")]
+#endif
     public static void RunEverything()
     {
         if (!TmpEssentialsPresent())

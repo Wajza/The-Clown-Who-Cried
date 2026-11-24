@@ -35,7 +35,9 @@ public static class Part7Setup
     private const string DialogueFolder = "Assets/Data/Dialogue/Wonderwick";
     private const string TestScenePath = Part1Setup.TestScenesFolder + "/WonderwickTest.unity";
 
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Part 7/Run Everything")]
+#endif
     public static void RunEverything()
     {
         GameSystemsPrefabBuilder.Build();

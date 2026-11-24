@@ -42,7 +42,9 @@ public static class Part5Setup
 
     // ------------------------------------------------------------------ Menu items
 
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Part 5/1. Configure Project (Cinemachine symbol, Pogo tag)")]
+#endif
     public static void ConfigureProject()
     {
         // Scripting symbol for every desktop build (and the Editor).
@@ -62,7 +64,9 @@ public static class Part5Setup
         EditorApplication.Exit(0);
     }
 
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Part 5/2. Run Everything")]
+#endif
     public static void RunEverything()
     {
         GameSystemsPrefabBuilder.Build(); // Also makes the placeholder art.

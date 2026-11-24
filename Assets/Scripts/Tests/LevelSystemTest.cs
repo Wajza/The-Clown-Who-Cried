@@ -56,7 +56,9 @@ public class LevelSystemTest : SystemTestBase
         // 2. The front door leads to Tumbleton. (Since Part 6 it only opens after P1's mirror;
         //    this test is about doors, so it sets that flag directly.)
         GameManager.Instance.Save.SetFlag("p1_looked_in_mirror");
-        yield return UseDoor("FrontDoor");
+        LevelExit houseExit = GameObject.Find("FrontDoor").GetComponent<LevelExit>(); // Walk out of the right side.
+        Check("Pip's house is left by walking right (no door)", houseExit != null);
+        yield return MovePipTo(houseExit.transform.position.x, LevelFloorY);
         yield return WaitForScene("Tumbleton");
         CheckArrival("Tumbleton", "FromHouse");
         CheckCamera();
@@ -143,12 +145,37 @@ public class LevelSystemTest : SystemTestBase
         Check($"{level}: camera kept inside the level bounds", rig.CurrentBounds == LevelInfo.Current.CameraBounds);
 
         Camera cam = Camera.main;
-        var pixelPerfect = cam != null ? cam.GetComponent<PixelPerfectCamera>() : null;
-        Check($"{level}: Pixel Perfect Camera 480x270 at 16 PPU", pixelPerfect != null &&
-            pixelPerfect.assetsPPU == 16 && pixelPerfect.refResolutionX == 480 && pixelPerfect.refResolutionY == 270);
-        Check($"{level}: Cinemachine brain + pixel perfect + impulse listener",
-            cam.GetComponent<CinemachineBrain>() != null && rig.PipCamera.GetComponent<CinemachinePixelPerfect>() != null &&
-            rig.PipCamera.GetComponent<CinemachineImpulseListener>() != null);
+        // Demo polish: no pixel-perfect camera (the art is high resolution), the same zoom in every
+        // level, and always a 16:9 picture (AspectLock).
+        var pp = cam != null ? cam.GetComponent<PixelPerfectCamera>() : null;
+        var cmPp = rig.PipCamera.GetComponent<CinemachinePixelPerfect>();
+        var confiner = rig.PipCamera.GetComponent<CinemachineConfiner2D>();
+        Check($"{level}: no Pixel Perfect Camera (high-resolution art)",
+            cam != null && (pp == null || !pp.enabled) && (cmPp == null || !cmPp.enabled));
+        FixedCameraRoom fixedRoom = FindAnyObjectByType<FixedCameraRoom>();
+        if (fixedRoom != null)
+        {
+            // The boss arena: the camera shows the whole background and stays still.
+            Check($"{level}: fixed camera held to the whole room", confiner != null && confiner.enabled &&
+                confiner.BoundingShape2D == fixedRoom.Area);
+            Check($"{level}: zoomed to show the whole room",
+                Mathf.Abs(cam.orthographicSize - FixedCameraRoom.ZoomFor(fixedRoom.Area.size)) < 0.01f);
+        }
+        else if (FindAnyObjectByType<KeepCameraInBounds>() != null)
+        {
+            // Tumbleton: follows Pip, but never past the background pictures.
+            Check($"{level}: camera follows Pip inside the background", confiner != null && confiner.enabled &&
+                rig.PipCamera.Follow == Pip.transform);
+            Check($"{level}: same camera zoom as every level (7)", Mathf.Abs(cam.orthographicSize - 7f) < 0.01f);
+        }
+        else
+        {
+            Check($"{level}: the camera always follows Pip (no camera limits)", confiner == null || !confiner.enabled);
+            Check($"{level}: same camera zoom as every level (7)", Mathf.Abs(cam.orthographicSize - 7f) < 0.01f);
+        }
+        Check($"{level}: the picture is 16:9", Mathf.Abs(cam.aspect - 16f / 9f) < 0.02f);
+        Check($"{level}: Cinemachine brain + impulse listener",
+            cam.GetComponent<CinemachineBrain>() != null && rig.PipCamera.GetComponent<CinemachineImpulseListener>() != null);
         ScreenShake shake = FindAnyObjectByType<ScreenShake>();
         Check($"{level}: teammate's ScreenShake with an impulse source", shake != null && shake.GetComponent<CinemachineImpulseSource>() != null);
     }

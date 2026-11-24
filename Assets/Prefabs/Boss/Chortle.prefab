@@ -120,7 +120,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.65, y: 0.65, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 932233122545842649}
@@ -378,6 +378,7 @@ MonoBehaviour:
   startAutomatically: 0
   startDelay: 2
   piePrefab: {fileID: 546233470479851034, guid: b15a051d27a10464da6a8e9464ba2daf, type: 3}
+  piePrefabRight: {fileID: 546233470479851034, guid: 7cd79c84c442b9f458d915dd35f97166, type: 3}
   bombPrefab: {fileID: 2958760260773455985, guid: 239570656fb6ff84fb8cea768d72e690, type: 3}
   copyPrefab: {fileID: 7507895060962156521, guid: c57c377a410ca60448a96b001a1ebc8c, type: 3}
   stagePoints: []
@@ -693,8 +694,8 @@ Transform:
   m_GameObject: {fileID: 9212379254443664132}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 4.3, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.7, z: 1}
+  m_LocalPosition: {x: 0, y: 5.115, z: 0}
+  m_LocalScale: {x: 0.9, y: 0.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 932233122545842649}
@@ -748,8 +749,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 20
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 5212313863364658681, guid: 04aa9a54ba3715e469d245c3116a524b, type: 3}
-  m_Color: {r: 1, g: 0.9, b: 0.2, a: 1}
+  m_Sprite: {fileID: 21300000, guid: d26a921af771a4c44a5561b85c79aa90, type: 3}
+  m_Color: {r: 1, g: 0.55, b: 0.45, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

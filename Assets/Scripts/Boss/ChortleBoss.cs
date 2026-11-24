@@ -34,7 +34,7 @@ public enum ChortleState
 ///   Mask reaches 0:       Defeated (cries, fires OnDefeated)
 ///
 /// Damage can never skip a phase: the Mask stops at each threshold.
-/// The arena (TrapdoorFloor, RubberChickenCannon) listens to PhaseChanged and adjusts itself.
+/// The arena (RubberChickenCannon) listens to PhaseChanged and adjusts itself.
 ///
 /// Setup: tag "Boss", Enemy layer, Kinematic Rigidbody2D, trigger Collider2D, SpriteRenderer,
 /// SpriteFlasher, ContactDamage, and a child shadow sprite with BlueSightOnly.
@@ -64,7 +64,10 @@ public class ChortleBoss : MonoBehaviour, IDamageable, IStunnable
     [SerializeField, Min(0f)] private float startDelay = 2f;
 
     [Header("References")]
-    [SerializeField] private PieProjectile piePrefab;
+    [SerializeField, Tooltip("Pie thrown when Pip is on the thrower's LEFT (Pie_Left).")]
+    private PieProjectile piePrefab;
+    [SerializeField, Tooltip("Pie thrown when Pip is on the thrower's RIGHT (Pie_Right). Empty = always use the one above.")]
+    private PieProjectile piePrefabRight;
     [SerializeField] private PunchlineBomb bombPrefab;
     [SerializeField] private ChortleCopy copyPrefab;
     [SerializeField, Tooltip("Spots Chortle teleports between in phases 1 and 3 (pivot = feet).")]
@@ -466,7 +469,11 @@ public class ChortleBoss : MonoBehaviour, IDamageable, IStunnable
         Vector2 to = PlayerCenter() + new Vector2(targetOffset, 0f);
         Vector2 velocity = PieProjectile.ArcVelocity(from, to, ScaleSpeed(pieSpeed), pieGravity);
 
-        PieProjectile pie = Instantiate(piePrefab, from, Quaternion.identity);
+        // The pie drawing that faces the way it flies: right-facing pie when Pip is on the thrower's right
+        // (works for Chortle and each of his copies, since 'thrower' is whoever throws).
+        bool pipOnRight = PlayerController.Current.transform.position.x > thrower.position.x;
+        PieProjectile prefab = pipOnRight && piePrefabRight != null ? piePrefabRight : piePrefab;
+        PieProjectile pie = Instantiate(prefab, from, Quaternion.identity);
         pie.Launch(velocity, pieGravity, pieDamage, playerLayer, groundLayer);
     }
 

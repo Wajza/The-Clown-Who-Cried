@@ -21,7 +21,7 @@ using P6 = Part6Setup;
 ///      Inspector field filled in. Only CREATED if missing: your edits are never overwritten.
 ///      (Tools > ... > Combat > Rebuild Prefabs (overwrites) remakes them from scratch.)
 ///   2. GameSettings > Player Prefab = the new Pip, so every level spawns her.
-///   3. ChortleArena: the real Chortle replaces the PlaceholderBoss, plus trapdoors, a pit,
+///   3. ChortleArena: Chortle (in the middle of the room), a solid floor,
 ///      floating platforms, rubber-chicken cannons, stage points and clone points.
 ///   4. Wonderwick_W3_Coaster: the "runaway riders" waves.
 ///   5. Every level: the Blue Sight / washed-out screen Volumes, and post-processing on the camera.
@@ -60,7 +60,9 @@ public static class CombatSetup
 
     // ------------------------------------------------------------------ Menu
 
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Combat/Run Everything")]
+#endif
     public static void RunEverything()
     {
         if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
@@ -87,7 +89,9 @@ public static class CombatSetup
         Debug.Log("CombatSetup: done.");
     }
 
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Combat/Rebuild Prefabs (overwrites)")]
+#endif
     public static void RebuildPrefabs()
     {
         if (!EditorUtility.DisplayDialog("Rebuild combat prefabs?",
@@ -102,7 +106,9 @@ public static class CombatSetup
 
     private const string TestScenePath = "Assets/Scenes/Tests/CombatTest.unity";
 
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Combat/Run Test (play mode)")]
+#endif
     public static void RunTestInEditor()
     {
         RunEverything();
@@ -648,14 +654,8 @@ public static class CombatSetup
         var root = new GameObject(ArenaRootName).transform;
         int groundLayer = Part1Setup.RequireLayer("Ground");
 
-        // ---- The real Chortle replaces the placeholder (TEAMMATE_TODO #11).
-        float bossX = 24f;
-        var placeholder = Object.FindAnyObjectByType<PlaceholderBoss>(FindObjectsInactive.Include);
-        if (placeholder != null)
-        {
-            bossX = placeholder.transform.position.x;
-            Object.DestroyImmediate(placeholder.gameObject);
-        }
+        // ---- Chortle (TEAMMATE_TODO #11), in the middle of the arena.
+        float bossX = 16f;
         var chortleGo = (GameObject)PrefabUtility.InstantiatePrefab(p.chortle.gameObject, scene);
         var chortle = chortleGo.GetComponent<ChortleBoss>();
         chortle.transform.SetParent(flow.transform.parent, false);
@@ -666,43 +666,7 @@ public static class CombatSetup
         Set(chortle, ("stagePoints", stagePoints), ("clonePoints", clonePoints));
         Set(flow, ("boss", chortle.GetComponent<ChortleFight>()));
 
-        // ---- Trapdoor floor: tiles x 8..19 become 4 trapdoors (3 tiles each) over a pit.
-        Tilemap tiles = FindGroundTilemap();
-        const int trapFrom = 8, trapTo = 19;
-        if (tiles != null)
-        {
-            for (int x = trapFrom; x <= trapTo; x++)
-                for (int y = -3; y <= -1; y++)
-                    tiles.SetTile(new Vector3Int(x, y, 0), null);
-        }
-
-        var floorGo = new GameObject("TrapdoorFloor");
-        floorGo.transform.SetParent(root);
-        var floor = floorGo.AddComponent<TrapdoorFloor>();
-        var sections = new List<TrapdoorSection>();
-        for (int start = trapFrom; start + 2 <= trapTo; start += 3)
-        {
-            var section = new GameObject($"Trapdoor_{sections.Count + 1}", typeof(BoxCollider2D)) { layer = groundLayer };
-            section.transform.SetParent(floorGo.transform);
-            section.transform.position = new Vector3(start + 1.5f, -0.5f, 0f);
-            section.GetComponent<BoxCollider2D>().size = new Vector2(3f, 1f);
-            SpriteRenderer sprite = P6.Box(section.transform, "Sprite", Vector2.zero, new Vector2(2.9f, 1f), new Color(0.55f, 0.4f, 0.3f), 1).GetComponent<SpriteRenderer>();
-            Set(section.AddComponent<SpriteFlasher>(), ("target", sprite));
-            var trapdoor = section.AddComponent<TrapdoorSection>(); // Also adds UnsafeGround.
-            Set(trapdoor, ("spriteRenderer", sprite));
-            sections.Add(trapdoor);
-        }
-        Set(floor, ("boss", chortle), ("sections", sections.ToArray()));
-
-        // The pit under the trapdoors: a fall costs a star and puts Pip back on safe ground.
-        var pit = new GameObject("Pit", typeof(BoxCollider2D)) { tag = "Pit" };
-        pit.transform.SetParent(root);
-        pit.transform.position = new Vector3((trapFrom + trapTo + 1) / 2f, -3f, 0f);
-        var pitBox = pit.GetComponent<BoxCollider2D>();
-        pitBox.isTrigger = true;
-        pitBox.size = new Vector2(trapTo - trapFrom + 1, 2f);
-
-        // ---- Floating platforms over the trapdoors (normal, safe ground).
+        // ---- Floating platforms over the floor.
         // Tops at 2 and 4 tiles: Pip's jump is 2.5, so each one is an easy jump from below.
         Platform(root, "Platform_Left", new Vector2(10f, 2f), 3f, groundLayer);
         Platform(root, "Platform_Right", new Vector2(18f, 2f), 3f, groundLayer);

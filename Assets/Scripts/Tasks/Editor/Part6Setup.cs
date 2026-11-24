@@ -32,7 +32,9 @@ public static class Part6Setup
     // Flags and signal keys used by the prologue (also by the test).
     public const string MirrorFlag = "p1_looked_in_mirror";
 
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Part 6/Run Everything")]
+#endif
     public static void RunEverything()
     {
         GameSystemsPrefabBuilder.Build();

@@ -28,7 +28,9 @@ public static class StorySetup
     private const string OfficePath = LevelsFolder + "/" + OfficeScene + ".unity";
     private const string DoctorName = "Dr. Mellow";
 
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Story/Run Everything")]
+#endif
     public static void RunEverything()
     {
         if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())

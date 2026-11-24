@@ -63,10 +63,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlueSightVolume
   fadeTime: 0.25
-  saturation: -60
-  tint: {r: 0.75, g: 0.85, b: 1, a: 1}
-  contrast: -10
-  vignetteIntensity: 0.3
+  saturation: 0
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  contrast: 0
+  vignetteIntensity: 0
   vignetteColor: {r: 0.08, g: 0.12, b: 0.25, a: 1}
 --- !u!1 &5717448656423743529
 GameObject:

@@ -6,12 +6,12 @@ using UnityEngine;
 /// The camera set-up in every level (the "CameraRig" object the level builder makes):
 ///
 ///   CameraRig                  this script + my teammate's ScreenShake (+ CinemachineImpulseSource)
-///   ├─ Main Camera             Camera, CinemachineBrain, Pixel Perfect Camera (480 x 270, 16 PPU)
+///   ├─ Main Camera             Camera, CinemachineBrain (zoom 7 in every level; AspectLock keeps it 16:9)
 ///   └─ PipCamera               CinemachineCamera following Pip, with:
-///                                - CinemachinePositionComposer (smooth follow, small dead zone)
+///                                - CinemachinePositionComposer (smooth follow, small dead zone, look-ahead)
 ///                                - CinemachineConfiner2D (stays inside the level/room bounds)
-///                                - CinemachinePixelPerfect (no wobbly pixels)
 ///                                - CinemachineImpulseListener (receives ScreenShake)
+///                              (The pixel-perfect camera of the placeholder art was removed by Demo Polish.)
 ///
 /// WHAT THIS SCRIPT DOES
 ///   - Points the CinemachineCamera at Pip. Each level spawns a new Pip, so it re-checks every frame

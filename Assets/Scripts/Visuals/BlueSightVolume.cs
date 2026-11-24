@@ -3,12 +3,16 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
 /// <summary>
-/// The soft blue-grey screen look while Blue Sight is on, done with a URP Global Volume.
+/// The screen look while Blue Sight is on, done with a URP Global Volume.
 ///
-/// How it works: this Volume holds the "Blue Sight look" (low saturation, blue-grey tint,
-/// slightly lower contrast, soft dark-blue vignette). Its Weight fades from 0 (no effect) to 1
-/// (full effect) when Blue Sight turns on. Because its Priority is higher than the WashedOutView
-/// Volume, URP blends from the washed-out look into this one by Weight automatically.
+/// Blue Sight shows the world in its NORMAL, full colours: Pip's everyday view is washed out
+/// (WashedOutView), and Blue Sight lets her see things as they really are. So the defaults are
+/// neutral (full saturation, no tint, normal contrast, no vignette); change them here for a
+/// different look (e.g. a light blue tint or a soft vignette).
+///
+/// How it works: this Volume's Weight fades from 0 (no effect) to 1 (full effect) when Blue Sight
+/// turns on. Because its Priority is higher than the WashedOutView Volume, URP blends from the
+/// washed-out look into this one by Weight automatically.
 ///
 /// Setup: put this on a GameObject with a Volume (Global, Priority 10). No profile asset needed.
 /// </summary>
@@ -20,15 +24,15 @@ public class BlueSightVolume : MonoBehaviour
 
     [Header("Color")]
     [SerializeField, Range(-100f, 0f), Tooltip("Saturation while Blue Sight is on.")]
-    private float saturation = -60f;
-    [SerializeField, Tooltip("Tint multiplied over the screen. Light blue-grey keeps it soft.")]
-    private Color tint = new Color(0.75f, 0.85f, 1f);
+    private float saturation = 0f;
+    [SerializeField, Tooltip("Tint multiplied over the screen. White = no tint (normal colours).")]
+    private Color tint = Color.white;
     [SerializeField, Range(-100f, 100f), Tooltip("Contrast while Blue Sight is on. Negative = softer.")]
-    private float contrast = -10f;
+    private float contrast = 0f;
 
     [Header("Vignette")]
     [SerializeField, Range(0f, 1f), Tooltip("Darkening at the screen edges. 0 = none.")]
-    private float vignetteIntensity = 0.3f;
+    private float vignetteIntensity = 0f;
     [SerializeField, Tooltip("Vignette color.")]
     private Color vignetteColor = new Color(0.08f, 0.12f, 0.25f);
 

@@ -16,13 +16,13 @@ using UnityEngine.Playables;
 /// Coming back after winning: no cutscene, no fight, the boss is gone, and the exit is open.
 ///
 /// Setup: one in ChortleArena (the Part 8 builder makes it). "Boss" is any component that
-/// implements IBossFight: the PlaceholderBoss now, ChortleFight on the real Chortle later.
+/// implements IBossFight: ChortleFight on Chortle.
 /// </summary>
 public class BossFightFlow : MonoBehaviour
 {
     public const string DefeatedFlag = "chortle_defeated";
 
-    [SerializeField, Tooltip("A component implementing IBossFight (PlaceholderBoss or ChortleFight).")]
+    [SerializeField, Tooltip("A component implementing IBossFight (ChortleFight on Chortle).")]
     private MonoBehaviour boss;
 
     [Header("Cutscenes")]
@@ -67,10 +67,7 @@ public class BossFightFlow : MonoBehaviour
         if (GameManager.Instance.Save.HasFlag(DefeatedFlag))
         {
             Current = Stage.Done; // Already won: nothing to do here any more.
-            if (boss is PlaceholderBoss placeholder)
-                placeholder.SetAlreadyDefeated();
-            else
-                boss.gameObject.SetActive(false); // The real Chortle: gone once he's been beaten.
+            boss.gameObject.SetActive(false); // Chortle is gone once he's been beaten.
             return;
         }
 

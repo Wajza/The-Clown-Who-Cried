@@ -9,7 +9,7 @@ using UnityEngine;
 ///   1. Put Chortle in ChortleArena and UNTICK his "Start Automatically" (BossFightFlow starts
 ///      him after the intro cutscene).
 ///   2. Add this script and ChortleHealthSource (boss bar) to him.
-///   3. In BossFightFlow, drag him into "Boss" instead of the PlaceholderBoss, and delete that.
+///   3. In BossFightFlow, drag him into "Boss".
 /// </summary>
 public class ChortleFight : MonoBehaviour, IBossFight
 {

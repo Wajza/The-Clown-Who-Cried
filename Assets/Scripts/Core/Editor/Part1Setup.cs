@@ -49,7 +49,9 @@ public static class Part1Setup
 
     // ------------------------------------------------------------------ Menu items
 
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Part 1/Run Everything")]
+#endif
     public static void RunEverything()
     {
         BuildGameSystemsPrefab();
@@ -58,10 +60,14 @@ public static class Part1Setup
     }
 
     /// <summary>Builds the whole GameSystems prefab (every part's systems, not only Part 1's).</summary>
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Part 1/Build GameSystems Prefab")]
+#endif
     public static void BuildGameSystemsPrefab() => GameSystemsPrefabBuilder.Build();
 
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Part 1/Build Test Scenes")]
+#endif
     public static void BuildTestScenes()
     {
         if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
@@ -119,7 +125,9 @@ public static class Part1Setup
     /// Counts components with a missing script in the GameSystems prefab and in every scene
     /// under Assets/Scenes. Prints one line per asset and returns the total.
     /// </summary>
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Part 1/Check Missing Scripts")]
+#endif
     public static int CheckMissingScripts()
     {
         int total = 0;

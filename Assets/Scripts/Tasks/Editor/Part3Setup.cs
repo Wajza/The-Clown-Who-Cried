@@ -27,7 +27,9 @@ public static class Part3Setup
     // Where things stand in the test scene (x positions; everyone is on the floor).
     private const float MayorX = -3f, BakerX = 1f, KidX = 4f, GateX = 9f;
 
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Part 3/Run Everything")]
+#endif
     public static void RunEverything()
     {
         GameSystemsPrefabBuilder.Build();

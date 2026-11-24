@@ -103,7 +103,7 @@ public class CutsceneTest : SystemTestBase
             BossHealthSource.Active != null && BossHealthSource.Active.IsFighting);
         Check("Boss health bar shows", FindAnyObjectByType<BossHealthBar>().Visible);
         Check("Pip free to fight", !PlayerInputLock.IsLocked && State == GameState.Playing);
-        Check("The exit is locked during the fight", !GameObject.Find("ExitToHub").GetComponent<Door>().Requirement.IsMet);
+        Check("The exit is locked during the fight", !GameObject.Find("ExitToHub").GetComponent<LevelExit>().Requirement.IsMet);
 
         int baseMax = Pip.GetComponent<PlayerHealth>().MaxStars;
         _maxBeforeReward = baseMax;
@@ -177,7 +177,7 @@ public class CutsceneTest : SystemTestBase
         var bossAfter = flowAfter.Boss as Component;
         Check("Back in the arena: no boss", (bossAfter == null || !bossAfter.gameObject.activeInHierarchy) &&
             flowAfter.Current == BossFightFlow.Stage.Done);
-        Check("Back in the arena: the exit is open", GameObject.Find("ExitToHub").GetComponent<Door>().Requirement.IsMet);
+        Check("Back in the arena: the exit is open", GameObject.Find("ExitToHub").GetComponent<LevelExit>().Requirement.IsMet);
         Check("No boss bar", !FindAnyObjectByType<BossHealthBar>().Visible);
     }
 

@@ -125,6 +125,12 @@ public class PlayerMallet : MonoBehaviour
     /// <summary>Seconds one whole swing takes (wind-up + hit + recovery). PipAnimator fits the animation to it.</summary>
     public float SwingDuration => SwingTotalTime;
 
+    /// <summary>Seconds from the swing's start until the hitbox turns on. PipAnimator times the smash pose with it.</summary>
+    public float WindupTime => windupTime;
+
+    /// <summary>Seconds the hitbox stays on.</summary>
+    public float ActiveTime => activeTime;
+
     // ------------------------------------------------------------------ Unity lifecycle
 
     private void Awake()

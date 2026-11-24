@@ -28,7 +28,9 @@ public static class Part4Setup
     private const string TaskFolder = "Assets/Resources/Tasks/Test";
     private const float PickupX = 4f;
 
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Part 4/Run Everything")]
+#endif
     public static void RunEverything()
     {
         GameSystemsPrefabBuilder.Build(); // Also makes the placeholder art.
@@ -40,7 +42,9 @@ public static class Part4Setup
         Debug.Log("Part4Setup: done.");
     }
 
+#if CWC_SETUP_TOOLS
     [MenuItem("Tools/Clown Who Cried/Part 4/Rebuild Title Scene (overwrites it)")]
+#endif
     public static void RebuildTitleScene()
     {
         if (EditorUtility.DisplayDialog("Rebuild Title Scene",

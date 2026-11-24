@@ -59,10 +59,9 @@ public class PrologueTest : SystemTestBase
         Check("P1 starts by itself in Pip's house", Tasks.IsActive(p1) && Tasks.GetStep(p1) == 0);
         Check("Tracker: 'Look in the mirror'", Tasks.GetObjectiveText(p1) == "Look in the mirror");
 
-        // The front door won't open yet: Pip says why instead.
+        // Walking out of the right side doesn't work yet: Pip says why instead.
         yield return MovePipTo(X("FrontDoor"), FloorY);
-        Check("Front door is usable (to hear why it's locked)", InteractionInput.Instance.TryInteract());
-        Check("Locked door: Pip says something, no scene change", Runner.IsRunning && !SceneLoader.Instance.IsLoading);
+        Check("Locked exit: Pip says something, no scene change", Runner.IsRunning && !SceneLoader.Instance.IsLoading);
         yield return FinishConversation();
         Check("Still in Pip's house", SceneLoader.CurrentSceneName == "Tumbleton_PipHouse");
 
@@ -70,8 +69,7 @@ public class PrologueTest : SystemTestBase
         Check("Mirror sets its flag", GameManager.Instance.Save.HasFlag("p1_looked_in_mirror"));
         Check("Mirror moves P1 on: 'Go outside'", Tasks.GetStep(p1) == 1 && Tasks.GetObjectiveText(p1) == "Go outside");
 
-        yield return MovePipTo(X("FrontDoor"), FloorY);
-        Check("Front door opens now", InteractionInput.Instance.TryInteract());
+        yield return MovePipTo(X("FrontDoor"), FloorY); // Walks out of the right side.
         yield return WaitForScene("Tumbleton");
         Check("Stepping outside finishes P1", TaskManager.IsCompleted(p1));
     }
@@ -183,9 +181,9 @@ public class PrologueTest : SystemTestBase
         Check("Talking to the doctor finishes P5", p5 != null && TaskManager.IsCompleted(p5));
         Check("...and teaches Tear Burst", ActionEnabled("TearBurst") && GameManager.Instance.Save.HasFlag("ability_tearburst"));
 
-        yield return MovePipTo(X("FrontDoor"), FloorY);
-        Check("The office door leads back to town", InteractionInput.Instance.TryInteract());
+        yield return MovePipTo(X("FrontDoor"), FloorY); // Walks out of the office's right side.
         yield return WaitForScene("Tumbleton");
+        Check("Walking out of the office leads back to town", SceneLoader.CurrentSceneName == "Tumbleton");
         CheckNear("Back outside the doctor's door", PipPosition(), SpawnPoint.Find("FromDoctor").Position);
         Check("The station gate opens after P1-P5", !WallUp("TaskGate_Station"));
     }
