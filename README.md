@@ -46,7 +46,7 @@ Abilities stay locked until the story gives them to you. The in-game **Controls*
 
 ### Tests
 
-The 11 automated test scenes in `Assets/Scenes/Tests` play through the real systems. They write PASS/FAIL lines to `Logs/*TestResults.txt`.
+The 11 automated test scenes in `Assets/Scenes/Tests` play through the real systems.
 
 ## Project layout
 
@@ -71,6 +71,6 @@ See [docs/phase2/checkpoint.md](docs/phase2/checkpoint.md) for the full status.
 
 | Member | Area |
 |--------|------|
-| Wajza | Player, combat, enemies, boss, game feel, camera, integration and polish |
+| Wajd Alghamdi | Player, combat, enemies, boss, game feel, camera, integration and polish |
 | Sarah Almas | Core systems: save, scenes, dialogue, tasks, UI, levels, cutscenes, audio, build and tests |
 | Dana Alyahya | Character art and animation, environment art |
