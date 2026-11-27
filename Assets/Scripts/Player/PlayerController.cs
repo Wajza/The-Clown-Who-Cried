@@ -277,8 +277,42 @@ public class PlayerController : MonoBehaviour
 
         Vector2 v = _rb.linearVelocity;
         v.x = Mathf.MoveTowards(v.x, targetSpeed, rate * Time.fixedDeltaTime);
+
+        // Don't push into a wall. Each tile is its own box collider, so pressing the capsule
+        // against a wall made of stacked tiles makes it catch on the seams between them:
+        // Pip jitters, "slides", and her jump gets stopped when she's in front of a platform.
+        // Not pushing means there's no contact, so she moves freely up and down the wall.
+        if (Mathf.Abs(v.x) > 0.01f && IsWallAhead(v.x > 0f ? 1 : -1))
+            v.x = 0f;
+
         _rb.linearVelocity = v;
     }
+
+    private static readonly RaycastHit2D[] WallHits = new RaycastHit2D[4];
+
+    /// <summary>True if a wall (a mostly vertical Ground surface) is right next to Pip in 'direction'.</summary>
+    private bool IsWallAhead(int direction)
+    {
+        var filter = new ContactFilter2D { useTriggers = false };
+        filter.SetLayerMask(groundLayer);
+
+        int count = _rb.Cast(new Vector2(direction, 0f), filter, WallHits, WallCheckDistance);
+        for (int i = 0; i < count; i++)
+        {
+            // One-way platforms (PlatformEffector2D) are meant to be passed through from the side/below.
+            if (WallHits[i].collider.usedByEffector)
+                continue;
+
+            // Normal pointing back at Pip and mostly sideways = a wall (not a floor, ramp or corner).
+            Vector2 n = WallHits[i].normal;
+            if (n.x * direction < -0.7f)
+                return true;
+        }
+        return false;
+    }
+
+    /// <summary>How far ahead (tiles) to look for a wall. Small: only walls Pip is already touching.</summary>
+    private const float WallCheckDistance = 0.05f;
 
     // ------------------------------------------------------------------ Jumping
 
